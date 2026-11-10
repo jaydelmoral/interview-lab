@@ -6,6 +6,7 @@
 <title>Interview Lab</title>
 <meta name="color-scheme" content="dark light">
 <script src="/theme.js"></script>
+<link rel="preload" href="/fonts/Outfit-latin-400-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/common.css">
 </head>
 <body class="landing">
@@ -24,36 +25,60 @@
   </div>
 
   <section class="hero" id="inicio">
-    <span class="eyebrow"><i></i><span data-t="heroBadge"></span></span>
-    <h1 data-t="heroTitle"></h1>
-    <p class="lead" data-t="heroSub"></p>
-    <div class="row">
-      <a class="btn primary lg" href="#crear" data-t="ctaBuild"></a>
-      <a class="btn light lg" href="#evaluacion" data-t="ctaEval"></a>
+    <div>
+      <span class="eyebrow"><i></i><span data-t="heroBadge"></span></span>
+      <h1><span data-t="heroT1"></span> <em data-t="heroEm"></em><span data-t="heroT3"></span></h1>
+      <p class="lead" data-t="heroSub"></p>
+      <div class="row">
+        <a class="btn primary lg" href="#crear" data-t="ctaBuild"></a>
+        <a class="btn lg" href="#evaluacion" data-t="ctaEval"></a>
+      </div>
+      <div class="facts">
+        <div><b>100 %</b><span data-t="fact1"></span></div>
+        <div><b id="factMods">–</b><span data-t="fact2"></span></div>
+        <div><b id="factItems">–</b><span data-t="fact3"></span></div>
+        <div><b>ES · EN</b><span data-t="fact4"></span></div>
+      </div>
     </div>
   </section>
 
-  <section class="section" id="evaluacion" style="padding-top:36px">
+  <section class="section" id="evaluacion">
+    <div class="section-head"><span class="eyebrow" data-t="evalEyebrow"></span><h2 data-t="evalTitle"></h2><p data-t="evalSub"></p></div>
     <div id="sampleDash"></div>
     <div class="how-grid" id="criteria"></div>
   </section>
 
-  <section class="section" id="como">
-    <div class="section-head"><span class="eyebrow" data-t="howEyebrow"></span><h2 data-t="howTitle"></h2><p data-t="howSub"></p></div>
-    <div class="term" aria-hidden="true">
-      <div class="term-bar"><i></i><i></i><i></i><span>interview-lab — 127.0.0.1:8765</span></div>
-      <pre id="termBody"></pre>
+  <section class="section" id="porque">
+    <span id="pilares" class="anchor-alias"></span>
+    <div class="section-head"><span class="eyebrow" data-t="whyEyebrow"></span><h2 id="whyTitle" data-t="pilTitle"></h2><p data-t="pilSub"></p></div>
+    <div class="reasons">
+      <nav class="reasons-nav" aria-labelledby="whyTitle">
+        <a href="#w1" class="active" data-t="p1t"></a><a href="#w2" data-t="p3t"></a><a href="#w3" data-t="p4t"></a><a href="#w4" data-t="p2t"></a>
+      </nav>
+      <div class="reasons-panels">
+        <article id="w1"><div class="mini"><span class="eyebrow" data-t="w1tag"></span><div class="chips reveal" id="detectChips"></div></div>
+          <h3 data-t="w1h"></h3><p data-t="p1p"></p></article>
+        <article id="w2"><div class="mini"><div class="mterm reveal" id="termLines"></div></div>
+          <h3 data-t="w2h"></h3><p data-t="p3p"></p></article>
+        <article id="w3"><div class="mini reveal" id="timeBars"></div>
+          <h3 data-t="w3h"></h3><p data-t="p4p"></p></article>
+        <article id="w4"><div class="mini"><div class="mflow reveal"><span data-t="flowBrowser"></span><em>⇄</em><span>127.0.0.1</span><em>⇄</em><span data-t="flowFiles"></span></div>
+          <p class="mnote" data-t="flowNote"></p></div>
+          <h3 data-t="w4h"></h3><p data-t="p2p"></p></article>
+      </div>
     </div>
-    <p class="caption" data-t="termCaption"></p>
   </section>
 
-  <section class="section" id="pilares">
-    <div class="section-head"><h2 data-t="pilTitle"></h2><p data-t="pilSub"></p></div>
-    <div class="bento">
-      <article><div class="num">01</div><h3 data-t="p1t"></h3><p data-t="p1p"></p><div class="tags" id="pilTags"></div></article>
-      <article><div class="num">02</div><h3 data-t="p2t"></h3><p data-t="p2p"></p></article>
-      <article><div class="num">03</div><h3 data-t="p3t"></h3><p data-t="p3p"></p></article>
-      <article><div class="num">04</div><h3 data-t="p4t"></h3><p data-t="p4p"></p></article>
+  <section class="section" id="pasos">
+    <span id="como" class="anchor-alias"></span>
+    <div class="section-head"><span class="eyebrow" data-t="howEyebrow"></span><h2 data-t="stepsTitle"></h2><p data-t="stepsSub"></p></div>
+    <div class="arcsteps">
+      <article class="card"><svg class="iso-only" viewBox="0 0 480 480" aria-hidden="true" focusable="false"><use href="#oA" fill="url(#gA)"/><use class="dim" href="#oB" fill="url(#gB)"/><use class="dim" href="#oC" fill="url(#gC)"/></svg>
+        <small><span data-t="stepWord"></span> 1</small><h3 data-t="s1t"></h3><p data-t="s1p"></p></article>
+      <article class="card"><svg class="iso-only" viewBox="0 0 480 480" aria-hidden="true" focusable="false"><use class="dim" href="#oA" fill="url(#gA)"/><use href="#oB" fill="url(#gB)"/><use class="dim" href="#oC" fill="url(#gC)"/></svg>
+        <small><span data-t="stepWord"></span> 2</small><h3 data-t="s2t"></h3><p data-t="s2p"></p></article>
+      <article class="card"><svg class="iso-only" viewBox="0 0 480 480" aria-hidden="true" focusable="false"><use class="dim" href="#oA" fill="url(#gA)"/><use class="dim" href="#oB" fill="url(#gB)"/><use href="#oC" fill="url(#gC)"/></svg>
+        <small><span data-t="stepWord"></span> 3</small><h3 data-t="s3t"></h3><p data-t="s3p"></p></article>
     </div>
   </section>
 
@@ -125,10 +150,11 @@
     </section>
   </section>
 
-  <section class="cta-final">
+  <section class="cta-final" id="cierre">
+    <small id="tagline"></small>
     <h2 data-t="ctaFinalTitle"></h2>
     <p data-t="ctaFinalSub"></p>
-    <div class="row" style="justify-content:center;margin-top:30px"><a class="btn primary lg" href="#crear" data-t="ctaBuild"></a></div>
+    <div class="row"><a class="btn primary lg" href="#crear" data-t="ctaBuild"></a></div>
   </section>
 </div>
 <div id="tip"></div>
