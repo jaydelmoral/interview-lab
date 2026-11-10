@@ -58,6 +58,9 @@ Use *Retake this simulation* or create another one focused on the weak topics.
 ### Light and dark mode / Modo claro y oscuro
 The button next to the language selector switches between light and dark mode (it follows your system until you choose). The matching Collaboration logo is shown automatically.
 
+### History / Historial
+The **History** page (top menu) keeps every finished simulation and every code/quiz submission in a local SQLite file (`workspace/ilab.db`): overall trend, evolution per module (weakest first), the topics you miss most, time used vs allotted, per-exercise progress, and each past simulation with its missed questions. It starts filling as soon as you finish your first simulation.
+
 ## 4. Free practice / Práctica libre
 *Free practice* (top menu) opens any single exercise or the output quiz with its own timer, without building an exam.
 

@@ -196,6 +196,24 @@ details.miss .why-txt{color:var(--muted);font-size:13.5px;margin:8px 0 2px}
 .how-grid b{display:block;font-weight:500;color:var(--fg-strong);margin-bottom:6px;font-size:16px}
 .how-grid p{margin:0;color:var(--muted);font-size:14px}
 
+/* ---------- history ---------- */
+.s12{grid-column:span 12} .s7{grid-column:span 7} .s6{grid-column:span 6} .s5{grid-column:span 5} .s4{grid-column:span 4}
+@media (max-width:1000px){.s7,.s6,.s5,.s4{grid-column:span 12}}
+.kpi.s4{grid-column:span 4}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line)}
+.tbl td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr.click{cursor:pointer} .tbl tr.click:hover td{background:var(--surface-2)}
+.up{color:var(--ok)} .down{color:var(--bad)} .flat{color:var(--muted)}
+.spark{width:110px;height:30px;display:block}
+.chart{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:11px}
+.empty{text-align:center;padding:56px 20px}
+.empty h3{font-size:24px;font-weight:400;margin-bottom:10px}
+.mod-card{display:grid;grid-template-columns:minmax(110px,1.2fr) auto 1fr auto;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.mod-card:last-child{border-bottom:none}
+
 /* ---------- exam / practice ---------- */
 .steps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .steps span{padding:4px 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--muted)}

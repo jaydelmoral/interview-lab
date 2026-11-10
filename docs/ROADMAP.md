@@ -23,8 +23,8 @@ Next, in rough priority order / Siguiente, en orden aproximado:
 **MUST-HAVE (question bank) / Obligatorio:** every question carries a **source** (link to official documentation) and a **review status** (`draft` → `reviewed` + reviewer + date). The validator rejects questions without a source; unreviewed questions are flagged in the UI. A wrong grade destroys trust. / Cada pregunta con fuente oficial y estado de revisión; el validador rechaza las que no la tengan.
 
 **Next / Siguiente**
-- [ ] SQLite history (`workspace/ilab.db`, stdlib `sqlite3`): attempts, exam runs, per-section results, missed questions and tags; schema versioning; import of existing `runs/*.jsonl`. Include a default `profile_id` column from day 1 (cheap, keeps the cloud door open). / Historial en SQLite con `profile_id` desde el inicio.
-- [ ] Analytics dashboard: trend by date, per module, weak topics over time, time used vs allotted, best/worst attempts. / Tablero de analítica con tendencias.
+- [x] SQLite history (`workspace/ilab.db`) with `profile_id` from day 1 — done, see ADR-0017. / Historial en SQLite — hecho.
+- [x] Analytics dashboard (`/history`): trend, per module, weak topics, time used vs allotted, per-exercise progress — done. / Tablero de analítica — hecho.
 - [ ] Question bank growth (target 40 per module) with sources and review fields. / Crecer el banco con fuentes.
 - [ ] In-browser editor: **Monaco** (MIT, vendored locally, no CDN), HackerRank-style layout (statement | editor | console), *Run* (sample cases) vs *Submit* (hidden tests), language picker, autocomplete off in interview mode. Not full VS Code (code-server) because of its attack surface. / Editor Monaco estilo HackerRank.
 - [ ] Language packs installed **at repo install time** (`./install --lang python`), never from the web UI; the app only offers languages it detects as installed; the installer asks for confirmation, uses official sources and never runs silently as root. The user owns what they install. / Lenguajes instalados en la fase de instalación, nunca desde la web.

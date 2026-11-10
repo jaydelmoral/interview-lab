@@ -44,3 +44,4 @@ What we will do.
 ## Resumen (ES)
 Una o dos frases.
 ```
+| 0017 | [SQLite history and analytics, per profile](0017-sqlite-history-and-analytics.md) | Accepted |

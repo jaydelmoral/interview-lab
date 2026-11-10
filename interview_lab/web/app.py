@@ -13,10 +13,11 @@ from ..adapters.fs_problems import FsProblems
 from ..adapters.fs_repositories import FsBankRepository, FsExamRepository, JsonlLog
 from ..adapters.java_grader import JavaCodeGrader
 from ..adapters.offline_generator import OfflineQuestionGenerator
+from ..adapters.sqlite_history import SqliteHistory
 from ..adapters.web_fetcher import SafeUrlFetcher
 from ..application.errors import AppError, Forbidden, InvalidRequest, NotFound, Unprocessable
 from ..application.ports import GenerationError
-from ..application.services import AnalysisService, BankService, ExamService, PracticeService
+from ..application.services import AnalysisService, BankService, ExamService, HistoryService, PracticeService
 from ..config import Settings
 from .handlers import Handlers, Request, Response, build_routes, lang_of
 from .security import SECURITY_HEADERS, RequestGuard
@@ -36,11 +37,13 @@ def compose(settings: Settings, grader=None) -> Handlers:
             generator, ai_enabled = AnthropicQuestionGenerator(settings.ai_model), True
         except GenerationError as e:
             log.warning("AI generator disabled: %s", e)
+    history = SqliteHistory(settings.home / "ilab.db")
+    history.import_legacy(settings.home / "runs", settings.home / "exams")      # one-time, idempotent
     practice = PracticeService(problems, grader or JavaCodeGrader(settings.root, settings.home), JsonlLog(settings.home / "runs" / "results.jsonl"),
-                               settings.home / "runs" / "attempts", settings.max_code_bytes)
-    return Handlers(settings, AnalysisService(), ExamService(catalog, FsExamRepository(settings.home)),
+                               settings.home / "runs" / "attempts", settings.max_code_bytes, history)
+    return Handlers(settings, AnalysisService(), ExamService(catalog, FsExamRepository(settings.home), history),
                     BankService(FsBankRepository(settings.home), SafeUrlFetcher(), generator, offline, settings.allow_fetch),
-                    practice, ai_enabled, generator.name)
+                    practice, ai_enabled, generator.name, HistoryService(history))
 
 
 def make_server(settings: Settings, handlers: Handlers = None) -> ThreadingHTTPServer:

@@ -227,7 +227,7 @@ async function finishSection(auto){
       answers = ans; renderQuestions(rep);
       const byKey = {}; sec.items.forEach(i => { byKey[i.key] = i; });
       const missed = rep.items.filter(r => !r.correct).map(r => { const it = byKey[r.key] || {};
-        return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation}; });
+        return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation, tags: r.tags || []}; });
       rec = {module: sec.module, title: sec.title, score: rep.score, max: Math.max(rep.max, 1), pct: rep.max ? rep.score / rep.max : 0, weak: rep.weak || [], done: rep.score, total: rep.max, cats: {}, missed, ...timeUsed(sec, auto)};
       RESULTS[idx] = rec; (rep.weak || []).forEach(w => { WEAK[w] = (WEAK[w] || 0) + 1; });
     } catch (e) { return fatal(e.message); }
@@ -260,7 +260,11 @@ async function showReport(){
   hideTip(); window.scrollTo(0, 0);
   clearInterval(tick); $('runner').style.display = 'none'; $('start').style.display = 'none'; $('report').style.display = '';
   const done = RESULTS.filter(Boolean);
-  try { await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', {sections: done.map(r => ({module: r.module, score: Math.round(r.pct * 100), max: 100}))}); } catch (e) {}
+  try {
+    await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', {
+      sections: done.map(r => ({module: r.module, title: r.title, score: Math.round(r.pct * 100), max: 100, pct: Math.round(r.pct * 1000) / 10, correct: r.done, total: r.total, used: r.used, allotted: r.allotted})),
+      missed: done.flatMap(r => r.missed || [])});
+  } catch (e) {}
   $('report').innerHTML = `<div class="section-head" style="margin:8px auto 26px"><span class="eyebrow">${esc(T('reportTitle'))}</span></div>` + renderDashboard(dashFromResults()) +
     `<div class="row noprint" style="justify-content:center;margin-top:24px"><button class="primary lg" id="retakeBtn">${esc(T('retake'))}</button><a class="btn lg" href="/">${esc(T('another'))}</a><button class="lg" id="printBtn">${esc(T('dPrint'))}</button></div>`;
   store(progKey(), null);

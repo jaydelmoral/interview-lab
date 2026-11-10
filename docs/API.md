@@ -43,3 +43,11 @@ Public item shapes: `code {key,type,id,title,minutes}`, `output {key,type,topic,
 | GET | `/api/problems/{id}` | → statement (EN and ES), starter code, test names; or quiz questions |
 | POST | `/api/grade` | `{problem, code (≤ 50 KB)}` → report `{score, max, compile, tests[{id,title,passed,ms,detail,fail_why,fail_how}]}` |
 | POST | `/api/quiz` | `{problem, answers{id: text}}` → `{score, max, results[]}` |
+
+## History and analytics / Historial
+| Method | Path | Description |
+|---|---|---|
+| GET | `/history` | History page (dashboard) |
+| GET | `/api/history` | Aggregated analytics for the local profile: `kpis`, `trend`, `modules` (weakest first), `weak_tags`, `code`, `recent` |
+| GET | `/api/history/runs/{id}` | One finished exam with its sections and missed questions |
+| POST | `/api/exams/{id}/finish` | Body: `sections[{module,title,score,max,pct,correct,total,used,allotted}]` and optional `missed[{section,q,expected,explanation,tags}]`. Stores the result (JSONL + SQLite). Every field is validated and clamped. |

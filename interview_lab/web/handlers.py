@@ -10,7 +10,7 @@ from typing import Callable, Optional
 from ..application.errors import NotFound
 
 STATIC_TYPES = {".png": "image/png", ".json": "application/json; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
-PAGES = {"/": "landing.html", "/index.html": "landing.html", "/practice": "index.html", "/exam": "exam.html"}
+PAGES = {"/": "landing.html", "/index.html": "landing.html", "/practice": "index.html", "/exam": "exam.html", "/history": "history.html"}
 ASSETS = {"/common.js", "/common.css", "/theme.js"}
 BRAND_FILE = re.compile(r"^/brand/([a-z0-9._-]+\.(?:png|json))$")
 
@@ -47,8 +47,8 @@ def lang_of(value) -> str:
 class Handlers:
     """Holds the services (injected by the composition root) and exposes one method per endpoint."""
 
-    def __init__(self, settings, analysis, exams, banks, practice, ai_enabled: bool, generator_name: str):
-        self.s, self.analysis, self.exams, self.banks, self.practice = settings, analysis, exams, banks, practice
+    def __init__(self, settings, analysis, exams, banks, practice, ai_enabled: bool, generator_name: str, history=None):
+        self.s, self.analysis, self.exams, self.banks, self.practice, self.history = settings, analysis, exams, banks, practice, history
         self.ai_enabled, self.generator_name = ai_enabled, generator_name
         self.web = settings.root / "web"
 
@@ -91,7 +91,7 @@ class Handlers:
         return self.exams.grade_section(req.params["id"], req.body.get("section"), req.body.get("answers"), req.lang)
 
     def exam_finish(self, req: Request):
-        return self.exams.finish(req.params["id"], req.body.get("sections"))
+        return self.exams.finish(req.params["id"], req.body.get("sections"), req.body.get("missed"))
 
     # ---- memory banks
     def banks_list(self, req: Request):
@@ -106,6 +106,13 @@ class Handlers:
     def bank_delete(self, req: Request):
         self.banks.delete(req.params["id"])
         return {"deleted": req.params["id"]}
+
+    # ---- history and analytics
+    def history_overview(self, req: Request):
+        return self.history.overview()
+
+    def history_run(self, req: Request):
+        return self.history.run(int(req.params["id"]))
 
     # ---- free practice
     def problems_list(self, req: Request):
@@ -136,6 +143,8 @@ def build_routes(h: Handlers) -> list:
         r("GET", "/api/exams", h.exams_list),
         r("GET", r"/api/exams/(?P<id>[^/]+)", h.exam_get),
         r("GET", "/api/banks", h.banks_list),
+    r("GET", "/api/history", h.history_overview),
+    r("GET", r"/api/history/runs/(?P<id>\d{1,12})", h.history_run),
         r("POST", "/api/analyze", h.analyze, big),
         r("POST", "/api/exams", h.exam_create),
         r("POST", r"/api/exams/(?P<id>[^/]+)/section", h.exam_section),

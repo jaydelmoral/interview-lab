@@ -14,7 +14,7 @@ function addStrings(o){ for (const l of ['es', 'en']) Object.assign(STR[l], o[l]
 const T = k => (STR[lang][k] !== undefined ? STR[lang][k] : (STR.es[k] !== undefined ? STR.es[k] : k));
 
 addStrings({
-  es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', cta: 'Iniciar simulación', theme: 'Cambiar entre modo claro y oscuro',
+  es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', navHistory: 'Historial', cta: 'Iniciar simulación', theme: 'Cambiar entre modo claro y oscuro',
        foot: 'Interview Lab · código Apache-2.0 · ejercicios CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) con Claude (Anthropic). Logotipos: © Collaboration, todos los derechos reservados. Proyecto independiente, sin relación con Oracle, plataformas de pruebas ni empresas mencionadas. El código que escribes se ejecuta en tu equipo.',
        translate: '🌐 Convertir al español para mayor ayuda', original: '🌐 Ver el original en inglés', hover: 'Traducir al pasar el cursor',
        noTr: 'Este problema no tiene traducción (falta problem.es.md)', err: 'Error',
@@ -26,7 +26,7 @@ addStrings({
        tipTag: 'Repasa este tema: abajo están las preguntas que fallaste, con su explicación.', tipSection: 'Quedó bajo el umbral de 60 %. Practica sus ejercicios en «Práctica libre» y repite el simulacro.',
        tipPS: 'Descompón el problema y escribe los casos límite antes de codificar.', tipRel: 'Cubre entradas vacías, nulos y límites: ahí fallan las pruebas ocultas.', tipLang: 'Repasa la API y la semántica del lenguaje que usaste.',
        catPS: 'Resolución de problemas', catRel: 'Fiabilidad', catLang: 'Conocimiento del lenguaje'},
-  en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', cta: 'Start simulation', theme: 'Switch between light and dark mode',
+  en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', navHistory: 'History', cta: 'Start simulation', theme: 'Switch between light and dark mode',
        foot: 'Interview Lab · code Apache-2.0 · exercises CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) with Claude (Anthropic). Logos: © Collaboration, all rights reserved. Independent project, not affiliated with Oracle, testing platforms or any company mentioned. The code you write runs on your machine.',
        translate: '🌐 Show in Spanish for extra help', original: '🌐 Show the English original', hover: 'Translate on hover',
        noTr: 'This problem has no Spanish translation (problem.es.md is missing)', err: 'Error',
@@ -64,7 +64,7 @@ async function renderChrome(active, onLangChange){
   bar.className = 'appbar';
   const lk = (id, href, key, on) => `<a href="${href}" id="${id}" class="${active === on ? 'active' : ''}"></a>`;
   bar.innerHTML = `<div class="appbar-in"><a class="brand" href="/" aria-label="${esc(b.name)}">${logoPair(b.logo_mark, 30, b.name)}</a>
-    <nav class="pill-nav" aria-label="Main">${lk('navHome', '/', 'navHome', 'home')}${lk('navEval', '/#evaluacion', 'navEval', 'eval')}${lk('navBuild', '/#crear', 'navBuild', 'build')}${lk('navPractice', '/practice', 'navPractice', 'practice')}</nav>
+    <nav class="pill-nav" aria-label="Main">${lk('navHome', '/', 'navHome', 'home')}${lk('navEval', '/#evaluacion', 'navEval', 'eval')}${lk('navBuild', '/#crear', 'navBuild', 'build')}${lk('navPractice', '/practice', 'navPractice', 'practice')}${lk('navHistory', '/history', 'navHistory', 'history')}</nav>
     <div class="actions"><select id="langSel" aria-label="Language / Idioma"><option value="es">Español</option><option value="en">English</option></select>
     <button class="icon-btn" id="themeBtn" type="button">${SVG_SUN}${SVG_MOON}</button></div></div>`;
   $('langSel').value = lang;
@@ -75,7 +75,7 @@ async function renderChrome(active, onLangChange){
 }
 function chromeText(){
   document.documentElement.lang = lang;
-  if ($('navHome')) { for (const k of ['navHome', 'navEval', 'navBuild', 'navPractice']) $(k).textContent = T(k); }
+  if ($('navHome')) { for (const k of ['navHome', 'navEval', 'navBuild', 'navPractice', 'navHistory']) $(k).textContent = T(k); }
   if ($('themeBtn')) { $('themeBtn').title = T('theme'); $('themeBtn').setAttribute('aria-label', T('theme')); }
   if ($('foot')) { $('foot').className = 'foot'; $('foot').textContent = T('foot'); }
 }

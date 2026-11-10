@@ -80,7 +80,7 @@ class Grading(unittest.TestCase):
 class TestWebPages(unittest.TestCase):
     """The UI must stay self-contained: the CSP and the local-first promise forbid external assets (ADR-0006, ADR-0015)."""
 
-    PAGES = ("landing.html", "exam.html", "index.html")
+    PAGES = ("landing.html", "exam.html", "index.html", "history.html")
 
     def test_pages_load_theme_and_shared_styles_and_nothing_external(self):
         import re
