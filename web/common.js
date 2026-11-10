@@ -17,7 +17,7 @@ const T = k => (STR[lang][k] !== undefined ? STR[lang][k] : (STR.es[k] !== undef
 
 addStrings({
   es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', navHistory: 'Historial', cta: 'Iniciar simulación', footBrand: 'Interview Lab · un producto de {n}', theme: 'Cambiar entre modo claro y oscuro',
-       foot: 'Interview Lab · código Apache-2.0 · ejercicios CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) con Claude (Anthropic). Logotipos: © Collaboration, todos los derechos reservados. Proyecto independiente, sin relación con Oracle, plataformas de pruebas ni empresas mencionadas. El código que escribes se ejecuta en tu equipo.',
+       foot: 'Interview Lab · código Apache-2.0 · ejercicios CC BY 4.0 · Javier Morales Barrera (@jaydelmoral). Proyecto con IA. Logotipos: © Collaboration, todos los derechos reservados. El código que escribes se ejecuta en tu equipo.',
        translate: '🌐 Convertir al español para mayor ayuda', original: '🌐 Ver el original en inglés', hover: 'Traducir al pasar el cursor',
        noTr: 'Este problema no tiene traducción (falta problem.es.md)', err: 'Error',
        dSample: 'Ejemplo ilustrativo', dSampleNote: 'Datos de muestra: así se verá tu reporte al terminar el simulacro.', dOverall: 'Resultado global', dSectionsOk: 'Secciones aprobadas',
@@ -29,7 +29,7 @@ addStrings({
        tipPS: 'Descompón el problema y escribe los casos límite antes de codificar.', tipRel: 'Cubre entradas vacías, nulos y límites: ahí fallan las pruebas ocultas.', tipLang: 'Repasa la API y la semántica del lenguaje que usaste.',
        catPS: 'Resolución de problemas', catRel: 'Fiabilidad', catLang: 'Conocimiento del lenguaje'},
   en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', navHistory: 'History', cta: 'Start simulation', footBrand: 'Interview Lab · a {n} product', theme: 'Switch between light and dark mode',
-       foot: 'Interview Lab · code Apache-2.0 · exercises CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) with Claude (Anthropic). Logos: © Collaboration, all rights reserved. Independent project, not affiliated with Oracle, testing platforms or any company mentioned. The code you write runs on your machine.',
+       foot: 'Interview Lab · code Apache-2.0 · exercises CC BY 4.0 · Javier Morales Barrera (@jaydelmoral). AI-assisted project. Logos: © Collaboration, all rights reserved. The code you write runs on your machine.',
        translate: '🌐 Show in Spanish for extra help', original: '🌐 Show the English original', hover: 'Translate on hover',
        noTr: 'This problem has no Spanish translation (problem.es.md is missing)', err: 'Error',
        dSample: 'Illustrative example', dSampleNote: 'Sample data: this is how your report will look when you finish the simulation.', dOverall: 'Overall result', dSectionsOk: 'Sections passed',
@@ -114,7 +114,7 @@ function chromeText(){
     const who = b.link ? `<a href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : esc(name);
     const line = esc(T('footBrand')).replace('{n}', who);
     $('foot').className = 'foot';
-    $('foot').innerHTML = `<div class="foot-brand">${window.brandFull && b.logo_full ? window.brandFull(26) : ''}<span>${line}${b.tagline ? ' · ' + esc(b.tagline) : ''}</span></div><p>${esc(T('foot'))}</p>`;
+    $('foot').innerHTML = `<div class="foot-brand">${window.brandFull && b.logo_full ? window.brandFull(34) : ''}<span>${line}${b.tagline ? ' · ' + esc(b.tagline) : ''}</span></div><p>${esc(T('foot'))}</p>`;
   }
 }
 

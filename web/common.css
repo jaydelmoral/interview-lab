@@ -130,10 +130,10 @@ html[data-theme="light"] .logo-l{display:block}
 .list .item:last-child{border-bottom:none}
 .timer{font-variant-numeric:tabular-nums;font-weight:600;font-size:22px;padding:4px 16px;border:1px solid var(--line-strong);border-radius:999px;background:var(--surface);letter-spacing:.02em}
 .timer.low{color:var(--bad);border-color:var(--bad)}
-footer.foot{max-width:1160px;margin:0 auto;padding:28px 24px 40px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line)}
+footer.foot{max-width:1160px;margin:0 auto;padding:32px 24px 44px;color:var(--muted);font-size:12.5px;text-align:center;border-top:1px solid var(--line)}
 footer.foot a{color:inherit}
-footer.foot p{margin:0}
-.foot-brand{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:12px;color:var(--fg)}
+footer.foot p{margin:0 auto;max-width:860px}
+.foot-brand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:16px;color:var(--fg)}
 .foot-brand img{width:auto}
 pre,code{font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,Consolas,monospace}
 
