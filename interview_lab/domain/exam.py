@@ -13,7 +13,7 @@ import re
 import time
 from typing import Callable, Optional
 
-LEVELS = {"jr": 0, "mid": 1, "sr": 2, "any": 1}
+LEVELS = {"jr": 0, "mid": 1, "sr": 2, "staff": 3, "principal": 4, "any": 1}
 MODULE_ORDER = ["coding", "java-trivia", "sql", "qa", "microservices", "devops", "architecture", "security", "unix", "mybank"]
 TITLES = {
     "coding": {"es": "Código y Big O", "en": "Coding and Big O"},
@@ -28,7 +28,7 @@ TITLES = {
     "mybank": {"es": "Mi banco (enlaces y notas)", "en": "My bank (links and notes)"},
 }
 MIN_PER_ITEM = {"mcq": 1.5, "output": 1.0, "flash": 1.0}          # standard timers; coding uses each problem's own limit
-DEFAULT_COUNT = {"coding": {"jr": 2, "mid": 2, "sr": 3}, "java-trivia": 10, "mybank": 10, "default": 8}
+DEFAULT_COUNT = {"coding": {"jr": 2, "mid": 2, "sr": 3, "staff": 3, "principal": 3}, "java-trivia": 10, "mybank": 10, "default": 8}
 PACE = {"tight": 0.8, "standard": 1.0, "relaxed": 1.25}
 JAVA_ONLY_MODULES = ("coding", "java-trivia")
 
@@ -54,7 +54,7 @@ def build(config: dict, candidates: list, now: Optional[float] = None) -> dict:
     Selection prefers items whose level is closest to the requested seniority; ties are shuffled with a seed
     derived from the exam id, so an exam is reproducible once created.
     """
-    level = config.get("seniority") if config.get("seniority") in ("jr", "mid", "sr") else "mid"
+    level = config.get("seniority") if config.get("seniority") in ("jr", "mid", "sr", "staff", "principal") else "mid"
     language = config.get("language", "java")
     version = config.get("version")
     version = int(version) if isinstance(version, (int, str)) and str(version).isdigit() else None
@@ -131,7 +131,7 @@ def public_item(exam_id: str, ref: dict, item: Optional[dict], lang: str) -> Opt
     if t == "flash":
         return {"key": key, "type": "flash", "q": pick(item["q"], lang), "a": pick(item["a"], lang)}
     order = option_order(exam_id, key, len(item["options"]))
-    return {"key": key, "type": "mcq", "q": pick(item["q"], lang),
+    return {"key": key, "type": "mcq", "q": pick(item["q"], lang), "review": (item.get("review") or {}).get("status", "draft"),
             "options": [pick(item["options"][i], lang) for i in order], "multi": len(item["answer"]) > 1}
 
 
@@ -168,7 +168,7 @@ def grade_section(exam: dict, idx: int, answers: dict, resolve: Resolver, lang: 
             ok = chosen == set(q["answer"])
             results.append({"key": key, "correct": ok, "expected": " / ".join(pick(q["options"][a], lang) for a in q["answer"]),
                             "expected_index": [order.index(a) for a in q["answer"]], "explanation": pick(q["explain"], lang),
-                            "tags": q.get("tags", [])})
+                            "tags": q.get("tags", []), "sources": q.get("sources", []), "review": (q.get("review") or {}).get("status", "draft")})
         right += ok
     return {"module": section["module"], "score": right, "max": len(results), "items": results}
 

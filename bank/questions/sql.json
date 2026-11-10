@@ -1,211 +1,266 @@
 [
-  {
-    "id": "sql-001",
-    "type": "mcq",
-    "module": "sql",
-    "level": "jr",
-    "lang": "any",
-    "tags": [
-      "where",
-      "having"
-    ],
-    "q": {
-      "en": "What is the difference between WHERE and HAVING?",
-      "es": "¿Cuál es la diferencia entre WHERE y HAVING?"
-    },
-    "options": [
-      {
-        "en": "WHERE filters rows before grouping; HAVING filters groups after aggregation",
-        "es": "WHERE filtra filas antes de agrupar; HAVING filtra grupos después de agregar"
-      },
-      {
-        "en": "WHERE is for numbers and HAVING for text",
-        "es": "WHERE es para números y HAVING para texto"
-      },
-      {
-        "en": "They are interchangeable",
-        "es": "Son intercambiables"
-      },
-      {
-        "en": "HAVING runs before WHERE",
-        "es": "HAVING se ejecuta antes que WHERE"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "Aggregates such as COUNT or SUM can appear in HAVING but not in WHERE, because the groups do not exist yet when WHERE runs.",
-      "es": "Los agregados como COUNT o SUM pueden ir en HAVING pero no en WHERE, porque los grupos aún no existen cuando corre WHERE."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+ {
+  "id": "sql-001",
+  "type": "mcq",
+  "module": "sql",
+  "level": "jr",
+  "lang": "any",
+  "tags": [
+   "where",
+   "having"
+  ],
+  "q": {
+   "en": "What is the difference between WHERE and HAVING?",
+   "es": "¿Cuál es la diferencia entre WHERE y HAVING?"
   },
-  {
-    "id": "sql-002",
-    "type": "mcq",
-    "module": "sql",
-    "level": "jr",
-    "lang": "any",
-    "tags": [
-      "joins"
-    ],
-    "q": {
-      "en": "Which join returns every row of the left table, even when there is no match on the right?",
-      "es": "¿Qué join devuelve todas las filas de la tabla izquierda, aunque no haya coincidencia en la derecha?"
-    },
-    "options": [
-      {
-        "en": "LEFT JOIN",
-        "es": "LEFT JOIN"
-      },
-      {
-        "en": "INNER JOIN",
-        "es": "INNER JOIN"
-      },
-      {
-        "en": "CROSS JOIN",
-        "es": "CROSS JOIN"
-      },
-      {
-        "en": "None of them",
-        "es": "Ninguno"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "LEFT JOIN keeps unmatched left rows and fills the right columns with NULL. INNER JOIN keeps only matches.",
-      "es": "LEFT JOIN conserva las filas de la izquierda sin pareja y rellena con NULL las columnas de la derecha. INNER JOIN solo conserva las coincidencias."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+  "options": [
+   {
+    "en": "WHERE filters rows before grouping; HAVING filters groups after aggregation",
+    "es": "WHERE filtra filas antes de agrupar; HAVING filtra grupos después de agregar"
+   },
+   {
+    "en": "WHERE is for numbers and HAVING for text",
+    "es": "WHERE es para números y HAVING para texto"
+   },
+   {
+    "en": "They are interchangeable",
+    "es": "Son intercambiables"
+   },
+   {
+    "en": "HAVING runs before WHERE",
+    "es": "HAVING se ejecuta antes que WHERE"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "Aggregates such as COUNT or SUM can appear in HAVING but not in WHERE, because the groups do not exist yet when WHERE runs.",
+   "es": "Los agregados como COUNT o SUM pueden ir en HAVING pero no en WHERE, porque los grupos aún no existen cuando corre WHERE."
   },
-  {
-    "id": "sql-003",
-    "type": "mcq",
-    "module": "sql",
-    "level": "mid",
-    "lang": "any",
-    "tags": [
-      "null",
-      "count"
-    ],
-    "q": {
-      "en": "A table has 10 rows and column x is NULL in 3 of them. What does SELECT COUNT(x) return?",
-      "es": "Una tabla tiene 10 filas y la columna x es NULL en 3 de ellas. ¿Qué devuelve SELECT COUNT(x)?"
-    },
-    "options": [
-      {
-        "en": "7",
-        "es": "7"
-      },
-      {
-        "en": "10",
-        "es": "10"
-      },
-      {
-        "en": "3",
-        "es": "3"
-      },
-      {
-        "en": "0",
-        "es": "0"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "COUNT(column) ignores NULLs; COUNT(*) counts all rows (10).",
-      "es": "COUNT(columna) ignora los NULL; COUNT(*) cuenta todas las filas (10)."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
-  },
-  {
-    "id": "sql-004",
-    "type": "mcq",
-    "module": "sql",
-    "level": "mid",
-    "lang": "any",
-    "tags": [
-      "index",
-      "performance"
-    ],
-    "q": {
-      "en": "Why might WHERE lower(email) = 'a@b.com' not use a plain index on email?",
-      "es": "¿Por qué WHERE lower(email) = 'a@b.com' podría no usar un índice simple sobre email?"
-    },
-    "options": [
-      {
-        "en": "Applying a function to the indexed column prevents using the index (non-sargable); a functional index or a normalized column fixes it",
-        "es": "Aplicar una función a la columna indexada impide usar el índice (no sargable); lo arregla un índice funcional o una columna normalizada"
-      },
-      {
-        "en": "Indexes only work with numbers",
-        "es": "Los índices solo funcionan con números"
-      },
-      {
-        "en": "Because email is a text column",
-        "es": "Porque email es una columna de texto"
-      },
-      {
-        "en": "Indexes are never used with WHERE",
-        "es": "Los índices nunca se usan con WHERE"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "The index stores the raw values, not lower(values). Check the plan with EXPLAIN and create an index on lower(email) where the engine supports it.",
-      "es": "El índice guarda los valores originales, no lower(valores). Revisa el plan con EXPLAIN y crea un índice sobre lower(email) donde el motor lo permita."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
-  },
-  {
-    "id": "sql-005",
-    "type": "mcq",
-    "module": "sql",
-    "level": "sr",
-    "lang": "any",
-    "tags": [
-      "transactions",
-      "isolation"
-    ],
-    "q": {
-      "en": "Which anomaly can still happen at the READ COMMITTED isolation level?",
-      "es": "¿Qué anomalía todavía puede ocurrir en el nivel de aislamiento READ COMMITTED?"
-    },
-    "options": [
-      {
-        "en": "Non-repeatable reads",
-        "es": "Lecturas no repetibles"
-      },
-      {
-        "en": "Dirty reads",
-        "es": "Lecturas sucias"
-      },
-      {
-        "en": "None",
-        "es": "Ninguna"
-      },
-      {
-        "en": "Deadlocks cannot happen",
-        "es": "Los interbloqueos no pueden ocurrir"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "READ COMMITTED prevents dirty reads, but a second read in the same transaction can see different committed data (non-repeatable read) and phantom rows.",
-      "es": "READ COMMITTED evita lecturas sucias, pero una segunda lectura en la misma transacción puede ver otros datos confirmados (lectura no repetible) y filas fantasma."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "PostgreSQL: SELECT",
+    "url": "https://www.postgresql.org/docs/current/sql-select.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
   }
+ },
+ {
+  "id": "sql-002",
+  "type": "mcq",
+  "module": "sql",
+  "level": "jr",
+  "lang": "any",
+  "tags": [
+   "joins"
+  ],
+  "q": {
+   "en": "Which join returns every row of the left table, even when there is no match on the right?",
+   "es": "¿Qué join devuelve todas las filas de la tabla izquierda, aunque no haya coincidencia en la derecha?"
+  },
+  "options": [
+   {
+    "en": "LEFT JOIN",
+    "es": "LEFT JOIN"
+   },
+   {
+    "en": "INNER JOIN",
+    "es": "INNER JOIN"
+   },
+   {
+    "en": "CROSS JOIN",
+    "es": "CROSS JOIN"
+   },
+   {
+    "en": "None of them",
+    "es": "Ninguno"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "LEFT JOIN keeps unmatched left rows and fills the right columns with NULL. INNER JOIN keeps only matches.",
+   "es": "LEFT JOIN conserva las filas de la izquierda sin pareja y rellena con NULL las columnas de la derecha. INNER JOIN solo conserva las coincidencias."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "PostgreSQL: Joined tables",
+    "url": "https://www.postgresql.org/docs/current/queries-table-expressions.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "sql-003",
+  "type": "mcq",
+  "module": "sql",
+  "level": "mid",
+  "lang": "any",
+  "tags": [
+   "null",
+   "count"
+  ],
+  "q": {
+   "en": "A table has 10 rows and column x is NULL in 3 of them. What does SELECT COUNT(x) return?",
+   "es": "Una tabla tiene 10 filas y la columna x es NULL en 3 de ellas. ¿Qué devuelve SELECT COUNT(x)?"
+  },
+  "options": [
+   {
+    "en": "7",
+    "es": "7"
+   },
+   {
+    "en": "10",
+    "es": "10"
+   },
+   {
+    "en": "3",
+    "es": "3"
+   },
+   {
+    "en": "0",
+    "es": "0"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "COUNT(column) ignores NULLs; COUNT(*) counts all rows (10).",
+   "es": "COUNT(columna) ignora los NULL; COUNT(*) cuenta todas las filas (10)."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "PostgreSQL: Aggregate functions",
+    "url": "https://www.postgresql.org/docs/current/functions-aggregate.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "sql-004",
+  "type": "mcq",
+  "module": "sql",
+  "level": "mid",
+  "lang": "any",
+  "tags": [
+   "index",
+   "performance"
+  ],
+  "q": {
+   "en": "Why might WHERE lower(email) = 'a@b.com' not use a plain index on email?",
+   "es": "¿Por qué WHERE lower(email) = 'a@b.com' podría no usar un índice simple sobre email?"
+  },
+  "options": [
+   {
+    "en": "Applying a function to the indexed column prevents using the index (non-sargable); a functional index or a normalized column fixes it",
+    "es": "Aplicar una función a la columna indexada impide usar el índice (no sargable); lo arregla un índice funcional o una columna normalizada"
+   },
+   {
+    "en": "Indexes only work with numbers",
+    "es": "Los índices solo funcionan con números"
+   },
+   {
+    "en": "Because email is a text column",
+    "es": "Porque email es una columna de texto"
+   },
+   {
+    "en": "Indexes are never used with WHERE",
+    "es": "Los índices nunca se usan con WHERE"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "The index stores the raw values, not lower(values). Check the plan with EXPLAIN and create an index on lower(email) where the engine supports it.",
+   "es": "El índice guarda los valores originales, no lower(valores). Revisa el plan con EXPLAIN y crea un índice sobre lower(email) donde el motor lo permita."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "PostgreSQL: Indexes on expressions",
+    "url": "https://www.postgresql.org/docs/current/indexes-expressional.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "sql-005",
+  "type": "mcq",
+  "module": "sql",
+  "level": "sr",
+  "lang": "any",
+  "tags": [
+   "transactions",
+   "isolation"
+  ],
+  "q": {
+   "en": "Which anomaly can still happen at the READ COMMITTED isolation level?",
+   "es": "¿Qué anomalía todavía puede ocurrir en el nivel de aislamiento READ COMMITTED?"
+  },
+  "options": [
+   {
+    "en": "Non-repeatable reads",
+    "es": "Lecturas no repetibles"
+   },
+   {
+    "en": "Dirty reads",
+    "es": "Lecturas sucias"
+   },
+   {
+    "en": "None",
+    "es": "Ninguna"
+   },
+   {
+    "en": "Deadlocks cannot happen",
+    "es": "Los interbloqueos no pueden ocurrir"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "READ COMMITTED prevents dirty reads, but a second read in the same transaction can see different committed data (non-repeatable read) and phantom rows.",
+   "es": "READ COMMITTED evita lecturas sucias, pero una segunda lectura en la misma transacción puede ver otros datos confirmados (lectura no repetible) y filas fantasma."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "PostgreSQL: Transaction isolation",
+    "url": "https://www.postgresql.org/docs/current/transaction-iso.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ }
 ]

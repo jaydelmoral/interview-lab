@@ -38,7 +38,8 @@ addStrings({
     noCompile: 'No compiló.', why: 'Por qué falló', how: 'Cómo mejorar', best: 'Mejor puntaje', problem: 'Ejercicio', loading: 'Cargando…',
     reportTitle: 'Reporte final', overall: 'Resultado global', perSection: 'Por sección', weak: 'Temas a reforzar', none: 'Sin temas débiles detectados.', review: 'Repasa', good: 'Bien',
     retake: 'Repetir este simulacro', another: 'Crear otro simulacro', notes: 'Avisos', notFound: 'No se encontró ese simulacro.', quizHint: 'Escribe exactamente lo que imprimirá el fragmento, o el nombre de la excepción.',
-    multiHint: 'Elige todas las correctas', singleHint: 'Elige una', score: 'Puntaje'
+    multiHint: 'Elige todas las correctas', singleHint: 'Elige una', score: 'Puntaje',
+    draft: 'Borrador', draftHint: 'Pregunta escrita con IA, aún sin revisión humana: contrástala con las fuentes antes de fiarte.', sourcesLbl: 'Fuentes'
   },
   en: {
     sections: 'Sections', minutes: 'min', total: 'Total time', begin: 'Start', resume: 'Resume where I left off', fresh: 'Start over', config: 'Settings',
@@ -48,7 +49,8 @@ addStrings({
     noCompile: 'It did not compile.', why: 'Why it failed', how: 'How to improve', best: 'Best score', problem: 'Exercise', loading: 'Loading…',
     reportTitle: 'Final report', overall: 'Overall result', perSection: 'By section', weak: 'Topics to reinforce', none: 'No weak topics detected.', review: 'Review', good: 'Good',
     retake: 'Retake this simulation', another: 'Create another simulation', notes: 'Notes', notFound: 'That simulation was not found.', quizHint: 'Write exactly what the snippet prints, or the exception name.',
-    multiHint: 'Pick all correct answers', singleHint: 'Pick one', score: 'Score'
+    multiHint: 'Pick all correct answers', singleHint: 'Pick one', score: 'Score',
+    draft: 'Draft', draftHint: 'AI-written question not yet reviewed by a human: check it against the sources before relying on it.', sourcesLbl: 'Sources'
   }
 });
 
@@ -114,7 +116,8 @@ function renderQuestions(results){
   (results ? results.items : []).forEach(r => byKey[r.key] = r);
   $('body').innerHTML = '<div class="card">' + sec.items.map((it, n) => {
     const r = byKey[it.key], lock = results ? 'disabled' : '';
-    let h = `<div class="q" data-key="${esc(it.key)}"><div class="cat">${n + 1}. ${esc(it.topic || '')}</div>`;
+    const badge = it.type === 'mcq' && it.review && it.review !== 'reviewed' ? ` <span class="chip" title="${esc(T('draftHint'))}">${esc(T('draft'))}</span>` : '';
+    let h = `<div class="q" data-key="${esc(it.key)}"><div class="cat">${n + 1}. ${esc(it.topic || '')}${badge}</div>`;
     if (it.type === 'mcq') {
       h += `<p><b>${esc(it.q)}</b> <span class="muted">(${esc(T(it.multi ? 'multiHint' : 'singleHint'))})</span></p>` + it.options.map((o, k) => {
         const cls = r ? ((r.expected_index || []).includes(k) ? 'right' : (answers[it.key] && [].concat(answers[it.key]).includes(k) ? 'wrong' : '')) : '';
@@ -127,7 +130,7 @@ function renderQuestions(results){
       h += `<p><b>${esc(it.q)}</b></p><button class="showA" ${lock}>${esc(T('show'))}</button><div class="faceA muted" style="display:${results ? 'block' : 'none'};margin:8px 0">${esc(it.a)}</div>
         <div class="row selfr" style="display:${results ? 'none' : 'none'}"><label><input type="radio" name="${esc(it.key)}" value="know"> ${esc(T('know'))}</label><label><input type="radio" name="${esc(it.key)}" value="dont"> ${esc(T('dont'))}</label></div>`;
     }
-    if (r) h += `<div class="qres ${r.correct ? 'ok' : 'err'}">${r.correct ? '✅ ' + esc(T('right')) : '❌ ' + esc(T('wrong'))}${r.correct ? '' : ' — ' + esc(T('expected')) + ': <code>' + esc(r.expected).replace(/\n/g, ' ⏎ ') + '</code>'}${r.explanation ? '<br>' + esc(r.explanation) : ''}</div>`;
+    if (r) h += `<div class="qres ${r.correct ? 'ok' : 'err'}">${r.correct ? '✅ ' + esc(T('right')) : '❌ ' + esc(T('wrong'))}${r.correct ? '' : ' — ' + esc(T('expected')) + ': <code>' + esc(r.expected).replace(/\n/g, ' ⏎ ') + '</code>'}${r.explanation ? '<br>' + esc(r.explanation) : ''}${(r.sources || []).length ? '<br><span class="muted">' + esc(T('sourcesLbl')) + ': ' + r.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>`).join(' · ') + '</span>' : ''}</div>`;
     return h + '</div>';
   }).join('') + (results ? `<div class="row"><b>${esc(T('score'))}: ${results.score}/${results.max}</b></div>` : '') + '</div>';
   if (!results) {
@@ -227,7 +230,7 @@ async function finishSection(auto){
       answers = ans; renderQuestions(rep);
       const byKey = {}; sec.items.forEach(i => { byKey[i.key] = i; });
       const missed = rep.items.filter(r => !r.correct).map(r => { const it = byKey[r.key] || {};
-        return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation, tags: r.tags || []}; });
+        return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation, tags: r.tags || [], sources: r.sources || []}; });
       rec = {module: sec.module, title: sec.title, score: rep.score, max: Math.max(rep.max, 1), pct: rep.max ? rep.score / rep.max : 0, weak: rep.weak || [], done: rep.score, total: rep.max, cats: {}, missed, ...timeUsed(sec, auto)};
       RESULTS[idx] = rec; (rep.weak || []).forEach(w => { WEAK[w] = (WEAK[w] || 0) + 1; });
     } catch (e) { return fatal(e.message); }

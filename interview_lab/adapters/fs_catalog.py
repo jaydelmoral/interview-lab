@@ -14,8 +14,9 @@ from .fs_problems import FsProblems
 
 
 class FsCatalog:
-    def __init__(self, root: Path, home: Path, problems: FsProblems):
+    def __init__(self, root: Path, home: Path, problems: FsProblems, packs_dir: Path = None):
         self.root, self.home, self.problems = Path(root), Path(home), problems
+        self.packs_dir = Path(packs_dir) if packs_dir else self.root / "packs"
 
     def _json_files(self, *parts):
         for base in (self.root, self.home):
@@ -26,6 +27,18 @@ class FsCatalog:
                         yield json.loads(f.read_text())
                     except Exception:
                         continue
+
+    def _question_lists(self):
+        """Question files from the built-in bank, the user's workspace and every content pack (packs/<name>/questions)."""
+        yield from self._json_files("bank", "questions")
+        if self.packs_dir.is_dir():
+            for pack in sorted(self.packs_dir.iterdir()):
+                if (pack / "pack.json").is_file():
+                    for f in sorted((pack / "questions").glob("*.json")):
+                        try:
+                            yield json.loads(f.read_text())
+                        except Exception:
+                            continue
 
     def candidates(self) -> list:
         out = []
@@ -47,7 +60,7 @@ class FsCatalog:
                 out.append({"ref": {"t": "code", "id": d.name}, "module": m.get("module", "coding"), "level": m.get("level", "mid"),
                             "min_java": m.get("min_java", 8), "language": m.get("language", "java"), "tags": m.get("tags", []),
                             "minutes": m.get("time_limit_min", 20)})
-        for lst in self._json_files("bank", "questions"):
+        for lst in self._question_lists():
             for q in lst if isinstance(lst, list) else []:
                 out.append({"ref": {"t": "mcq", "id": q["id"]}, "module": q.get("module", "unknown"), "level": q.get("level", "mid"),
                             "min_java": 0, "language": q.get("lang", "any"), "tags": q.get("tags", []), "minutes": MIN_PER_ITEM["mcq"]})
@@ -70,7 +83,7 @@ class FsCatalog:
             m = self.problems.meta(ref["id"])
             return {"type": "code", "id": ref["id"], "title": m["title"], "minutes": m["time_limit_min"]} if m else None
         if t == "mcq":
-            for lst in self._json_files("bank", "questions"):
+            for lst in self._question_lists():
                 for q in lst if isinstance(lst, list) else []:
                     if q["id"] == ref["id"]:
                         return q | {"type": "mcq"}

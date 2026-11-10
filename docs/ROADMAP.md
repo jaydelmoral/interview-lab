@@ -25,7 +25,8 @@ Next, in rough priority order / Siguiente, en orden aproximado:
 **Next / Siguiente**
 - [x] SQLite history (`workspace/ilab.db`) with `profile_id` from day 1 — done, see ADR-0017. / Historial en SQLite — hecho.
 - [x] Analytics dashboard (`/history`): trend, per module, weak topics, time used vs allotted, per-exercise progress — done. / Tablero de analítica — hecho.
-- [ ] Question bank growth (target 40 per module) with sources and review fields. / Crecer el banco con fuentes.
+- [x] Question bank: sources + review status mandatory (validator, ADR-0018); 276 senior/staff/principal questions written into a separate private pack (all `draft`, awaiting human review). / Banco con fuentes — hecho; falta la revisión humana.
+- [ ] Human review pass of the draft questions (`tools/mark_reviewed.py`).
 - [ ] In-browser editor: **Monaco** (MIT, vendored locally, no CDN), HackerRank-style layout (statement | editor | console), *Run* (sample cases) vs *Submit* (hidden tests), language picker, autocomplete off in interview mode. Not full VS Code (code-server) because of its attack surface. / Editor Monaco estilo HackerRank.
 - [ ] Language packs installed **at repo install time** (`./install --lang python`), never from the web UI; the app only offers languages it detects as installed; the installer asks for confirmation, uses official sources and never runs silently as root. The user owns what they install. / Lenguajes instalados en la fase de instalación, nunca desde la web.
 - [ ] Document "desktop-first": no mobile work (real interviews use a laptop). / Diseñado para escritorio.

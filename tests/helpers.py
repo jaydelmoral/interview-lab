@@ -55,7 +55,7 @@ class Client:
 class RunningServer:
     def __init__(self, **overrides):
         self.home = Path(tempfile.mkdtemp(prefix="ilab-api-"))
-        s = Settings.from_env(ROOT, {"ILAB_HOME": str(self.home), "ILAB_PORT": "0", **overrides})
+        s = Settings.from_env(ROOT, {"ILAB_HOME": str(self.home), "ILAB_PORT": "0", "ILAB_PACKS_DIR": str(self.home / "no-packs"), **overrides})
         self.grader = FakeGrader()
         self.handlers = compose(s, grader=self.grader)
         self.server = make_server(s, self.handlers)

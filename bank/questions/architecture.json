@@ -1,207 +1,262 @@
 [
-  {
-    "id": "architecture-001",
-    "type": "mcq",
-    "module": "architecture",
-    "level": "jr",
-    "lang": "any",
-    "tags": [
-      "solid"
-    ],
-    "q": {
-      "en": "In SOLID, what does the letter S stand for?",
-      "es": "En SOLID, ¿qué significa la letra S?"
-    },
-    "options": [
-      {
-        "en": "Single Responsibility Principle",
-        "es": "Principio de responsabilidad única"
-      },
-      {
-        "en": "Simple Syntax",
-        "es": "Sintaxis simple"
-      },
-      {
-        "en": "Secure Socket",
-        "es": "Socket seguro"
-      },
-      {
-        "en": "Stateless Service",
-        "es": "Servicio sin estado"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "A class should have one reason to change. It keeps code cohesive and easier to test.",
-      "es": "Una clase debe tener una sola razón para cambiar. Mantiene el código cohesivo y más fácil de probar."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+ {
+  "id": "architecture-001",
+  "type": "mcq",
+  "module": "architecture",
+  "level": "jr",
+  "lang": "any",
+  "tags": [
+   "solid"
+  ],
+  "q": {
+   "en": "In SOLID, what does the letter S stand for?",
+   "es": "En SOLID, ¿qué significa la letra S?"
   },
-  {
-    "id": "architecture-002",
-    "type": "mcq",
-    "module": "architecture",
-    "level": "mid",
-    "lang": "any",
-    "tags": [
-      "hexagonal"
-    ],
-    "q": {
-      "en": "In hexagonal architecture (ports and adapters), what is an adapter?",
-      "es": "En la arquitectura hexagonal (puertos y adaptadores), ¿qué es un adaptador?"
-    },
-    "options": [
-      {
-        "en": "Code that connects an external technology (HTTP, database, queue) to a port of the domain",
-        "es": "Código que conecta una tecnología externa (HTTP, base de datos, cola) con un puerto del dominio"
-      },
-      {
-        "en": "The domain model",
-        "es": "El modelo de dominio"
-      },
-      {
-        "en": "A design pattern for UIs only",
-        "es": "Un patrón de diseño solo para interfaces"
-      },
-      {
-        "en": "A kind of exception",
-        "es": "Un tipo de excepción"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "The domain depends on ports (interfaces) and never on frameworks; adapters implement them, so infrastructure can be swapped.",
-      "es": "El dominio depende de puertos (interfaces) y nunca de frameworks; los adaptadores los implementan, así la infraestructura se puede cambiar."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+  "options": [
+   {
+    "en": "Single Responsibility Principle",
+    "es": "Principio de responsabilidad única"
+   },
+   {
+    "en": "Simple Syntax",
+    "es": "Sintaxis simple"
+   },
+   {
+    "en": "Secure Socket",
+    "es": "Socket seguro"
+   },
+   {
+    "en": "Stateless Service",
+    "es": "Servicio sin estado"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "A class should have one reason to change. It keeps code cohesive and easier to test.",
+   "es": "Una clase debe tener una sola razón para cambiar. Mantiene el código cohesivo y más fácil de probar."
   },
-  {
-    "id": "architecture-003",
-    "type": "mcq",
-    "module": "architecture",
-    "level": "mid",
-    "lang": "any",
-    "tags": [
-      "cqrs"
-    ],
-    "q": {
-      "en": "What does CQRS propose?",
-      "es": "¿Qué propone CQRS?"
-    },
-    "options": [
-      {
-        "en": "Separate models for commands (writes) and queries (reads)",
-        "es": "Modelos separados para comandos (escrituras) y consultas (lecturas)"
-      },
-      {
-        "en": "Use only one table",
-        "es": "Usar una sola tabla"
-      },
-      {
-        "en": "Query the database from the UI",
-        "es": "Consultar la base de datos desde la interfaz"
-      },
-      {
-        "en": "Never use caches",
-        "es": "No usar nunca cachés"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "It lets each side scale and be optimized independently, at the cost of extra complexity and often eventual consistency.",
-      "es": "Permite escalar y optimizar cada lado por separado, a costa de más complejidad y, a menudo, consistencia eventual."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
-  },
-  {
-    "id": "architecture-004",
-    "type": "mcq",
-    "module": "architecture",
-    "level": "sr",
-    "lang": "any",
-    "tags": [
-      "event-driven"
-    ],
-    "q": {
-      "en": "What is the main trade-off of asynchronous event-driven integration?",
-      "es": "¿Cuál es el principal compromiso de la integración asíncrona basada en eventos?"
-    },
-    "options": [
-      {
-        "en": "Loose coupling and resilience in exchange for eventual consistency and harder debugging",
-        "es": "Bajo acoplamiento y resiliencia a cambio de consistencia eventual y depuración más difícil"
-      },
-      {
-        "en": "Higher coupling",
-        "es": "Mayor acoplamiento"
-      },
-      {
-        "en": "It removes the need for monitoring",
-        "es": "Elimina la necesidad de monitoreo"
-      },
-      {
-        "en": "It guarantees strong consistency",
-        "es": "Garantiza consistencia fuerte"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "Services no longer wait for each other, but you must handle duplicates, ordering, and tracing flows across services.",
-      "es": "Los servicios ya no se esperan, pero hay que manejar duplicados, orden y el rastreo de flujos entre servicios."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
-  },
-  {
-    "id": "architecture-005",
-    "type": "mcq",
-    "module": "architecture",
-    "level": "sr",
-    "lang": "any",
-    "tags": [
-      "migration"
-    ],
-    "q": {
-      "en": "What is the strangler fig pattern used for?",
-      "es": "¿Para qué sirve el patrón strangler fig?"
-    },
-    "options": [
-      {
-        "en": "Gradually replacing a legacy system by routing functionality to new components piece by piece",
-        "es": "Reemplazar gradualmente un sistema legado enrutando funcionalidad a componentes nuevos poco a poco"
-      },
-      {
-        "en": "Killing slow threads",
-        "es": "Matar hilos lentos"
-      },
-      {
-        "en": "Compressing logs",
-        "es": "Comprimir logs"
-      },
-      {
-        "en": "Encrypting databases",
-        "es": "Cifrar bases de datos"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "A facade routes each call to old or new code; when everything is migrated the legacy system is switched off, avoiding a risky big-bang rewrite.",
-      "es": "Una fachada enruta cada llamada al código viejo o al nuevo; al migrar todo se apaga el legado, evitando una reescritura total riesgosa."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "Wikipedia: SOLID (reference overview)",
+    "url": "https://en.wikipedia.org/wiki/SOLID"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
   }
+ },
+ {
+  "id": "architecture-002",
+  "type": "mcq",
+  "module": "architecture",
+  "level": "mid",
+  "lang": "any",
+  "tags": [
+   "hexagonal"
+  ],
+  "q": {
+   "en": "In hexagonal architecture (ports and adapters), what is an adapter?",
+   "es": "En la arquitectura hexagonal (puertos y adaptadores), ¿qué es un adaptador?"
+  },
+  "options": [
+   {
+    "en": "Code that connects an external technology (HTTP, database, queue) to a port of the domain",
+    "es": "Código que conecta una tecnología externa (HTTP, base de datos, cola) con un puerto del dominio"
+   },
+   {
+    "en": "The domain model",
+    "es": "El modelo de dominio"
+   },
+   {
+    "en": "A design pattern for UIs only",
+    "es": "Un patrón de diseño solo para interfaces"
+   },
+   {
+    "en": "A kind of exception",
+    "es": "Un tipo de excepción"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "The domain depends on ports (interfaces) and never on frameworks; adapters implement them, so infrastructure can be swapped.",
+   "es": "El dominio depende de puertos (interfaces) y nunca de frameworks; los adaptadores los implementan, así la infraestructura se puede cambiar."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "Alistair Cockburn: Hexagonal architecture",
+    "url": "https://alistair.cockburn.us/hexagonal-architecture/"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "architecture-003",
+  "type": "mcq",
+  "module": "architecture",
+  "level": "mid",
+  "lang": "any",
+  "tags": [
+   "cqrs"
+  ],
+  "q": {
+   "en": "What does CQRS propose?",
+   "es": "¿Qué propone CQRS?"
+  },
+  "options": [
+   {
+    "en": "Separate models for commands (writes) and queries (reads)",
+    "es": "Modelos separados para comandos (escrituras) y consultas (lecturas)"
+   },
+   {
+    "en": "Use only one table",
+    "es": "Usar una sola tabla"
+   },
+   {
+    "en": "Query the database from the UI",
+    "es": "Consultar la base de datos desde la interfaz"
+   },
+   {
+    "en": "Never use caches",
+    "es": "No usar nunca cachés"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "It lets each side scale and be optimized independently, at the cost of extra complexity and often eventual consistency.",
+   "es": "Permite escalar y optimizar cada lado por separado, a costa de más complejidad y, a menudo, consistencia eventual."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "Martin Fowler: CQRS",
+    "url": "https://martinfowler.com/bliki/CQRS.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "architecture-004",
+  "type": "mcq",
+  "module": "architecture",
+  "level": "sr",
+  "lang": "any",
+  "tags": [
+   "event-driven"
+  ],
+  "q": {
+   "en": "What is the main trade-off of asynchronous event-driven integration?",
+   "es": "¿Cuál es el principal compromiso de la integración asíncrona basada en eventos?"
+  },
+  "options": [
+   {
+    "en": "Loose coupling and resilience in exchange for eventual consistency and harder debugging",
+    "es": "Bajo acoplamiento y resiliencia a cambio de consistencia eventual y depuración más difícil"
+   },
+   {
+    "en": "Higher coupling",
+    "es": "Mayor acoplamiento"
+   },
+   {
+    "en": "It removes the need for monitoring",
+    "es": "Elimina la necesidad de monitoreo"
+   },
+   {
+    "en": "It guarantees strong consistency",
+    "es": "Garantiza consistencia fuerte"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "Services no longer wait for each other, but you must handle duplicates, ordering, and tracing flows across services.",
+   "es": "Los servicios ya no se esperan, pero hay que manejar duplicados, orden y el rastreo de flujos entre servicios."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "Martin Fowler: What do you mean by Event-Driven?",
+    "url": "https://martinfowler.com/articles/201701-event-driven.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "architecture-005",
+  "type": "mcq",
+  "module": "architecture",
+  "level": "sr",
+  "lang": "any",
+  "tags": [
+   "migration"
+  ],
+  "q": {
+   "en": "What is the strangler fig pattern used for?",
+   "es": "¿Para qué sirve el patrón strangler fig?"
+  },
+  "options": [
+   {
+    "en": "Gradually replacing a legacy system by routing functionality to new components piece by piece",
+    "es": "Reemplazar gradualmente un sistema legado enrutando funcionalidad a componentes nuevos poco a poco"
+   },
+   {
+    "en": "Killing slow threads",
+    "es": "Matar hilos lentos"
+   },
+   {
+    "en": "Compressing logs",
+    "es": "Comprimir logs"
+   },
+   {
+    "en": "Encrypting databases",
+    "es": "Cifrar bases de datos"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "A facade routes each call to old or new code; when everything is migrated the legacy system is switched off, avoiding a risky big-bang rewrite.",
+   "es": "Una fachada enruta cada llamada al código viejo o al nuevo; al migrar todo se apaga el legado, evitando una reescritura total riesgosa."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "Martin Fowler: Strangler Fig",
+    "url": "https://martinfowler.com/bliki/StranglerFigApplication.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ }
 ]

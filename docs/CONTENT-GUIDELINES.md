@@ -52,3 +52,14 @@ Set `author` and `license` in each `meta.json`.
 - [ ] No NDA-covered or confidential material. / Nada cubierto por NDA ni confidencial.
 - [ ] `python3 tools/validate.py` shows no warnings. / El validador no muestra avisos.
 - [ ] EN and ES statements and feedback exist. / Existen enunciados y retroalimentación en EN y ES.
+
+## Multiple-choice questions: sources and review (mandatory) / Preguntas de opción múltiple: fuentes y revisión (obligatorio)
+Every question in `bank/questions/*.json` (and in any content pack) must carry:
+```json
+"sources": [{"title": "PostgreSQL: Transaction isolation", "url": "https://www.postgresql.org/docs/current/transaction-iso.html"}],
+"review":  {"status": "draft", "author": "who wrote it", "date": "2026-11-10"}
+```
+- Cite **official documentation** (or the standard/RFC) that supports the facts; never copy question wording from interview sites, books or courses.
+- New questions start as `draft`. After a person checks the answer against the sources: `python3 tools/mark_reviewed.py --file bank/questions/sql.json --ids sql-001 --reviewer "Name"`.
+- `python3 tools/validate_bank.py` fails on missing sources or review data; add `--online` to check that the links answer.
+- Levels: `jr`, `mid`, `sr`, `staff`, `principal`. Premium or large banks go in a **content pack** (`packs/`, see `packs/README.md`), never in `bank/`.

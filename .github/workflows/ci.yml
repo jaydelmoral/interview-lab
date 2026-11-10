@@ -18,6 +18,7 @@ jobs:
           python-version: "3.12"
       - run: python3 -m unittest discover -s tests -t . -v
       - run: python3 tools/validate.py
+      - run: python3 tools/validate_bank.py
       - run: python3 tools/preflight.py
   docker:
     runs-on: ubuntu-latest

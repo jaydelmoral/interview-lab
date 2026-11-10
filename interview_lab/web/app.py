@@ -29,7 +29,7 @@ STATUS = {NotFound: 404, InvalidRequest: 400, Forbidden: 403, Unprocessable: 422
 def compose(settings: Settings, grader=None) -> Handlers:
     """Composition root: the only place that knows which concrete adapter implements each port."""
     problems = FsProblems(settings.root, settings.home)
-    catalog = FsCatalog(settings.root, settings.home, problems)
+    catalog = FsCatalog(settings.root, settings.home, problems, settings.packs_dir)
     offline = OfflineQuestionGenerator()
     generator, ai_enabled = offline, False
     if settings.ai_provider == "anthropic":

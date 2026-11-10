@@ -37,6 +37,8 @@ LANGS = {
 }
 JR = re.compile(r"\b(junior|jr\.?|trainee|entry[- ]level|becario|practicante)\b")
 SR = re.compile(r"\b(senior|sr\.?|lead|principal|staff|architect|arquitecto|líder|lider)\b")
+STAFF = re.compile(r"\bstaff\s+(?:software\s+|backend\s+|platform\s+)?(?:engineer|developer|architect|swe)\b")
+PRINCIPAL = re.compile(r"\b(?:principal\s+(?:software\s+|backend\s+|platform\s+)?(?:engineer|developer|architect|consultant)|distinguished\s+engineer|ingeniero\s+principal|arquitecto\s+principal)\b")
 YEARS = re.compile(r"(\d{1,2})\s*\+?\s*(?:years?|años?|yrs?)\b")
 JAVA_V = re.compile(r"\b(?:java|jdk)\s*(?:se\s*)?(?:v\.?\s*)?(1\.8|8|11|17|21|22|23|24)\b")
 PY_V = re.compile(r"\bpython\s*(?:v\.?\s*)?3\.(\d{1,2})\b")
@@ -80,6 +82,10 @@ def analyze(text: str) -> dict:
         seniority = "sr" if senior_kw and not junior_kw else "jr" if junior_kw and not senior_kw else "mid"
     if years is None and senior_kw and junior_kw:
         seniority = "mid"
+    if PRINCIPAL.search(low):                       # explicit, role-shaped titles only ("staff augmentation" must not match)
+        seniority = "principal"
+    elif STAFF.search(low):
+        seniority = "staff"
     modules = []
     for mid, kws in MODULES.items():
         hits = [k for k in kws if _has(low, k)]

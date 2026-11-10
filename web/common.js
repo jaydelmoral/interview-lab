@@ -22,7 +22,7 @@ addStrings({
        dTime: 'Tiempo usado', dHits: 'Aciertos', dOf: 'de', dPass: 'umbral 60 %', dBySection: 'Resultado por sección', dTimeBy: 'Tiempo por sección', dRadar: 'Perfil por módulo',
        dOpp: 'Áreas de oportunidad', dOppNone: 'Sin áreas débiles detectadas: mantén el ritmo y sube la dificultad.', dPrio: 'Prioritaria', dReinf: 'Reforzar', dWatch: 'Vigilar',
        dMissed: 'Preguntas para repasar', dMissedNone: 'No fallaste ninguna pregunta de opción múltiple.', dStrong: 'Sólido', dMid: 'En camino', dWeak: 'A reforzar', dExpected: 'Respuesta correcta',
-       dPrint: 'Guardar como PDF', dMin: 'min', dTests: 'pruebas', dQuestions: 'preguntas', dFails: n => (n === 1 ? '1 fallo' : n + ' fallos'),
+       dPrint: 'Guardar como PDF', dSources: 'Fuentes', dMin: 'min', dTests: 'pruebas', dQuestions: 'preguntas', dFails: n => (n === 1 ? '1 fallo' : n + ' fallos'),
        tipTag: 'Repasa este tema: abajo están las preguntas que fallaste, con su explicación.', tipSection: 'Quedó bajo el umbral de 60 %. Practica sus ejercicios en «Práctica libre» y repite el simulacro.',
        tipPS: 'Descompón el problema y escribe los casos límite antes de codificar.', tipRel: 'Cubre entradas vacías, nulos y límites: ahí fallan las pruebas ocultas.', tipLang: 'Repasa la API y la semántica del lenguaje que usaste.',
        catPS: 'Resolución de problemas', catRel: 'Fiabilidad', catLang: 'Conocimiento del lenguaje'},
@@ -34,7 +34,7 @@ addStrings({
        dTime: 'Time used', dHits: 'Correct', dOf: 'of', dPass: '60 % line', dBySection: 'Result by section', dTimeBy: 'Time by section', dRadar: 'Profile by module',
        dOpp: 'Opportunity areas', dOppNone: 'No weak areas detected: keep the pace and raise the difficulty.', dPrio: 'Priority', dReinf: 'Reinforce', dWatch: 'Watch',
        dMissed: 'Questions to review', dMissedNone: 'You did not miss any multiple-choice question.', dStrong: 'Solid', dMid: 'On track', dWeak: 'Needs work', dExpected: 'Correct answer',
-       dPrint: 'Save as PDF', dMin: 'min', dTests: 'tests', dQuestions: 'questions', dFails: n => (n === 1 ? '1 miss' : n + ' misses'),
+       dPrint: 'Save as PDF', dSources: 'Sources', dMin: 'min', dTests: 'tests', dQuestions: 'questions', dFails: n => (n === 1 ? '1 miss' : n + ' misses'),
        tipTag: 'Review this topic: the questions you missed are below, with their explanation.', tipSection: 'It fell under the 60 % line. Practise its exercises in “Free practice” and retake the simulation.',
        tipPS: 'Break the problem down and write the edge cases before coding.', tipRel: 'Cover empty inputs, nulls and limits: that is where the hidden tests fail.', tipLang: 'Review the API and semantics of the language you used.',
        catPS: 'Problem solving', catRel: 'Reliability', catLang: 'Language knowledge'}
@@ -174,7 +174,7 @@ function renderDashboard(d){
       return `<div class="opp"><span class="pr pr-${pr}">${esc(prLabel[pr])}</span><div><b>${esc(w.label)}${w.pct != null ? ' · ' + w.pct + '%' : ''}${w.count ? ' · ' + esc(T('dFails')(w.count)) : ''}</b><span class="tip">${esc(w.tip || '')}</span></div></div>`; }).join('')
     : `<p class="muted">${esc(T('dOppNone'))}</p>`;
   const miss = d.missed === undefined ? '' : `<div class="panel p-missed"><h4>${esc(T('dMissed'))}</h4>${d.missed.length ? d.missed.map(m => `<details class="miss"><summary>${esc(m.section)} — ${esc(m.q)}</summary>
-      <p class="why-txt"><b>${esc(T('dExpected'))}:</b> ${esc(m.expected)}</p>${m.explanation ? `<p class="why-txt">${esc(m.explanation)}</p>` : ''}</details>`).join('') : `<p class="muted">${esc(T('dMissedNone'))}</p>`}</div>`;
+      <p class="why-txt"><b>${esc(T('dExpected'))}:</b> ${esc(m.expected)}</p>${m.explanation ? `<p class="why-txt">${esc(m.explanation)}</p>` : ''}${(m.sources || []).length ? `<p class="why-txt">${esc(T('dSources'))}: ${m.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>`).join(' · ')}</p>` : ''}</details>`).join('') : `<p class="muted">${esc(T('dMissedNone'))}</p>`}</div>`;
   const radar = n >= 3 ? `<div class="panel p-radar"><h4>${esc(T('dRadar'))}</h4>${dashRadar(secs)}</div>` : '';
   return `<div class="dash"><div class="dash-top"><div><h3>${esc(d.title)}<span class="sub">${esc(d.subtitle || '')}</span></h3></div>
       ${d.sample ? `<span class="badge sample" title="${esc(T('dSampleNote'))}">${esc(T('dSample'))}</span>` : `<span class="badge">${esc(T('dOverall'))}: ${esc(levelName(d.overall))}</span>`}</div>

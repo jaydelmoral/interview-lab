@@ -1,207 +1,262 @@
 [
-  {
-    "id": "unix-001",
-    "type": "mcq",
-    "module": "unix",
-    "level": "jr",
-    "lang": "any",
-    "tags": [
-      "permissions"
-    ],
-    "q": {
-      "en": "What do the permissions of a file with chmod 640 mean?",
-      "es": "¿Qué significan los permisos de un archivo con chmod 640?"
-    },
-    "options": [
-      {
-        "en": "Owner read+write, group read, others none",
-        "es": "Propietario lectura y escritura, grupo lectura, otros nada"
-      },
-      {
-        "en": "Owner read, group write, others execute",
-        "es": "Propietario lectura, grupo escritura, otros ejecución"
-      },
-      {
-        "en": "Everyone can read and write",
-        "es": "Todos pueden leer y escribir"
-      },
-      {
-        "en": "Owner execute only",
-        "es": "Solo ejecución para el propietario"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "Each digit is r=4, w=2, x=1: 6 = rw-, 4 = r--, 0 = ---.",
-      "es": "Cada dígito es r=4, w=2, x=1: 6 = rw-, 4 = r--, 0 = ---."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+ {
+  "id": "unix-001",
+  "type": "mcq",
+  "module": "unix",
+  "level": "jr",
+  "lang": "any",
+  "tags": [
+   "permissions"
+  ],
+  "q": {
+   "en": "What do the permissions of a file with chmod 640 mean?",
+   "es": "¿Qué significan los permisos de un archivo con chmod 640?"
   },
-  {
-    "id": "unix-002",
-    "type": "mcq",
-    "module": "unix",
-    "level": "jr",
-    "lang": "any",
-    "tags": [
-      "grep"
-    ],
-    "q": {
-      "en": "Which command shows the lines of app.log that contain the word ERROR?",
-      "es": "¿Qué comando muestra las líneas de app.log que contienen la palabra ERROR?"
-    },
-    "options": [
-      {
-        "en": "grep ERROR app.log",
-        "es": "grep ERROR app.log"
-      },
-      {
-        "en": "cat ERROR app.log",
-        "es": "cat ERROR app.log"
-      },
-      {
-        "en": "find ERROR app.log",
-        "es": "find ERROR app.log"
-      },
-      {
-        "en": "ls ERROR app.log",
-        "es": "ls ERROR app.log"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "grep searches text patterns in files. Use -i to ignore case and -n to show line numbers.",
-      "es": "grep busca patrones de texto en archivos. Usa -i para ignorar mayúsculas y -n para ver los números de línea."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+  "options": [
+   {
+    "en": "Owner read+write, group read, others none",
+    "es": "Propietario lectura y escritura, grupo lectura, otros nada"
+   },
+   {
+    "en": "Owner read, group write, others execute",
+    "es": "Propietario lectura, grupo escritura, otros ejecución"
+   },
+   {
+    "en": "Everyone can read and write",
+    "es": "Todos pueden leer y escribir"
+   },
+   {
+    "en": "Owner execute only",
+    "es": "Solo ejecución para el propietario"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "Each digit is r=4, w=2, x=1: 6 = rw-, 4 = r--, 0 = ---.",
+   "es": "Cada dígito es r=4, w=2, x=1: 6 = rw-, 4 = r--, 0 = ---."
   },
-  {
-    "id": "unix-003",
-    "type": "mcq",
-    "module": "unix",
-    "level": "mid",
-    "lang": "any",
-    "tags": [
-      "redirection"
-    ],
-    "q": {
-      "en": "In `cmd > out.txt 2>&1`, what does 2>&1 do?",
-      "es": "En `cmd > out.txt 2>&1`, ¿qué hace 2>&1?"
-    },
-    "options": [
-      {
-        "en": "Sends standard error to the same place as standard output",
-        "es": "Envía el error estándar al mismo lugar que la salida estándar"
-      },
-      {
-        "en": "Runs the command twice",
-        "es": "Ejecuta el comando dos veces"
-      },
-      {
-        "en": "Discards standard error",
-        "es": "Descarta el error estándar"
-      },
-      {
-        "en": "Sends standard input to a file",
-        "es": "Envía la entrada estándar a un archivo"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "File descriptor 1 is stdout and 2 is stderr. Order matters: redirect stdout first, then point stderr at it.",
-      "es": "El descriptor 1 es stdout y el 2 es stderr. El orden importa: primero redirige stdout y luego apunta stderr hacia él."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
-  },
-  {
-    "id": "unix-004",
-    "type": "mcq",
-    "module": "unix",
-    "level": "mid",
-    "lang": "any",
-    "tags": [
-      "pipelines"
-    ],
-    "q": {
-      "en": "Which pipeline counts how many times each value appears in the first column of access.log?",
-      "es": "¿Qué tubería cuenta cuántas veces aparece cada valor de la primera columna de access.log?"
-    },
-    "options": [
-      {
-        "en": "awk '{print $1}' access.log | sort | uniq -c",
-        "es": "awk '{print $1}' access.log | sort | uniq -c"
-      },
-      {
-        "en": "awk '{print $1}' access.log | uniq -c",
-        "es": "awk '{print $1}' access.log | uniq -c"
-      },
-      {
-        "en": "cut access.log | count",
-        "es": "cut access.log | count"
-      },
-      {
-        "en": "sort access.log | head -1",
-        "es": "sort access.log | head -1"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "uniq only collapses adjacent duplicates, so the input must be sorted first. Add `| sort -rn` to rank the results.",
-      "es": "uniq solo agrupa duplicados adyacentes, por eso la entrada debe estar ordenada. Añade `| sort -rn` para ordenar el resultado."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
-  },
-  {
-    "id": "unix-005",
-    "type": "mcq",
-    "module": "unix",
-    "level": "sr",
-    "lang": "any",
-    "tags": [
-      "signals"
-    ],
-    "q": {
-      "en": "Why try kill -15 (SIGTERM) before kill -9 (SIGKILL)?",
-      "es": "¿Por qué conviene probar kill -15 (SIGTERM) antes de kill -9 (SIGKILL)?"
-    },
-    "options": [
-      {
-        "en": "SIGTERM lets the process clean up and exit; SIGKILL cannot be caught or handled",
-        "es": "SIGTERM permite que el proceso limpie y termine; SIGKILL no se puede capturar ni manejar"
-      },
-      {
-        "en": "SIGKILL is slower",
-        "es": "SIGKILL es más lento"
-      },
-      {
-        "en": "SIGTERM needs root",
-        "es": "SIGTERM requiere root"
-      },
-      {
-        "en": "They are identical",
-        "es": "Son idénticos"
-      }
-    ],
-    "answer": [
-      0
-    ],
-    "explain": {
-      "en": "Use SIGKILL only as a last resort: the process cannot flush buffers, release locks or close connections.",
-      "es": "Usa SIGKILL solo como último recurso: el proceso no puede vaciar buffers, liberar bloqueos ni cerrar conexiones."
-    },
-    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
-    "license": "CC-BY-4.0"
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "man7: chmod(1)",
+    "url": "https://man7.org/linux/man-pages/man1/chmod.1.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
   }
+ },
+ {
+  "id": "unix-002",
+  "type": "mcq",
+  "module": "unix",
+  "level": "jr",
+  "lang": "any",
+  "tags": [
+   "grep"
+  ],
+  "q": {
+   "en": "Which command shows the lines of app.log that contain the word ERROR?",
+   "es": "¿Qué comando muestra las líneas de app.log que contienen la palabra ERROR?"
+  },
+  "options": [
+   {
+    "en": "grep ERROR app.log",
+    "es": "grep ERROR app.log"
+   },
+   {
+    "en": "cat ERROR app.log",
+    "es": "cat ERROR app.log"
+   },
+   {
+    "en": "find ERROR app.log",
+    "es": "find ERROR app.log"
+   },
+   {
+    "en": "ls ERROR app.log",
+    "es": "ls ERROR app.log"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "grep searches text patterns in files. Use -i to ignore case and -n to show line numbers.",
+   "es": "grep busca patrones de texto en archivos. Usa -i para ignorar mayúsculas y -n para ver los números de línea."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "man7: grep(1)",
+    "url": "https://man7.org/linux/man-pages/man1/grep.1.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "unix-003",
+  "type": "mcq",
+  "module": "unix",
+  "level": "mid",
+  "lang": "any",
+  "tags": [
+   "redirection"
+  ],
+  "q": {
+   "en": "In `cmd > out.txt 2>&1`, what does 2>&1 do?",
+   "es": "En `cmd > out.txt 2>&1`, ¿qué hace 2>&1?"
+  },
+  "options": [
+   {
+    "en": "Sends standard error to the same place as standard output",
+    "es": "Envía el error estándar al mismo lugar que la salida estándar"
+   },
+   {
+    "en": "Runs the command twice",
+    "es": "Ejecuta el comando dos veces"
+   },
+   {
+    "en": "Discards standard error",
+    "es": "Descarta el error estándar"
+   },
+   {
+    "en": "Sends standard input to a file",
+    "es": "Envía la entrada estándar a un archivo"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "File descriptor 1 is stdout and 2 is stderr. Order matters: redirect stdout first, then point stderr at it.",
+   "es": "El descriptor 1 es stdout y el 2 es stderr. El orden importa: primero redirige stdout y luego apunta stderr hacia él."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "GNU Bash Reference Manual",
+    "url": "https://www.gnu.org/software/bash/manual/bash.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "unix-004",
+  "type": "mcq",
+  "module": "unix",
+  "level": "mid",
+  "lang": "any",
+  "tags": [
+   "pipelines"
+  ],
+  "q": {
+   "en": "Which pipeline counts how many times each value appears in the first column of access.log?",
+   "es": "¿Qué tubería cuenta cuántas veces aparece cada valor de la primera columna de access.log?"
+  },
+  "options": [
+   {
+    "en": "awk '{print $1}' access.log | sort | uniq -c",
+    "es": "awk '{print $1}' access.log | sort | uniq -c"
+   },
+   {
+    "en": "awk '{print $1}' access.log | uniq -c",
+    "es": "awk '{print $1}' access.log | uniq -c"
+   },
+   {
+    "en": "cut access.log | count",
+    "es": "cut access.log | count"
+   },
+   {
+    "en": "sort access.log | head -1",
+    "es": "sort access.log | head -1"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "uniq only collapses adjacent duplicates, so the input must be sorted first. Add `| sort -rn` to rank the results.",
+   "es": "uniq solo agrupa duplicados adyacentes, por eso la entrada debe estar ordenada. Añade `| sort -rn` para ordenar el resultado."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "GNU Coreutils manual",
+    "url": "https://www.gnu.org/software/coreutils/manual/coreutils.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ },
+ {
+  "id": "unix-005",
+  "type": "mcq",
+  "module": "unix",
+  "level": "sr",
+  "lang": "any",
+  "tags": [
+   "signals"
+  ],
+  "q": {
+   "en": "Why try kill -15 (SIGTERM) before kill -9 (SIGKILL)?",
+   "es": "¿Por qué conviene probar kill -15 (SIGTERM) antes de kill -9 (SIGKILL)?"
+  },
+  "options": [
+   {
+    "en": "SIGTERM lets the process clean up and exit; SIGKILL cannot be caught or handled",
+    "es": "SIGTERM permite que el proceso limpie y termine; SIGKILL no se puede capturar ni manejar"
+   },
+   {
+    "en": "SIGKILL is slower",
+    "es": "SIGKILL es más lento"
+   },
+   {
+    "en": "SIGTERM needs root",
+    "es": "SIGTERM requiere root"
+   },
+   {
+    "en": "They are identical",
+    "es": "Son idénticos"
+   }
+  ],
+  "answer": [
+   0
+  ],
+  "explain": {
+   "en": "Use SIGKILL only as a last resort: the process cannot flush buffers, release locks or close connections.",
+   "es": "Usa SIGKILL solo como último recurso: el proceso no puede vaciar buffers, liberar bloqueos ni cerrar conexiones."
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "sources": [
+   {
+    "title": "man7: signal(7)",
+    "url": "https://man7.org/linux/man-pages/man7/signal.7.html"
+   }
+  ],
+  "review": {
+   "status": "draft",
+   "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
+   "date": "2026-11-10"
+  }
+ }
 ]

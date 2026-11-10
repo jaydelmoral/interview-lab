@@ -22,6 +22,7 @@ Un ADR documenta una decisión significativa: contexto, decisión y consecuencia
 | 0015 | [Design system with light/dark themes and one results dashboard](0015-ui-design-system-and-results-dashboard.md) | Accepted |
 | 0016 | [No external contributions until a CLA; premium content in separate private repos](0016-contribution-policy-and-premium-content-separation.md) | Accepted |
 | 0017 | [SQLite history and analytics, per profile](0017-sqlite-history-and-analytics.md) | Accepted |
+| 0018 | [Content packs; mandatory sources and review status per question](0018-content-packs-and-question-provenance.md) | Accepted |
 
 ## Template
 

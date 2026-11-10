@@ -17,6 +17,7 @@ class Settings:
     ai_provider: str = ""      # "" (off, default) or "anthropic"
     ai_model: str = "claude-haiku-5-5"
     max_code_bytes: int = 50_000
+    packs_dir: Path = None     # optional content packs (separate repos, e.g. a private question bank); default <root>/packs
 
     @classmethod
     def from_env(cls, root: Path, env=os.environ) -> "Settings":
@@ -30,4 +31,5 @@ class Settings:
             allow_fetch=env.get("ILAB_ALLOW_FETCH", "1") != "0",
             ai_provider=env.get("ILAB_AI_PROVIDER", "").strip().lower(),
             ai_model=env.get("ILAB_AI_MODEL", "claude-haiku-5-5"),
+            packs_dir=Path(env.get("ILAB_PACKS_DIR", Path(root) / "packs")).resolve(),
         )
