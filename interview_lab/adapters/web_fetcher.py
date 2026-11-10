@@ -88,7 +88,10 @@ def fetch(url: str, resolver=resolve_public) -> tuple[str, str]:
             if len(data) > MAX_BYTES:
                 raise FetchError("page too large")
             m = re.search(r"charset=([\w-]+)", ctype)
-            return url, data.decode(m.group(1) if m else "utf-8", "replace")
+            try:
+                return url, data.decode(m.group(1) if m else "utf-8", "replace")
+            except LookupError:                              # the page declares a charset Python does not know
+                return url, data.decode("utf-8", "replace")
         except (OSError, http.client.HTTPException) as e:
             raise FetchError(f"network error: {e}") from e
         finally:

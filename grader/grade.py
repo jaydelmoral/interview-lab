@@ -14,9 +14,11 @@ import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from pathlib import Path
 
@@ -25,6 +27,7 @@ HOME = Path(os.environ.get("ILAB_HOME", ROOT / "workspace")).resolve()
 PROBLEM_DIRS = [ROOT / "problems", HOME / "problems"]  # built-in first, then yours
 RUNS = HOME / "runs"
 MAX_DETAIL = 400
+MAX_OUTPUT = 200_000        # bytes kept from each output stream of the code under test; anything beyond is read and discarded
 
 
 def problem_dir(problem_id: str) -> Path:
@@ -45,34 +48,88 @@ def strip_comments(src: str) -> str:
     return re.sub(r"//[^\n]*", "", src)
 
 
-def compile_java(workdir: Path):
-    proc = subprocess.run(
-        ["javac", "-d", str(workdir / "out")] + sorted(str(f) for f in workdir.glob("*.java")),
-        capture_output=True, text=True, timeout=60, cwd=workdir, env=clean_env(workdir), stdin=subprocess.DEVNULL,
-    )
-    msg = (proc.stderr or proc.stdout).strip().replace(str(workdir) + "/", "")
-    return proc.returncode == 0, msg
+def run_capped(cmd: list, timeout: float, cwd: Path, env: dict):
+    """Runs `cmd` with a time limit and returns (returncode, stdout, stderr, timed_out).
+
+    Two protections for the machine that runs the grader:
+    - output is drained continuously but only MAX_OUTPUT bytes per stream are kept, so code that prints in an endless
+      loop cannot exhaust the memory of the grader (it used to be buffered whole);
+    - the code runs in its own process group, which is killed when the test ends, so processes started by the code
+      under test do not outlive it.
+    This is damage control, not a sandbox: the code still runs with your user's permissions (see SECURITY.md).
+    """
+    posix = os.name == "posix"
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, cwd=cwd, env=env,
+                            start_new_session=posix)
+    kept = (bytearray(), bytearray())
+
+    def pump(stream, buf):
+        try:
+            while True:
+                chunk = stream.read(65536)
+                if not chunk:
+                    return
+                room = MAX_OUTPUT - len(buf)
+                if room > 0:
+                    buf += chunk[:room]
+        except (OSError, ValueError):
+            return
+
+    pumps = [threading.Thread(target=pump, args=(stream, buf), daemon=True) for stream, buf in ((proc.stdout, kept[0]), (proc.stderr, kept[1]))]
+    for t in pumps:
+        t.start()
+    timed_out = False
+    try:
+        proc.wait(timeout)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+    finally:
+        if posix:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)       # the group created by start_new_session: the test and its children
+            except (ProcessLookupError, PermissionError):
+                pass
+        else:
+            proc.kill()
+        proc.wait()
+    for t in pumps:
+        t.join(2)
+    if not any(t.is_alive() for t in pumps):              # a detached grandchild may still hold a pipe: then leave it to the OS
+        proc.stdout.close()
+        proc.stderr.close()
+    return proc.returncode, kept[0].decode("utf-8", "replace"), kept[1].decode("utf-8", "replace"), timed_out
+
+
+def _without_jvm_notices(text: str) -> str:
+    """The JVM announces JAVA_TOOL_OPTIONS on stderr; that line is ours (clean_env), not part of the candidate's output."""
+    return "\n".join(ln for ln in text.splitlines() if not ln.startswith(("Picked up JAVA_TOOL_OPTIONS", "Picked up _JAVA_OPTIONS")))
+
+
+def compile_java(workdir: Path, lang: str = "es"):
+    code, out, err, timed_out = run_capped(["javac", "-d", str(workdir / "out")] + sorted(str(f) for f in workdir.glob("*.java")),
+                                           60, workdir, clean_env(workdir))
+    if timed_out:
+        return False, ("The compiler took too long" if lang == "en" else "El compilador tardó demasiado")
+    msg = _without_jvm_notices(err or out).strip().replace(str(workdir) + "/", "")
+    return code == 0, msg
 
 
 def run_test(workdir: Path, test_id: str, timeout_ms: int, lang: str):
     t0 = time.monotonic()
-    try:
-        proc = subprocess.run(
-            ["java", "-Xmx256m", "-Xss1m", f"-Dilab.lang={lang}", "-cp", str(workdir / "out"), "Harness", test_id],
-            capture_output=True, text=True, timeout=timeout_ms / 1000, cwd=workdir, env=clean_env(workdir),
-            stdin=subprocess.DEVNULL,
-        )
-    except subprocess.TimeoutExpired:
-        return {"passed": False, "ms": int((time.monotonic() - t0) * 1000),
-                "detail": (f"TIMEOUT: exceeded {timeout_ms} ms" if lang == "en" else f"TIMEOUT: superó {timeout_ms} ms")}
+    _, out, err, timed_out = run_capped(
+        ["java", "-Xmx256m", "-Xss1m", f"-Dilab.lang={lang}", "-cp", str(workdir / "out"), "Harness", test_id],
+        timeout_ms / 1000, workdir, clean_env(workdir))
     ms = int((time.monotonic() - t0) * 1000)
-    for line in proc.stdout.splitlines():
+    if timed_out:
+        return {"passed": False, "ms": ms,
+                "detail": (f"TIMEOUT: exceeded {timeout_ms} ms" if lang == "en" else f"TIMEOUT: superó {timeout_ms} ms")}
+    for line in out.splitlines():
         if line.startswith("RESULT "):
             parts = line.split(" ", 4)
             verdict = parts[3] if len(parts) > 3 else "FAIL"
             rest = parts[4] if len(parts) > 4 else ""
             return {"passed": verdict == "PASS", "ms": ms, "detail": rest[:MAX_DETAIL]}
-    msg = (proc.stderr.strip()[:200] or ("no output" if lang == "en" else "sin salida"))
+    msg = (_without_jvm_notices(err).strip()[:200] or ("no output" if lang == "en" else "sin salida"))
     return {"passed": False, "ms": ms,
             "detail": ("No result (did the JVM fail?): " if lang == "en" else "Sin resultado (¿falló la JVM?): ") + msg}
 
@@ -92,7 +149,7 @@ def grade(problem_id: str, solution: Path, lang: str = "es"):
             shutil.copy(pdir / name, work / name)
         for common in (ROOT / "grader" / "common").glob("*.java"):
             shutil.copy(common, work / common.name)
-        ok, msg = compile_java(work)
+        ok, msg = compile_java(work, lang)
         report["compile"] = {"ok": ok, "message": msg}
         clean = strip_comments(source)
         static = meta.get("static_checks", {})

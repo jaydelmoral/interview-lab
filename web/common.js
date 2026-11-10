@@ -1,6 +1,8 @@
 /* Shared helpers for landing.html and exam.html (no dependencies). */
 const $ = id => document.getElementById(id);
-const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Links that come from content files (question sources): only http(s) may become a clickable link, never javascript: or data: */
+const safeUrl = u => (/^https?:\/\//i.test(String(u == null ? '' : u).trim()) ? String(u).trim() : '#');
 
 function store(key, val){
   try { if (val === undefined) return JSON.parse(localStorage.getItem(key)); localStorage.setItem(key, JSON.stringify(val)); }
@@ -174,7 +176,7 @@ function renderDashboard(d){
       return `<div class="opp"><span class="pr pr-${pr}">${esc(prLabel[pr])}</span><div><b>${esc(w.label)}${w.pct != null ? ' · ' + w.pct + '%' : ''}${w.count ? ' · ' + esc(T('dFails')(w.count)) : ''}</b><span class="tip">${esc(w.tip || '')}</span></div></div>`; }).join('')
     : `<p class="muted">${esc(T('dOppNone'))}</p>`;
   const miss = d.missed === undefined ? '' : `<div class="panel p-missed"><h4>${esc(T('dMissed'))}</h4>${d.missed.length ? d.missed.map(m => `<details class="miss"><summary>${esc(m.section)} — ${esc(m.q)}</summary>
-      <p class="why-txt"><b>${esc(T('dExpected'))}:</b> ${esc(m.expected)}</p>${m.explanation ? `<p class="why-txt">${esc(m.explanation)}</p>` : ''}${(m.sources || []).length ? `<p class="why-txt">${esc(T('dSources'))}: ${m.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>`).join(' · ')}</p>` : ''}</details>`).join('') : `<p class="muted">${esc(T('dMissedNone'))}</p>`}</div>`;
+      <p class="why-txt"><b>${esc(T('dExpected'))}:</b> ${esc(m.expected)}</p>${m.explanation ? `<p class="why-txt">${esc(m.explanation)}</p>` : ''}${(m.sources || []).length ? `<p class="why-txt">${esc(T('dSources'))}: ${m.sources.map(x => `<a href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>`).join(' · ')}</p>` : ''}</details>`).join('') : `<p class="muted">${esc(T('dMissedNone'))}</p>`}</div>`;
   const radar = n >= 3 ? `<div class="panel p-radar"><h4>${esc(T('dRadar'))}</h4>${dashRadar(secs)}</div>` : '';
   return `<div class="dash"><div class="dash-top"><div><h3>${esc(d.title)}<span class="sub">${esc(d.subtitle || '')}</span></h3></div>
       ${d.sample ? `<span class="badge sample" title="${esc(T('dSampleNote'))}">${esc(T('dSample'))}</span>` : `<span class="badge">${esc(T('dOverall'))}: ${esc(levelName(d.overall))}</span>`}</div>

@@ -55,7 +55,7 @@ def build(config: dict, candidates: list, now: Optional[float] = None) -> dict:
     derived from the exam id, so an exam is reproducible once created.
     """
     level = config.get("seniority") if config.get("seniority") in ("jr", "mid", "sr", "staff", "principal") else "mid"
-    language = config.get("language", "java")
+    language = config.get("language") or "java"
     version = config.get("version")
     version = int(version) if isinstance(version, (int, str)) and str(version).isdigit() else None
     modules = [m for m in MODULE_ORDER if m in (config.get("modules") or [])]
@@ -89,7 +89,7 @@ def build(config: dict, candidates: list, now: Optional[float] = None) -> dict:
     return {"id": exam_id, "created": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(created)),
             "title": (config.get("title") or "")[:120],
             "config": {"seniority": level, "language": language, "version": version, "modules": modules,
-                       "pace": config.get("pace", "standard"), "banks": sorted(banks)},
+                       "pace": config.get("pace") or "standard", "banks": sorted(banks)},
             "sections": sections, "notes": notes, "total_minutes": sum(s["minutes"] for s in sections)}
 
 

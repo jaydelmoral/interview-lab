@@ -96,6 +96,8 @@ def make_server(settings: Settings, handlers: Handlers = None) -> ThreadingHTTPS
                         return self._error(415, "application/json required")
                     try:
                         length = int(self.headers.get("Content-Length", "0"))
+                        if length < 0:                         # read(-1) would block this thread until the client hangs up
+                            return self._error(400, "invalid request")
                         if length > limit:
                             return self._error(413, "request too large")
                         req.body = json.loads(self.rfile.read(length))
@@ -132,6 +134,9 @@ def main(root) -> None:
     server = make_server(settings)
     print(f"interview-lab on http://{'localhost' if settings.host in ('127.0.0.1', '0.0.0.0') else settings.host}:{settings.port}  (Ctrl+C to quit)")
     print(f"your data: {settings.home}")
+    if settings.host not in ("127.0.0.1", "::1", "localhost"):
+        print(f"WARNING: listening on {settings.host}, not only on this computer. This server compiles and runs code: anyone who can "
+              "reach the port can run code as your user. Keep it behind a loopback port mapping (see SECURITY.md).")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

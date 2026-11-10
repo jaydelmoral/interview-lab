@@ -29,10 +29,36 @@ def _txt(x, n: int) -> str:
     return str(x if x is not None else "")[:n]
 
 
+MAX_POINTS = 1_000_000     # upper bound for a client-reported score; real sections are far below it
+MAX_SECTIONS = 30
+
+
+def _valid_score(x) -> bool:
+    """A finished section as reported by the client: whole points with 0 <= score <= max, so a percentage is always 0-100."""
+    if not isinstance(x, dict):
+        return False
+    score, top = x.get("score"), x.get("max")
+    if isinstance(score, bool) or isinstance(top, bool) or not isinstance(score, int) or not isinstance(top, int):
+        return False
+    return 0 <= score <= top <= MAX_POINTS
+
+
+def _clean_config(cfg: dict) -> dict:
+    """Untrusted exam preferences -> the types the domain rules expect. Wrong types fall back to defaults, never to a 500."""
+    text = lambda v, default="": v if isinstance(v, str) else default    # noqa: E731
+    counts = cfg.get("counts") if isinstance(cfg.get("counts"), dict) else {}
+    return {"seniority": text(cfg.get("seniority")), "language": text(cfg.get("language")).strip().lower()[:20] or "java",
+            "version": cfg.get("version") if isinstance(cfg.get("version"), (int, str)) and not isinstance(cfg.get("version"), bool) else None,
+            "modules": [m for m in cfg["modules"] if isinstance(m, str)], "pace": text(cfg.get("pace"), "standard") or "standard",
+            "banks": [b for b in (cfg.get("banks") if isinstance(cfg.get("banks"), list) else []) if isinstance(b, str)][:50],
+            "counts": {k: min(v, 200) for k, v in counts.items() if isinstance(k, str) and isinstance(v, int) and not isinstance(v, bool)},
+            "title": text(cfg.get("title"))}
+
+
 def _clean_section(x: dict) -> dict:
     pct = _num(x.get("pct"), 0, 100)
     if pct is None:                                          # legacy clients send score/max only
-        pct = 100.0 * x["score"] / x["max"] if x.get("max") else 0.0
+        pct = max(0.0, min(100.0, 100.0 * x["score"] / x["max"])) if x.get("max") else 0.0
     return {"module": _txt(x.get("module"), 30), "title": _txt(x.get("title") or x.get("module"), 80), "pct": round(pct, 2),
             "correct": int(_num(x.get("correct"), 0, 100000, 0)), "total": int(_num(x.get("total"), 0, 100000, 0)),
             "used_min": _num(x.get("used"), 0, 10000), "allotted_min": _num(x.get("allotted"), 0, 10000)}
@@ -91,7 +117,7 @@ class ExamService:
     def create(self, cfg: dict, lang: str) -> dict:
         if not isinstance(cfg.get("modules"), list) or not cfg["modules"]:
             raise InvalidRequest("choose at least one module")
-        exam = rules.build(cfg, self.catalog.candidates())
+        exam = rules.build(_clean_config(cfg), self.catalog.candidates())
         if not exam["sections"]:
             raise Unprocessable("nothing to build with those filters",
                                 {"notes": [{"module": n["module"], "text": rules.pick(n, lang)} for n in exam["notes"]]})
@@ -117,7 +143,7 @@ class ExamService:
 
     def finish(self, exam_id: str, sections, missed=None) -> dict:
         exam = self._load(exam_id)
-        if not isinstance(sections, list) or not all(isinstance(x, dict) and isinstance(x.get("score"), int) and isinstance(x.get("max"), int) for x in sections):
+        if not isinstance(sections, list) or not 0 < len(sections) <= MAX_SECTIONS or not all(_valid_score(x) for x in sections):
             raise InvalidRequest("invalid request")
         now = time.strftime("%Y-%m-%d %H:%M:%S")
         rec = {"exam": exam["id"], "when": now, "score": sum(x["score"] for x in sections),
@@ -263,9 +289,13 @@ class PracticeService:
             raise InvalidRequest("invalid code")
         folder = self.attempts_dir / pid
         folder.mkdir(parents=True, exist_ok=True)
-        path = folder / (time.strftime("%Y%m%d-%H%M%S") + ".java")
-        path.write_text(code)
-        with self._lock:
+        with self._lock:                                     # the file is written under the lock: two submissions never share a name
+            stamp, n = time.strftime("%Y%m%d-%H%M%S"), 1
+            path = folder / (stamp + ".java")
+            while path.exists():                             # same problem twice within one second
+                n += 1
+                path = folder / f"{stamp}-{n}.java"
+            path.write_text(code)
             report = self.grader.grade(pid, path, lang)
         self._log(report)
         return report

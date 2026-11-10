@@ -131,7 +131,7 @@ function renderQuestions(results){
       h += `<p><b>${esc(it.q)}</b></p><button class="showA" ${lock}>${esc(T('show'))}</button><div class="faceA muted" style="display:${results ? 'block' : 'none'};margin:8px 0">${esc(it.a)}</div>
         <div class="row selfr" style="display:${results ? 'none' : 'none'}"><label><input type="radio" name="${esc(it.key)}" value="know"> ${esc(T('know'))}</label><label><input type="radio" name="${esc(it.key)}" value="dont"> ${esc(T('dont'))}</label></div>`;
     }
-    if (r) h += `<div class="qres ${r.correct ? 'ok' : 'err'}">${r.correct ? '✅ ' + esc(T('right')) : '❌ ' + esc(T('wrong'))}${r.correct ? '' : ' — ' + esc(T('expected')) + ': <code>' + esc(r.expected).replace(/\n/g, ' ⏎ ') + '</code>'}${r.explanation ? '<br>' + esc(r.explanation) : ''}${(r.sources || []).length ? '<br><span class="muted">' + esc(T('sourcesLbl')) + ': ' + r.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>`).join(' · ') + '</span>' : ''}</div>`;
+    if (r) h += `<div class="qres ${r.correct ? 'ok' : 'err'}">${r.correct ? '✅ ' + esc(T('right')) : '❌ ' + esc(T('wrong'))}${r.correct ? '' : ' — ' + esc(T('expected')) + ': <code>' + esc(r.expected).replace(/\n/g, ' ⏎ ') + '</code>'}${r.explanation ? '<br>' + esc(r.explanation) : ''}${(r.sources || []).length ? '<br><span class="muted">' + esc(T('sourcesLbl')) + ': ' + r.sources.map(s => `<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>`).join(' · ') + '</span>' : ''}</div>`;
     return h + '</div>';
   }).join('') + (results ? `<div class="row"><b>${esc(T('score'))}: ${results.score}/${results.max}</b></div>` : '') + '</div>';
   if (!results) {
@@ -213,7 +213,7 @@ function timeUsed(sec, auto){
 }
 async function finishSection(auto){
   if (!auto && !confirm(T('finishConfirm'))) return;
-  clearInterval(tick); $('finishBtn').disabled = true;
+  clearInterval(tick); $('finishBtn').disabled = true; $('fatal').style.display = 'none';
   const sec = EXAM.sections[idx];
   let rec;
   if (sec.items.length && sec.items[0].type === 'code') {
@@ -235,7 +235,7 @@ async function finishSection(auto){
         return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation, tags: r.tags || [], sources: r.sources || []}; });
       rec = {module: sec.module, title: sec.title, score: rep.score, max: Math.max(rep.max, 1), pct: rep.max ? rep.score / rep.max : 0, weak: rep.weak || [], done: rep.score, total: rep.max, cats: {}, missed, ...timeUsed(sec, auto)};
       RESULTS[idx] = rec; (rep.weak || []).forEach(w => { WEAK[w] = (WEAK[w] || 0) + 1; });
-    } catch (e) { return fatal(e.message); }
+    } catch (e) { $('finishBtn').disabled = false; return fatal(e.message); }   // the answers are still on screen: let the user retry
   }
   if (auto) $('secTitle').textContent = sec.title + ' — ' + T('timeUp');
   drawSteps(); saveProg();
@@ -261,7 +261,10 @@ function dashFromResults(){
   return {sample: false, title: EXAM.title || modeLabel(EXAM.config), subtitle: '· ' + EXAM.total_minutes + ' ' + T('minutes'), overall, sections: secs,
     weak: weak.slice(0, 6), missed: done.flatMap(r => r.missed || [])};
 }
+let reportSent = false;
 async function showReport(){
+  if (reportSent) return;            // a double click must not store the same run twice
+  reportSent = true;
   hideTip(); window.scrollTo(0, 0);
   clearInterval(tick); $('runner').style.display = 'none'; $('start').style.display = 'none'; $('report').style.display = '';
   const done = RESULTS.filter(Boolean);

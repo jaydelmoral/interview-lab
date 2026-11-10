@@ -77,8 +77,14 @@ class SqliteHistory:
         with self._lock, self._conn() as c:
             version = c.execute("PRAGMA user_version").fetchone()[0]
             for i in range(version, len(MIGRATIONS)):
-                c.executescript(MIGRATIONS[i])            # executescript commits; fine for DDL
-                c.execute(f"PRAGMA user_version={i + 1}")
+                # one transaction per migration, version bump included: a crash can never leave tables created but the
+                # version not advanced (which would make the next start fail with "table already exists")
+                try:
+                    c.executescript(f"BEGIN;\n{MIGRATIONS[i]}\nPRAGMA user_version={i + 1};\nCOMMIT;")
+                except sqlite3.Error:
+                    if c.in_transaction:
+                        c.execute("ROLLBACK")
+                    raise
 
     def schema_version(self) -> int:
         with self._conn() as c:
@@ -112,10 +118,11 @@ class SqliteHistory:
                       (profile_id, a["problem_id"], a["kind"], a["attempted_at"], a["score"], a["max"], a.get("passed"), a.get("total")))
 
     # ------------------------------------------------------------------ reads
-    def runs(self, profile_id: str, with_details: bool = True) -> list:
-        """All runs of a profile, oldest first, each with its sections and missed questions."""
+    def runs(self, profile_id: str, with_details: bool = True, run_id: Optional[int] = None) -> list:
+        """All runs of a profile (or just `run_id`), oldest first, each with its sections and missed questions."""
         with self._conn() as c:
-            rows = [dict(r) for r in c.execute("SELECT * FROM exam_runs WHERE profile_id=? ORDER BY finished_at, id", (profile_id,))]
+            where, args = ("profile_id=? AND id=?", (profile_id, run_id)) if run_id is not None else ("profile_id=?", (profile_id,))
+            rows = [dict(r) for r in c.execute(f"SELECT * FROM exam_runs WHERE {where} ORDER BY finished_at, id", args)]
             by_id = {r["id"]: r for r in rows}
             for r in rows:
                 r["sections"], r["missed"] = [], []
@@ -130,7 +137,7 @@ class SqliteHistory:
         return rows
 
     def run(self, profile_id: str, run_id: int) -> Optional[dict]:
-        return next((r for r in self.runs(profile_id) if r["id"] == run_id), None)
+        return next(iter(self.runs(profile_id, run_id=run_id)), None)
 
     def attempts(self, profile_id: str) -> list:
         with self._conn() as c:

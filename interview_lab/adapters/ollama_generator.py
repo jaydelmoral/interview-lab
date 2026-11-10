@@ -76,6 +76,6 @@ class OllamaQuestionGenerator:
         try:
             resp = self._post("/api/chat", payload)
             raw = (resp.get("message") or {}).get("content") or ""
-        except (OSError, ValueError, urllib.error.URLError) as e:
+        except (OSError, ValueError, AttributeError, TypeError, urllib.error.URLError) as e:   # includes a reply that is not the expected JSON object
             raise GenerationError(f"Ollama request failed: {type(e).__name__}") from e
         return parse_items(raw, title)

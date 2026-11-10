@@ -18,7 +18,7 @@ Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional 
 | T1 | Another web page makes the browser POST code to `localhost` (CSRF) | `Origin` must be ours; JSON content type required (no simple cross-origin request) — ADR-0008 | Low |
 | T2 | DNS rebinding makes a hostile name resolve to 127.0.0.1 | `Host` must be in an allow-list | Low |
 | T3 | Submitted code steals secrets or damages the host | Env scrubbed (no tokens), temp dir, limits; **Docker**: non-root, read-only FS, no caps, limits — ADR-0004 | **Medium without Docker**: code runs as the user. Medium in Docker: network allowed |
-| T4 | Infinite loops / memory bombs | Per-test timeout, `-Xmx256m`, container CPU/mem/PID limits | Low |
+| T4 | Infinite loops / memory bombs / endless output / leftover child processes | Per-test timeout, `-Xmx256m`, captured output capped at 200 KB per stream, the test's process group is killed when it ends, container CPU/mem/PID limits | Low (a process that detaches itself with `setsid` escapes the group outside Docker) |
 | T5 | SSRF via "My bank" links (metadata service, LAN, localhost) | Public-IP-only, pinned connection, revalidated redirects, size/time/type limits — ADR-0009 | Low |
 | T6 | XSS from fetched or generated text | Every dynamic value escaped; strict CSP (no remote sources); text rendered via `textContent`/`esc()` | Low |
 | T7 | Prompt injection in fetched text steering the AI generator | AI output validated for shape/size and treated as study text only; no tools, no actions; user opt-in | Low (bad questions possible) |
@@ -31,6 +31,7 @@ Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional 
 ## Not defended (by design)
 - Hostile code that wants the network or the user's files **outside Docker**.
 - Tampering with client-side timers (practice tool, not a proctored test).
+- Cheating yourself: the browser reports each section's score when an exam is finished (the server only checks that it is a valid 0-100 % value), a section can be graded more than once, and code under test shares the JVM with the hidden harness, so it could print a fake result line. A hosted or proctored edition must keep attempt state and verdicts on the server.
 - Exposing the port beyond loopback, or serving several users.
 
 ## Operational guidance
@@ -46,3 +47,13 @@ La herramienta asume un usuario local. Se defiende de CSRF y DNS rebinding (Host
 - Optional runtimes are installed only by the user at setup time (`install.py`, `tools/fetch_monaco.py`); the web app has no install endpoint (ADR-0019).
 - A local Ollama daemon is contacted only on loopback unless `ILAB_OLLAMA_ALLOW_REMOTE=1` is set deliberately.
 - Content packs and premium material are blocked from the public repository by `tools/preflight.py` (ADR-0016).
+
+## Audit 2026-11-10 / Auditoría
+Fixed (regression tests in `tests/test_hardening.py`):
+- The grader buffered all output of the code under test: an endless print loop used about 7 GB of server memory. Output is now capped and drained.
+- Processes started by the code under test survived the test; the whole process group is now killed.
+- A negative `Content-Length` blocked a server thread; wrong types in exam preferences returned a 500; a finished exam accepted any score (history could show 1e32 %). All validated now.
+- Two submissions of the same problem within one second shared a file name; schema migrations were not atomic; a page with an unknown charset failed the whole bank; question-source links accept only `http(s)`.
+- The server prints a warning when it listens beyond loopback.
+
+Se corrigieron los puntos anteriores (pruebas en `tests/test_hardening.py`). Lo que queda abierto está en "Not defended" y en el plan de trabajo.
