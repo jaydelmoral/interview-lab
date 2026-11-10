@@ -8,7 +8,7 @@
 The UI is a few pages (wizard, exam runner, free practice). A framework and bundler would add a toolchain, dependencies and supply-chain surface to a project whose selling points are simplicity and trust.
 
 ## Decision
-Static HTML pages with small vanilla-JS scripts and one shared `common.js`/`common.css`; no npm, no bundling. A strict CSP (`default-src 'none'`, scripts/styles from self plus inline, images from self) and output escaping (`esc()`) on every dynamic value. Light/dark theme follows the OS (`prefers-color-scheme`), including the logo variants.
+Static HTML pages with small vanilla-JS scripts and one shared `common.js`/`common.css`; no npm, no bundling. A strict CSP (`default-src 'none'`, scripts from self only, styles from self plus inline, images from self) and output escaping (`esc()`) on every dynamic value. Light/dark theme follows the OS (`prefers-color-scheme`), including the logo variants.
 
 ## Consequences
 **Positive**
@@ -17,11 +17,11 @@ Static HTML pages with small vanilla-JS scripts and one shared `common.js`/`comm
 
 **Negative / trade-offs**
 - No component model or type checking; some duplication between pages (mitigated by `common.js`).
-- Inline scripts require `'unsafe-inline'` in the CSP.
+- Each page's script lives in its own file (`exam.js`, `index.js`, `history.js`, `landing.js`) so the CSP can omit `'unsafe-inline'` for scripts (changed on 2026-11-10; before, they were inline). No `on*=` attributes: use `addEventListener`.
 
 ## Alternatives considered
 - React/Vue + Vite (productive, but a toolchain and many dependencies).
 - Server-side templates (more server code, less interactive timers).
 
 ## Resumen (ES)
-El front end es HTML y JavaScript sin paso de compilación ni npm: nada que instalar, superficie de ataque pequeña y una política CSP estricta. El costo es menos estructura que con un framework.
+El front end es HTML y JavaScript sin paso de compilación ni npm: nada que instalar, superficie de ataque pequeña y una política CSP estricta (los scripts van en archivos propios y la política no admite scripts en línea). El costo es menos estructura que con un framework.

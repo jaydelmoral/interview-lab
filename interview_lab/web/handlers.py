@@ -11,7 +11,7 @@ from ..application.errors import NotFound
 
 STATIC_TYPES = {".png": "image/png", ".json": "application/json; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".ttf": "font/ttf", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".map": "application/json"}
 PAGES = {"/": "landing.html", "/index.html": "landing.html", "/practice": "index.html", "/exam": "exam.html", "/history": "history.html"}
-ASSETS = {"/common.js", "/common.css", "/theme.js", "/editor.js"}
+ASSETS = {"/common.js", "/common.css", "/theme.js", "/editor.js", "/exam.js", "/history.js", "/index.js", "/landing.js"}
 BRAND_FILE = re.compile(r"^/brand/([a-z0-9._-]+\.(?:png|json))$")
 
 

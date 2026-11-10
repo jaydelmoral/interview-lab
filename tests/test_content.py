@@ -99,6 +99,28 @@ class TestWebPages(unittest.TestCase):
             for theme in ("light", "dark"):
                 self.assertTrue((ROOT / "web" / "brand" / brand[key][theme]).is_file(), f"{key}/{theme}")
 
+    def test_no_inline_scripts_or_event_handlers_so_the_csp_can_forbid_them(self):
+        """P7: every script is a file served from 'self'; an inline script, an on*= attribute or a javascript: URL would be blocked by the CSP."""
+        import re
+        sources = {n: (ROOT / "web" / n).read_text() for n in self.PAGES}
+        sources.update({n: (ROOT / "web" / n).read_text() for n in ("common.js", "theme.js", "editor.js", "exam.js", "history.js", "index.js", "landing.js")})
+        for name, text in sources.items():
+            if name.endswith(".html"):
+                for tag in re.findall(r"<script\b[^>]*>(.*?)</script>", text, re.S):
+                    self.assertEqual("", tag.strip(), f"{name} has an inline script")
+                self.assertTrue(all("src=" in t for t in re.findall(r"<script\b[^>]*>", text)), f"{name}: script without src")
+            self.assertIsNone(re.search(r"[\s'\"]on[a-z]+\s*=\s*[\"']", text), f"{name} sets an inline event handler")
+            self.assertIsNone(re.search(r"(?:href|src|action)\s*=\s*[\"']\s*javascript:", text, re.I), f"{name} has a javascript: URL")
+        for name in self.PAGES:
+            js = name.replace(".html", ".js")
+            self.assertIn(f'<script src="/{js}"></script>', (ROOT / "web" / name).read_text(), name)
+
+    def test_csp_does_not_allow_inline_scripts(self):
+        from interview_lab.web.security import SECURITY_HEADERS
+        directives = dict(d.strip().split(" ", 1) for d in SECURITY_HEADERS["Content-Security-Policy"].split(";") if d.strip())
+        self.assertEqual("'self'", directives["script-src"])
+        self.assertNotIn("unsafe-eval", directives["script-src"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -20,7 +20,7 @@ Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional 
 | T3 | Submitted code steals secrets or damages the host | Env scrubbed (no tokens), temp dir, limits; **Docker**: non-root, read-only FS, no caps, limits — ADR-0004 | **Medium without Docker**: code runs as the user. Medium in Docker: network allowed |
 | T4 | Infinite loops / memory bombs / endless output / leftover child processes | Per-test timeout, `-Xmx256m`, captured output capped at 200 KB per stream, the test's process group is killed when it ends, container CPU/mem/PID limits | Low (a process that detaches itself with `setsid` escapes the group outside Docker) |
 | T5 | SSRF via "My bank" links (metadata service, LAN, localhost) | Public-IP-only, pinned connection, revalidated redirects, size/time/type limits — ADR-0009 | Low |
-| T6 | XSS from fetched or generated text | Every dynamic value escaped; strict CSP (no remote sources); text rendered via `textContent`/`esc()` | Low |
+| T6 | XSS from fetched or generated text | Every dynamic value escaped; strict CSP (no remote sources, `script-src 'self'`: no inline scripts, so an unescaped value cannot run code); text rendered via `textContent`/`esc()` | Low |
 | T7 | Prompt injection in fetched text steering the AI generator | AI output validated for shape/size and treated as study text only; no tools, no actions; user opt-in | Low (bad questions possible) |
 | T8 | Leaking the AI key | Key only from the user's environment; never stored, logged or returned; errors scrubbed | Low |
 | T9 | Path traversal through ids | Strict id regexes; fixed base directories | Low |
@@ -58,3 +58,4 @@ Fixed (regression tests in `tests/test_hardening.py`):
 - P4 (local step): the exam result is computed from what the server graded, per attempt, and finishing twice never stores two runs (ADR-0021; tests in `tests/test_attempts.py`).
 
 Se corrigieron los puntos anteriores (pruebas en `tests/test_hardening.py`). Lo que queda abierto está en "Not defended" y en el plan de trabajo.
+- Scripts live in `web/*.js` and the CSP no longer allows `'unsafe-inline'` for scripts (ADR-0013, audit P7). Styles still allow it. A test fails if a page gains an inline `<script>`, an `on*=` attribute or a `javascript:` URL.

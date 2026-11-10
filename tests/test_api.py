@@ -18,7 +18,7 @@ class ApiTest(unittest.TestCase):
 
     # ---- pages, assets, headers
     def test_pages_and_assets(self):
-        for path in ("/", "/practice", "/exam", "/history", "/common.js", "/common.css", "/theme.js", "/editor.js", "/brand/logo-full-dark.png", "/api/brand"):
+        for path in ("/", "/practice", "/exam", "/history", "/common.js", "/common.css", "/theme.js", "/editor.js", "/exam.js", "/history.js", "/index.js", "/landing.js", "/brand/logo-full-dark.png", "/api/brand"):
             self.assertEqual(200, self.c.get(path)[0], path)
 
     def test_security_headers_present(self):
