@@ -1,0 +1,42 @@
+# Security model
+
+Scope: Interview Lab as a **single-user, local** tool. Multi-user hosting and public exposure are out of scope.
+Alcance: herramienta **local de un solo usuario**. El alojamiento multiusuario o público queda fuera de alcance.
+
+## Assets
+1. The user's machine and files (the app executes code).
+2. The user's CV text, notes, attempts and scores (privacy).
+3. Third-party credentials, if the optional AI is enabled (`ANTHROPIC_API_KEY`).
+
+## Trust boundaries
+Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional outbound: public web pages (links) and the AI provider.
+
+## Threats and mitigations
+
+| # | Threat | Mitigation | Residual risk |
+|---|---|---|---|
+| T1 | Another web page makes the browser POST code to `localhost` (CSRF) | `Origin` must be ours; JSON content type required (no simple cross-origin request) — ADR-0008 | Low |
+| T2 | DNS rebinding makes a hostile name resolve to 127.0.0.1 | `Host` must be in an allow-list | Low |
+| T3 | Submitted code steals secrets or damages the host | Env scrubbed (no tokens), temp dir, limits; **Docker**: non-root, read-only FS, no caps, limits — ADR-0004 | **Medium without Docker**: code runs as the user. Medium in Docker: network allowed |
+| T4 | Infinite loops / memory bombs | Per-test timeout, `-Xmx256m`, container CPU/mem/PID limits | Low |
+| T5 | SSRF via "My bank" links (metadata service, LAN, localhost) | Public-IP-only, pinned connection, revalidated redirects, size/time/type limits — ADR-0009 | Low |
+| T6 | XSS from fetched or generated text | Every dynamic value escaped; strict CSP (no remote sources); text rendered via `textContent`/`esc()` | Low |
+| T7 | Prompt injection in fetched text steering the AI generator | AI output validated for shape/size and treated as study text only; no tools, no actions; user opt-in | Low (bad questions possible) |
+| T8 | Leaking the AI key | Key only from the user's environment; never stored, logged or returned; errors scrubbed | Low |
+| T9 | Path traversal through ids | Strict id regexes; fixed base directories | Low |
+| T10 | Oversized requests | Per-route body limits (100 KB; 4.5 MB for CV upload) | Low |
+| T11 | Malformed files (docx zip bombs) | `.docx` size check; text length cap | Low |
+| T12 | Answers extracted from the browser | Answers stay server-side; public items omit them | Low (flashcards intentionally include theirs) |
+
+## Not defended (by design)
+- Hostile code that wants the network or the user's files **outside Docker**.
+- Tampering with client-side timers (practice tool, not a proctored test).
+- Exposing the port beyond loopback, or serving several users.
+
+## Operational guidance
+- Use Docker for any code you did not write; never grade strangers' code; never publish the port.
+- Keep the image updated; rebuild after `git pull`.
+- Report vulnerabilities privately (see [SECURITY.md](../SECURITY.md)).
+
+## Resumen (ES)
+La herramienta asume un usuario local. Se defiende de CSRF y DNS rebinding (Host/Origin/JSON), de SSRF al leer enlaces, de XSS y de peticiones enormes. El código del usuario corre con entorno limpio y límites; **sin Docker se ejecuta con tus permisos**, y con Docker aún puede usar la red del contenedor. No está pensada para exponerse a internet.

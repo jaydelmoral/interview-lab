@@ -1,0 +1,68 @@
+{
+  "id": "009-common-manager",
+  "title": "Closest Common Manager",
+  "class": "Solution",
+  "time_limit_min": 30,
+  "module": "coding",
+  "level": "mid",
+  "language": "java",
+  "min_java": 8,
+  "domain": "hr",
+  "tags": [
+    "trees",
+    "recursion",
+    "dfs",
+    "hr"
+  ],
+  "support": [
+    "Harness.java",
+    "TreeNode.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example tree",
+      "points": 55,
+      "fail_why": "Falla el árbol del ejemplo.",
+      "fail_how": "Recursión: si root es null, p o q, devuélvelo. Busca en izquierda y derecha. Si ambos lados devuelven algo, root es el gerente común más cercano.",
+      "fail_why_en": "The example tree fails.",
+      "fail_how_en": "Recursion: if root is null, p or q, return it. Search left and right. If both sides return something, root is the closest common manager."
+    },
+    {
+      "id": "ancestor",
+      "category": "Reliability",
+      "title": "Works when one node is ancestor of the other",
+      "points": 50,
+      "fail_why": "Cuando p dirige a q no devolviste p.",
+      "fail_how": "El caso base 'root == p || root == q' devuelve de inmediato: por eso la respuesta para (5,4) es 5 sin buscar más abajo.",
+      "fail_why_en": "When p manages q you did not return p.",
+      "fail_how_en": "The base case 'root == p || root == q' returns immediately: that is why the answer for (5,4) is 5 without searching deeper."
+    },
+    {
+      "id": "same",
+      "category": "Reliability",
+      "title": "Works when p and q are the same node",
+      "points": 25,
+      "fail_why": "Falla con p == q.",
+      "fail_how": "Con el mismo caso base devuelve ese nodo. Pruébalo a mano.",
+      "fail_why_en": "Fails with p == q.",
+      "fail_how_en": "With the same base case you return that node. Try it by hand."
+    },
+    {
+      "id": "deep",
+      "category": "Problem solving",
+      "title": "Works with a 3,000-level tree (no wasted work)",
+      "points": 100,
+      "fail_why": "Falla o se pasa de tiempo en un árbol profundo (recorridos repetidos o recursión excesiva).",
+      "fail_how": "Un solo DFS: O(n) tiempo y O(h) pila. No busques p y q por separado en cada nodo (eso es O(n²)).",
+      "fail_why_en": "Fails or times out on a deep tree (repeated traversals or excessive recursion).",
+      "fail_how_en": "A single DFS: O(n) time and O(h) stack. Do not search for p and q separately at every node (that is O(n²))."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

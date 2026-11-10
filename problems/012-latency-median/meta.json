@@ -1,0 +1,67 @@
+{
+  "id": "012-latency-median",
+  "title": "Running Latency Median",
+  "class": "LatencyTracker",
+  "time_limit_min": 30,
+  "module": "coding",
+  "level": "sr",
+  "language": "java",
+  "min_java": 8,
+  "domain": "telecom",
+  "tags": [
+    "heap",
+    "priorityqueue",
+    "design",
+    "telecom"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example",
+      "points": 50,
+      "fail_why": "Falla el ejemplo del enunciado.",
+      "fail_how": "Dos heaps: maxHeap con la mitad menor y minHeap con la mitad mayor. La mediana sale de sus cimas.",
+      "fail_why_en": "The statement's example fails.",
+      "fail_how_en": "Two heaps: a maxHeap with the lower half and a minHeap with the upper half. The median comes from their tops."
+    },
+    {
+      "id": "single",
+      "category": "Reliability",
+      "title": "Works with a single element",
+      "points": 25,
+      "fail_why": "Falla con un solo elemento.",
+      "fail_how": "Con un elemento, el heap izquierdo tiene 1 y el derecho 0: la mediana es la cima del izquierdo.",
+      "fail_why_en": "Fails with a single element.",
+      "fail_how_en": "With one element, the left heap has 1 and the right has 0: the median is the top of the left one."
+    },
+    {
+      "id": "duplicates",
+      "category": "Reliability",
+      "title": "Works with duplicates and no integer overflow",
+      "points": 45,
+      "fail_why": "Falla con repetidos o desborda al sumar dos Integer grandes antes de dividir.",
+      "fail_how": "Convierte a double ANTES de sumar: (low.peek() + (double) high.peek()) / 2.0. int + int puede desbordar.",
+      "fail_why_en": "Fails with repeated values or overflows when adding two large Integers before dividing.",
+      "fail_how_en": "Convert to double BEFORE adding: (low.peek() + (double) high.peek()) / 2.0. int + int can overflow."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "record O(log n) / median O(1): 200,000 operations",
+      "points": 140,
+      "fail_why": "Ordenar o insertar en una lista ordenada en cada record es O(n log n) o O(n) por operación.",
+      "fail_how": "Invariante: low.size() == high.size() o low.size() == high.size() + 1. record: ofrece a low, pasa su máximo a high, rebalancea. O(log n) por inserción y O(1) para la mediana.",
+      "fail_why_en": "Sorting or inserting into a sorted list on every record is O(n log n) or O(n) per operation.",
+      "fail_how_en": "Invariant: low.size() == high.size() or low.size() == high.size() + 1. record: offer to low, move its max to high, rebalance. O(log n) per insert and O(1) for the median."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

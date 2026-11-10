@@ -1,0 +1,81 @@
+{
+  "id": "007-rule-brackets",
+  "title": "Balanced Rule Expressions",
+  "class": "Solution",
+  "time_limit_min": 20,
+  "module": "coding",
+  "level": "jr",
+  "language": "java",
+  "min_java": 8,
+  "domain": "fintech",
+  "tags": [
+    "stack",
+    "deque",
+    "o(n)",
+    "fintech"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "basic",
+      "category": "Problem solving",
+      "title": "Works with the basic examples",
+      "points": 50,
+      "fail_why": "Falla alguno de los ejemplos del enunciado.",
+      "fail_how": "Push al ver una apertura. Al ver un cierre: el tope debe ser su apertura correspondiente; si no, false.",
+      "fail_why_en": "One of the statement's examples fails.",
+      "fail_how_en": "Push when you see an opening bracket. On a closing bracket: the top must be its matching opening; if not, false."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles empty strings and unmatched brackets",
+      "points": 40,
+      "fail_why": "Falla con vacío, cierres sin apertura o aperturas sin cerrar.",
+      "fail_how": "Antes de hacer pop revisa stack.isEmpty() (si no, NoSuchElementException). Al final devuelve stack.isEmpty(), no true.",
+      "fail_why_en": "Fails with empty input, closings without an opening, or openings left unclosed.",
+      "fail_how_en": "Before popping check stack.isEmpty() (otherwise NoSuchElementException). At the end return stack.isEmpty(), not true."
+    },
+    {
+      "id": "nested",
+      "category": "Problem solving",
+      "title": "Works with deeply nested mixed brackets",
+      "points": 40,
+      "fail_why": "Falla con anidamiento mixto.",
+      "fail_how": "El orden manda: ([)] es inválido aunque haya la misma cantidad de cada tipo.",
+      "fail_why_en": "Fails with mixed nesting.",
+      "fail_how_en": "Order rules: ([)] is invalid even though there are as many of each type."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 1,000,000 characters in reasonable time",
+      "points": 100,
+      "fail_why": "Tu solución no es lineal (por ejemplo reemplazar pares con replace en un ciclo, que es O(n²)).",
+      "fail_how": "Una pila y un solo recorrido: O(n).",
+      "fail_why_en": "Your solution is not linear (for example replacing pairs with replace in a loop, which is O(n²)).",
+      "fail_how_en": "One stack and a single pass: O(n)."
+    },
+    {
+      "id": "deque",
+      "category": "Language knowledge",
+      "title": "Uses Deque/ArrayDeque instead of the legacy Stack class",
+      "points": 30,
+      "fail_why": "Usaste la clase Stack, que es legada y sincronizada (más lenta).",
+      "fail_how": "ArrayDeque como pila: push/pop/peek. En entrevista dilo: 'Deque es la recomendación de la documentación de Java'.",
+      "fail_why_en": "You used the Stack class, which is legacy and synchronized (slower).",
+      "fail_how_en": "ArrayDeque as a stack: push/pop/peek. In an interview say it: 'Deque is the recommendation in the Java documentation'."
+    }
+  ],
+  "static_checks": {
+    "deque": {
+      "forbid": "\\bStack\\s*<|new\\s+Stack\\b"
+    }
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

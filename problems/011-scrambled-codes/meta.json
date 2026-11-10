@@ -1,0 +1,67 @@
+{
+  "id": "011-scrambled-codes",
+  "title": "Group Scrambled Codes",
+  "class": "Solution",
+  "time_limit_min": 25,
+  "module": "coding",
+  "level": "mid",
+  "language": "java",
+  "min_java": 8,
+  "domain": "logistics",
+  "tags": [
+    "hashmap",
+    "sorting",
+    "computeifabsent",
+    "logistics"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example",
+      "points": 50,
+      "fail_why": "Falla el ejemplo del enunciado.",
+      "fail_how": "La 'firma' de un código son sus caracteres ordenados: 'A7B','7BA','B7A' -> '7AB'. Agrupa por firma en un HashMap.",
+      "fail_why_en": "The statement's example fails.",
+      "fail_how_en": "A code's 'signature' is its sorted letters: 'A7B','7BA','B7A' -> '7AB'. Group by signature in a HashMap."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles empty strings and empty arrays",
+      "points": 35,
+      "fail_why": "Falla con cadena vacía, un carácter o arreglo vacío.",
+      "fail_how": "No asumas length > 0. El ciclo sobre un arreglo vacío simplemente devuelve una lista vacía.",
+      "fail_why_en": "Fails with an empty string, a single character or an empty array.",
+      "fail_how_en": "Do not assume length > 0. A loop over an empty array simply returns an empty list."
+    },
+    {
+      "id": "duplicates",
+      "category": "Reliability",
+      "title": "Keeps repeated words",
+      "points": 30,
+      "fail_why": "Perdiste códigos repetidos (por ejemplo usando un Set en lugar de una List).",
+      "fail_how": "Cada grupo es una List<String>, no un Set: las repeticiones cuentan.",
+      "fail_why_en": "You lost repeated codes (for example by using a Set instead of a List).",
+      "fail_how_en": "Each group is a List<String>, not a Set: repetitions count."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n·k log k): works with 100,000 words in reasonable time",
+      "points": 140,
+      "fail_why": "Comparar cada código con todos los demás es O(n²).",
+      "fail_how": "Una pasada: calcula la firma (ordenar chars, O(k log k)) y agrupa con computeIfAbsent. Alternativa O(n·k): firma por conteo de 26 letras.",
+      "fail_why_en": "Comparing every code with all the others is O(n²).",
+      "fail_how_en": "One pass: compute the signature (sort chars, O(k log k)) and group with computeIfAbsent. O(n·k) alternative: signature by counting 26 letters."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

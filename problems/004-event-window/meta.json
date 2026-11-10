@@ -1,0 +1,67 @@
+{
+  "id": "004-event-window",
+  "title": "Longest Distinct Event Window",
+  "class": "Solution",
+  "time_limit_min": 25,
+  "module": "coding",
+  "level": "mid",
+  "language": "java",
+  "min_java": 8,
+  "domain": "streaming",
+  "tags": [
+    "sliding-window",
+    "hashmap",
+    "o(n)",
+    "streaming"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "examples",
+      "category": "Problem solving",
+      "title": "Works with the examples",
+      "points": 50,
+      "fail_why": "Fallan los ejemplos del enunciado.",
+      "fail_how": "Traza 'ABCADEB' con una ventana [left,right]: crece a la derecha y se contrae por la izquierda al ver un repetido.",
+      "fail_why_en": "The statement's examples fail.",
+      "fail_how_en": "Trace 'ABCADEB' with a [left,right] window: it grows to the right and shrinks from the left when it sees a repeat."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles empty string and single characters",
+      "points": 35,
+      "fail_why": "Falla con cadena vacía, un espacio o un solo carácter.",
+      "fail_how": "Inicializa max = 0 y confía en el ciclo; no accedas a s.charAt(0) sin revisar el largo.",
+      "fail_why_en": "Fails with an empty string, a single space or a single character.",
+      "fail_how_en": "Initialize max = 0 and trust the loop; do not access s.charAt(0) without checking the length."
+    },
+    {
+      "id": "window",
+      "category": "Problem solving",
+      "title": "Window never moves backwards (e.g. \"abba\")",
+      "points": 55,
+      "fail_why": "Al ver un repetido mueves 'left' a una posición anterior a la actual. En 'abba' la segunda 'a' ya quedó fuera de la ventana.",
+      "fail_how": "Solo mueve left si el último índice del carácter es >= left: left = Math.max(left, prev + 1). Es el error más típico de esta pregunta.",
+      "fail_why_en": "When you see a repeat you move 'left' to a position before the current one. In 'abba' the second 'a' is already outside the window.",
+      "fail_how_en": "Only move left if the character's last index is >= left: left = Math.max(left, prev + 1). This is the most typical mistake in this kind of question."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 500,000 characters in reasonable time",
+      "points": 140,
+      "fail_why": "Revisar cada substring (o reconstruir un Set desde cero) es O(n²) o peor.",
+      "fail_how": "Sliding window con un Map<char, último índice>: un solo recorrido, O(n) tiempo y O(k) espacio (k = tamaño del alfabeto).",
+      "fail_why_en": "Checking every substring (or rebuilding a Set from scratch) is O(n²) or worse.",
+      "fail_how_en": "Sliding window with a Map<char, last index>: a single pass, O(n) time and O(k) space (k = alphabet size)."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

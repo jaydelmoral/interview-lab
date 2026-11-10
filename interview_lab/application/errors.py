@@ -1,0 +1,13 @@
+"""APPLICATION: domain-level errors. The web layer maps them to HTTP status codes; services never know about HTTP."""
+
+
+class AppError(Exception):
+    def __init__(self, message: str, details=None):
+        super().__init__(message)
+        self.message, self.details = message, details
+
+
+class NotFound(AppError): ...
+class InvalidRequest(AppError): ...
+class Forbidden(AppError): ...
+class Unprocessable(AppError): ...

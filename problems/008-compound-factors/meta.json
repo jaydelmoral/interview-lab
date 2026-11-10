@@ -1,0 +1,81 @@
+{
+  "id": "008-compound-factors",
+  "title": "Compound Factors Excluding Self",
+  "class": "Solution",
+  "time_limit_min": 25,
+  "module": "coding",
+  "level": "mid",
+  "language": "java",
+  "min_java": 8,
+  "domain": "banking",
+  "tags": [
+    "prefix-suffix",
+    "arrays",
+    "o(n)",
+    "banking"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example",
+      "points": 50,
+      "fail_why": "Falla el ejemplo del enunciado.",
+      "fail_how": "output[i] = (producto a la izquierda de i) x (producto a la derecha de i). Haz dos pasadas.",
+      "fail_why_en": "The statement's example fails.",
+      "fail_how_en": "result[i] = (product to the left of i) x (product to the right of i). Do two passes."
+    },
+    {
+      "id": "zeros",
+      "category": "Reliability",
+      "title": "Works with one or more zeros",
+      "points": 55,
+      "fail_why": "Con ceros falla: probablemente calculaste el producto total y lo dividiste (prohibido y rompe con 0).",
+      "fail_how": "Sin división: pasada 1 guarda en output[i] el producto de todo lo que está a la izquierda; pasada 2 de derecha a izquierda multiplica por un acumulador 'suffix'.",
+      "fail_why_en": "Fails with zeros: you probably computed the total product and divided (forbidden, and it breaks with 0).",
+      "fail_how_en": "Without division: pass 1 stores in result[i] the product of everything to the left; pass 2, from right to left, multiplies by a 'suffix' accumulator."
+    },
+    {
+      "id": "negatives",
+      "category": "Reliability",
+      "title": "Works with negative numbers",
+      "points": 30,
+      "fail_why": "Falla con negativos.",
+      "fail_how": "Sin división no hay trampas de signo; revisa que inicialices prefix y suffix en 1, no en 0.",
+      "fail_why_en": "Fails with negative numbers.",
+      "fail_how_en": "Without division there are no sign traps; check that prefix and suffix start at 1, not 0."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 1,000,000 elements in reasonable time",
+      "points": 140,
+      "fail_why": "Calcular el producto de los demás para cada i es O(n²).",
+      "fail_how": "Dos pasadas O(n) y O(1) de espacio extra (el arreglo de salida no cuenta).",
+      "fail_why_en": "Computing the product of the others for every i is O(n²).",
+      "fail_how_en": "Two O(n) passes and O(1) extra space (the output array does not count)."
+    },
+    {
+      "id": "nodiv",
+      "category": "Language knowledge",
+      "title": "Does not use division",
+      "points": 40,
+      "fail_why": "Usaste el operador / (el enunciado lo prohíbe).",
+      "fail_how": "Reformula como prefijos y sufijos. Es el patrón 'prefix/suffix', muy común en preguntas de arreglos.",
+      "fail_why_en": "You used the / operator (the statement forbids it).",
+      "fail_how_en": "Reformulate as prefixes and suffixes. It is the 'prefix/suffix' pattern, very common in array questions."
+    }
+  ],
+  "static_checks": {
+    "nodiv": {
+      "forbid": "/"
+    }
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

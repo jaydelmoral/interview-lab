@@ -1,0 +1,122 @@
+{
+  "q01": {
+    "topic": "Strings and operators",
+    "explanation": "It is evaluated left to right: 10 + 20 = 30 (both are numbers); then 30 + \"Java\" is already concatenation, and what follows is concatenated as text: 10 and 20, without adding.",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q02": {
+    "topic": "Integer cache",
+    "explanation": "== compares references. Java reuses Integer objects between -128 and 127 (autoboxing cache); 130 creates distinct objects. To compare values use equals.",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q03": {
+    "topic": "Post-increment",
+    "explanation": "i++ returns the old value (5) and then increments i to 6, but the assignment i = ... writes that 5 on top. Result: 5.",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q04": {
+    "topic": "String pool",
+    "explanation": "It prints true on Java 17/21 because the empty substring reuses the literal \"\", but it is an implementation detail. The lesson: never compare Strings with ==; use equals.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q05": {
+    "topic": "String pool",
+    "explanation": "\"a\" + \"b\" is a compile-time constant and points to the same literal. new String(...) and concatenation with a variable at run time create new objects. intern() returns the pool literal.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q06": {
+    "topic": "Floating point",
+    "explanation": "double is binary: 0.1 and 0.2 are not exact. Compare with a tolerance (Math.abs(a - b) < 1e-9) or use BigDecimal for money.",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q07": {
+    "topic": "char and numeric promotion",
+    "explanation": "'a' + 1 is promoted to int (97 + 1 = 98). The compound assignment c += 1 does an implicit cast to char, so it ends up as 'b'.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q08": {
+    "topic": "Immutable collections",
+    "explanation": "List.of creates an immutable list: add, remove or set throw UnsupportedOperationException. Arrays.asList does not allow adding or removing either.",
+    "level": "jr",
+    "min_java": 9
+  },
+  "q09": {
+    "topic": "Overflow",
+    "explanation": "int does not raise an error on overflow: it wraps around to the minimum. To detect it use Math.addExact (throws ArithmeticException) or long.",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q10": {
+    "topic": "try / finally",
+    "explanation": "finally runs before the method returns its value. It first prints \"finally\" and then main prints 1.",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q11": {
+    "topic": "Math.round",
+    "explanation": "Math.round rounds toward +infinity on ties (floor(x + 0.5)): 2.5 -> 3 and -2.5 -> -2.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q12": {
+    "topic": "Numeric conversion",
+    "explanation": "byte ranges from -128 to 127. 200 is truncated to the low 8 bits (11001000), which in two's complement is -56.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q13": {
+    "topic": "Streams: lazy evaluation",
+    "explanation": "Intermediate operations (peek, map) do not run until there is a terminal operation (collect, forEach, count...). Here there is none, so peek never prints.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q14": {
+    "topic": "Pattern matching (Java 21)",
+    "explanation": "Java 21 finalizes pattern matching in switch. Cases are evaluated in order: 42 is an Integer and satisfies the guard i > 40.",
+    "level": "sr",
+    "min_java": 21
+  },
+  "q15": {
+    "topic": "Records",
+    "explanation": "A record generates equals, hashCode and toString by value, so equals gives true. == still compares references (false). toString prints P[x=1].",
+    "level": "mid",
+    "min_java": 16
+  },
+  "q16": {
+    "topic": "Unboxing and null",
+    "explanation": "In the ternary operator with Integer and int, Java applies numeric promotion and unboxes x. Since x is null, it throws NullPointerException.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q17": {
+    "topic": "List.remove",
+    "explanation": "With an int literal, remove(int index) is called: it removes the element at position 1 (the 2), not the value 1. To remove by value use l.remove(Integer.valueOf(1)).",
+    "level": "jr",
+    "min_java": 8
+  },
+  "q18": {
+    "topic": "Sequenced collections (Java 21)",
+    "explanation": "Java 21 adds SequencedCollection: reversed(), getFirst() and getLast() on List, Deque, LinkedHashSet, etc.",
+    "level": "mid",
+    "min_java": 21
+  },
+  "q19": {
+    "topic": "equals and hashCode on arrays",
+    "explanation": "Arrays do not override equals/hashCode: they compare by identity. That is why a HashSet<int[]> does not find another array with the same content. Use List<Integer> or Arrays.equals/hashCode.",
+    "level": "mid",
+    "min_java": 8
+  },
+  "q20": {
+    "topic": "final",
+    "explanation": "final prevents reassigning the reference, not modifying the object. For a truly immutable list use List.of or Collections.unmodifiableList.",
+    "level": "jr",
+    "min_java": 8
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": "013-longest-string-first",
+  "title": "First Longest String in an Array",
+  "class": "Solution",
+  "time_limit_min": 15,
+  "module": "coding",
+  "level": "jr",
+  "language": "java",
+  "min_java": 8,
+  "tags": [
+    "arrays",
+    "streams",
+    "empates"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example",
+      "points": 40,
+      "fail_why": "Falla el ejemplo del enunciado.",
+      "fail_how": "Recorre una vez guardando el mejor visto hasta el momento.",
+      "fail_why_en": "The statement's example fails.",
+      "fail_how_en": "Walk once keeping the best seen so far."
+    },
+    {
+      "id": "ties",
+      "category": "Problem solving",
+      "title": "On a tie returns the first one",
+      "points": 60,
+      "fail_why": "En un empate devolviste el último (usaste >= en lugar de >).",
+      "fail_how": "Actualiza solo con ESTRICTAMENTE mayor: if (arr[i].length() > best.length()). Con >= el último empatado gana.",
+      "fail_why_en": "On a tie you returned the last one (you used >= instead of >).",
+      "fail_how_en": "Update only on STRICTLY greater: if (arr[i].length() > best.length()). With >= the last tied element wins."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles null, empty and single-element arrays",
+      "points": 35,
+      "fail_why": "Falla con null, vacío o con cadenas vacías.",
+      "fail_how": "Primera línea: if (arr == null || arr.length == 0) return \"\".",
+      "fail_why_en": "Fails with null, empty, or empty strings.",
+      "fail_how_en": "First line: if (arr == null || arr.length == 0) return \"\"."
+    },
+    {
+      "id": "nomutate",
+      "category": "Reliability",
+      "title": "Does not modify the input array",
+      "points": 30,
+      "fail_why": "Ordenaste o modificaste el arreglo recibido (efecto secundario).",
+      "fail_how": "Si ordenaste con Arrays.sort, cambiaste los datos del llamador. Recorrer una vez es más simple, O(n) y sin efectos secundarios.",
+      "fail_why_en": "You sorted or modified the received array (side effect).",
+      "fail_how_en": "If you used Arrays.sort you changed the caller's data. A single pass is simpler, O(n) and has no side effects."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 1,000,000 elements",
+      "points": 80,
+      "fail_why": "Tu solución no es lineal (ordenar es O(n log n); comparar todos contra todos es O(n²)).",
+      "fail_how": "Un solo recorrido, O(n) tiempo y O(1) espacio.",
+      "fail_why_en": "Your solution is not linear (sorting is O(n log n); comparing all against all is O(n²)).",
+      "fail_how_en": "A single pass, O(n) time and O(1) space."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

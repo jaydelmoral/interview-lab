@@ -1,0 +1,18 @@
+{
+  "_comment": "Company/platform names to avoid in public exercises -> suggested sector. Edit freely. EN: used by tools/validate.py as warnings. ES: lista de marcas a evitar -> giro sugerido.",
+  "brands": {
+    "american airlines": "Airline / Aerolinea", "delta air lines": "Airline / Aerolinea", "united airlines": "Airline / Aerolinea",
+    "aeromexico": "Airline / Aerolinea", "volaris": "Airline / Aerolinea", "lufthansa": "Airline / Aerolinea", "latam airlines": "Airline / Aerolinea",
+    "amazon": "E-commerce", "mercado libre": "E-commerce", "mercadolibre": "E-commerce", "ebay": "E-commerce", "alibaba": "E-commerce", "shopify": "E-commerce",
+    "google": "Search/Advertising platform", "microsoft": "Software vendor", "facebook": "Social network", "instagram": "Social network",
+    "netflix": "Streaming", "spotify": "Streaming", "disney": "Streaming/Media", "uber": "Ride-hailing", "tesla": "Automotive", "toyota": "Automotive",
+    "bbva": "Bank / Banco", "santander": "Bank / Banco", "citibanamex": "Bank / Banco", "banorte": "Bank / Banco", "hsbc": "Bank / Banco",
+    "jpmorgan": "Bank / Banco", "bank of america": "Bank / Banco", "wells fargo": "Bank / Banco", "paypal": "Payments / Pagos", "stripe": "Payments / Pagos",
+    "visa": "Card network / Red de tarjetas", "mastercard": "Card network / Red de tarjetas",
+    "telcel": "Telecom", "at&t": "Telecom", "verizon": "Telecom", "movistar": "Telecom", "telmex": "Telecom", "vodafone": "Telecom",
+    "walmart": "Retail", "costco": "Retail", "liverpool": "Retail", "oxxo": "Convenience retail", "home depot": "Retail",
+    "fedex": "Logistics", "dhl": "Logistics", "estafeta": "Logistics",
+    "ibm": "Enterprise software vendor", "sap": "Enterprise software vendor", "salesforce": "CRM vendor", "oracle": "Enterprise software vendor (OK when it is the database dialect: add \"oracle\" to lint_allow)"
+  },
+  "platforms": ["hackerrank", "leetcode", "codility", "testdome", "codewars", "codesignal", "geeksforgeeks", "glassdoor", "coderbyte"]
+}

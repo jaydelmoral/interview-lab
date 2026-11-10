@@ -1,0 +1,34 @@
+name: ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # preflight inspects the whole history
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m unittest discover -s tests -t . -v
+      - run: python3 tools/validate.py
+      - run: python3 tools/preflight.py
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t interview-lab .
+      - name: Smoke test the container (read-only FS, dropped capabilities)
+        run: |
+          docker run -d --name ilab --read-only --tmpfs /tmp:size=256m,exec --cap-drop ALL --security-opt no-new-privileges:true \
+            -p 127.0.0.1:8765:8765 -v "$PWD/workspace:/data" --user "$(id -u):$(id -g)" interview-lab
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8765/api/problems >/dev/null && break; sleep 1; done
+          curl -fsS http://127.0.0.1:8765/api/problems | head -c 200
+          curl -fsS -X POST http://127.0.0.1:8765/api/analyze -H 'Content-Type: application/json' -d '{"text":"Senior Java 17, Docker"}' | head -c 200
+          docker logs ilab

@@ -1,0 +1,9 @@
+.git
+workspace
+**/__pycache__
+**/*.class
+.github
+tests
+docs
+*.md
+!README.md

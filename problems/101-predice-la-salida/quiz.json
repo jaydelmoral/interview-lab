@@ -1,0 +1,222 @@
+[
+  {
+    "id": "q01",
+    "topic": "Strings y operadores",
+    "code": "System.out.println(10 + 20 + \"Java\" + 10 + 20);",
+    "expected": "30Java1020",
+    "explanation": "Se evalúa de izquierda a derecha: 10 + 20 = 30 (ambos son números); luego 30 + \"Java\" ya es concatenación, y lo que sigue se concatena como texto: 10 y 20, sin sumar.",
+    "topic_en": "Strings and operators",
+    "explanation_en": "It is evaluated left to right: 10 + 20 = 30 (both are numbers); then 30 + \"Java\" is already concatenation, and what follows is concatenated as text: 10 and 20, without adding.",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q02",
+    "topic": "Caché de Integer",
+    "code": "Integer a = 120, b = 120;\nInteger c = 130, d = 130;\nSystem.out.println((a == b) + \" \" + (c == d));",
+    "expected": "true false",
+    "explanation": "== compara referencias. Java reutiliza objetos Integer entre -128 y 127 (caché de autoboxing); 130 crea objetos distintos. Para comparar valores usa equals.",
+    "topic_en": "Integer cache",
+    "explanation_en": "== compares references. Java reuses Integer objects between -128 and 127 (autoboxing cache); 130 creates distinct objects. To compare values use equals.",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q03",
+    "topic": "Postincremento",
+    "code": "int i = 5;\ni = i++;\nSystem.out.println(i);",
+    "expected": "5",
+    "explanation": "i++ devuelve el valor viejo (5) y luego incrementa i a 6, pero la asignación i = ... escribe ese 5 encima. Resultado: 5.",
+    "topic_en": "Post-increment",
+    "explanation_en": "i++ returns the old value (5) and then increments i to 6, but the assignment i = ... writes that 5 on top. Result: 5.",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q04",
+    "topic": "String pool",
+    "code": "System.out.println(\"Java\".substring(0, 0) == \"\");",
+    "expected": "true",
+    "explanation": "Da true en Java 17/21 porque el substring vacío reutiliza el literal \"\", pero es un detalle de implementación. La lección: nunca compares Strings con ==; usa equals.",
+    "topic_en": "String pool",
+    "explanation_en": "It prints true on Java 17/21 because the empty substring reuses the literal \"\", but it is an implementation detail. The lesson: never compare Strings with ==; use equals.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q05",
+    "topic": "String pool",
+    "code": "String a = \"ab\";\nString b = \"a\" + \"b\";\nString x = \"a\";\nString c = new String(\"ab\");\nString d = x + \"b\";\nSystem.out.println((a == b) + \" \" + (a == c) + \" \" + (a == d) + \" \" + (a == d.intern()));",
+    "expected": "true false false true",
+    "explanation": "\"a\" + \"b\" es una constante en tiempo de compilación y apunta al mismo literal. new String(...) y la concatenación con una variable en ejecución crean objetos nuevos. intern() devuelve el literal del pool.",
+    "topic_en": "String pool",
+    "explanation_en": "\"a\" + \"b\" is a compile-time constant and points to the same literal. new String(...) and concatenation with a variable at run time create new objects. intern() returns the pool literal.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q06",
+    "topic": "Punto flotante",
+    "code": "System.out.println(0.1 + 0.2 == 0.3);\nSystem.out.println(0.1 + 0.2);",
+    "expected": "false\n0.30000000000000004",
+    "explanation": "double usa binario: 0.1 y 0.2 no son exactos. Compara con tolerancia (Math.abs(a - b) < 1e-9) o usa BigDecimal para dinero.",
+    "topic_en": "Floating point",
+    "explanation_en": "double is binary: 0.1 and 0.2 are not exact. Compare with a tolerance (Math.abs(a - b) < 1e-9) or use BigDecimal for money.",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q07",
+    "topic": "char y promoción numérica",
+    "code": "System.out.println('a' + 1);\nchar c = 'a';\nc += 1;\nSystem.out.println(c);",
+    "expected": "98\nb",
+    "explanation": "'a' + 1 promueve a int (97 + 1 = 98). La asignación compuesta c += 1 hace un cast implícito a char, por eso queda 'b'.",
+    "topic_en": "char and numeric promotion",
+    "explanation_en": "'a' + 1 is promoted to int (97 + 1 = 98). The compound assignment c += 1 does an implicit cast to char, so it ends up as 'b'.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q08",
+    "topic": "Colecciones inmutables",
+    "code": "try {\n    List.of(1, 2).add(3);\n} catch (Exception e) {\n    System.out.println(e.getClass().getSimpleName());\n}",
+    "expected": "UnsupportedOperationException",
+    "explanation": "List.of crea una lista inmutable: add, remove o set lanzan UnsupportedOperationException. Arrays.asList tampoco permite agregar ni quitar.",
+    "topic_en": "Immutable collections",
+    "explanation_en": "List.of creates an immutable list: add, remove or set throw UnsupportedOperationException. Arrays.asList does not allow adding or removing either.",
+    "level": "jr",
+    "min_java": 9
+  },
+  {
+    "id": "q09",
+    "topic": "Desbordamiento",
+    "code": "System.out.println(Integer.MAX_VALUE + 1);",
+    "expected": "-2147483648",
+    "explanation": "int no lanza error al desbordar: da la vuelta al mínimo. Para detectarlo usa Math.addExact (lanza ArithmeticException) o long.",
+    "topic_en": "Overflow",
+    "explanation_en": "int does not raise an error on overflow: it wraps around to the minimum. To detect it use Math.addExact (throws ArithmeticException) or long.",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q10",
+    "topic": "try / finally",
+    "code": "static int f() {\n    try {\n        return 1;\n    } finally {\n        System.out.println(\"finally\");\n    }\n}\n\nSystem.out.println(f());",
+    "expected": "finally\n1",
+    "explanation": "finally se ejecuta antes de que el método devuelva el valor. Primero imprime \"finally\" y después main imprime 1.",
+    "topic_en": "try / finally",
+    "explanation_en": "finally runs before the method returns its value. It first prints \"finally\" and then main prints 1.",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q11",
+    "topic": "Math.round",
+    "code": "System.out.println(Math.round(2.5) + \" \" + Math.round(-2.5));",
+    "expected": "3 -2",
+    "explanation": "Math.round redondea hacia +infinito en los empates (floor(x + 0.5)): 2.5 -> 3 y -2.5 -> -2.",
+    "topic_en": "Math.round",
+    "explanation_en": "Math.round rounds toward +infinity on ties (floor(x + 0.5)): 2.5 -> 3 and -2.5 -> -2.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q12",
+    "topic": "Conversión numérica",
+    "code": "System.out.println((byte) 200);",
+    "expected": "-56",
+    "explanation": "byte va de -128 a 127. 200 se trunca a los 8 bits bajos (11001000), que en complemento a dos es -56.",
+    "topic_en": "Numeric conversion",
+    "explanation_en": "byte ranges from -128 to 127. 200 is truncated to the low 8 bits (11001000), which in two's complement is -56.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q13",
+    "topic": "Streams: evaluación perezosa",
+    "code": "Stream.of(1, 2, 3).peek(x -> System.out.print(x)).map(x -> x * 2);\nSystem.out.println(\"done\");",
+    "expected": "done",
+    "explanation": "Las operaciones intermedias (peek, map) no se ejecutan hasta que hay una operación terminal (collect, forEach, count...). Aquí no hay terminal, así que peek nunca imprime.",
+    "topic_en": "Streams: lazy evaluation",
+    "explanation_en": "Intermediate operations (peek, map) do not run until there is a terminal operation (collect, forEach, count...). Here there is none, so peek never prints.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q14",
+    "topic": "Pattern matching (Java 21)",
+    "code": "Object o = 42;\nString r = switch (o) {\n    case Integer i when i > 40 -> \"big\";\n    case Integer i -> \"int\";\n    default -> \"other\";\n};\nSystem.out.println(r);",
+    "expected": "big",
+    "explanation": "Java 21 estabiliza el pattern matching en switch. Los casos se evalúan en orden: 42 es Integer y cumple la guarda i > 40.",
+    "topic_en": "Pattern matching (Java 21)",
+    "explanation_en": "Java 21 finalizes pattern matching in switch. Cases are evaluated in order: 42 is an Integer and satisfies the guard i > 40.",
+    "level": "sr",
+    "min_java": 21
+  },
+  {
+    "id": "q15",
+    "topic": "Records",
+    "code": "record P(int x) {}\n\nP a = new P(1), b = new P(1);\nSystem.out.println(a.equals(b) + \" \" + (a == b) + \" \" + a);",
+    "expected": "true false P[x=1]",
+    "explanation": "Un record genera equals, hashCode y toString por valor, así que equals da true. == sigue comparando referencias (false). toString imprime P[x=1].",
+    "topic_en": "Records",
+    "explanation_en": "A record generates equals, hashCode and toString by value, so equals gives true. == still compares references (false). toString prints P[x=1].",
+    "level": "mid",
+    "min_java": 16
+  },
+  {
+    "id": "q16",
+    "topic": "Unboxing y null",
+    "code": "Integer x = null;\ntry {\n    int y = true ? x : 0;\n} catch (Exception e) {\n    System.out.println(e.getClass().getSimpleName());\n}",
+    "expected": "NullPointerException",
+    "explanation": "En el operador ternario con Integer e int, Java aplica promoción numérica y hace unboxing de x. Como x es null, lanza NullPointerException.",
+    "topic_en": "Unboxing and null",
+    "explanation_en": "In the ternary operator with Integer and int, Java applies numeric promotion and unboxes x. Since x is null, it throws NullPointerException.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q17",
+    "topic": "List.remove",
+    "code": "List<Integer> l = new ArrayList<>(List.of(1, 2, 3));\nl.remove(1);\nSystem.out.println(l);",
+    "expected": "[1, 3]",
+    "explanation": "Con un int literal se llama remove(int index): quita el elemento de la posición 1 (el 2), no el valor 1. Para quitar por valor usa l.remove(Integer.valueOf(1)).",
+    "topic_en": "List.remove",
+    "explanation_en": "With an int literal, remove(int index) is called: it removes the element at position 1 (the 2), not the value 1. To remove by value use l.remove(Integer.valueOf(1)).",
+    "level": "jr",
+    "min_java": 8
+  },
+  {
+    "id": "q18",
+    "topic": "Sequenced collections (Java 21)",
+    "code": "List<Integer> l = List.of(1, 2, 3);\nSystem.out.println(l.reversed() + \" \" + l.getFirst());",
+    "expected": "[3, 2, 1] 1",
+    "explanation": "Java 21 agrega SequencedCollection: reversed(), getFirst() y getLast() en List, Deque, LinkedHashSet, etc.",
+    "topic_en": "Sequenced collections (Java 21)",
+    "explanation_en": "Java 21 adds SequencedCollection: reversed(), getFirst() and getLast() on List, Deque, LinkedHashSet, etc.",
+    "level": "mid",
+    "min_java": 21
+  },
+  {
+    "id": "q19",
+    "topic": "equals y hashCode en arreglos",
+    "code": "Set<int[]> s = new HashSet<>();\ns.add(new int[]{1});\nSystem.out.println(s.contains(new int[]{1}));",
+    "expected": "false",
+    "explanation": "Los arreglos no sobrescriben equals/hashCode: comparan por identidad. Por eso un HashSet<int[]> no encuentra otro arreglo con el mismo contenido. Usa List<Integer> o Arrays.equals/hashCode.",
+    "topic_en": "equals and hashCode on arrays",
+    "explanation_en": "Arrays do not override equals/hashCode: they compare by identity. That is why a HashSet<int[]> does not find another array with the same content. Use List<Integer> or Arrays.equals/hashCode.",
+    "level": "mid",
+    "min_java": 8
+  },
+  {
+    "id": "q20",
+    "topic": "final",
+    "code": "final List<Integer> l = new ArrayList<>();\nl.add(1);\nSystem.out.println(l);",
+    "expected": "[1]",
+    "explanation": "final impide reasignar la referencia, no modificar el objeto. Para una lista realmente inmutable usa List.of o Collections.unmodifiableList.",
+    "topic_en": "final",
+    "explanation_en": "final prevents reassigning the reference, not modifying the object. For a truly immutable list use List.of or Collections.unmodifiableList.",
+    "level": "jr",
+    "min_java": 8
+  }
+]

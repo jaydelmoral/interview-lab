@@ -1,0 +1,24 @@
+Interview Lab
+Copyright 2026 Javier Morales Barrera (@jaydelmoral)
+
+Created together with Claude, an AI assistant developed by Anthropic. Claude is credited as a co-creator
+(see AUTHORS.md); the copyright holder named above is the human author.
+
+This product includes:
+  - Source code, licensed under the Apache License, Version 2.0 (see LICENSE).
+  - Exercises, quiz questions, documentation and the concept bank (problems/, bank/, README*, docs/),
+    licensed under Creative Commons Attribution 4.0 International (see LICENSE-CONTENT.md).
+
+Redistributions of the source code must retain this NOTICE file (Apache-2.0, section 4(d)).
+Reuse of the content must give credit as described in LICENSE-CONTENT.md.
+
+Logos and brand: the Collaboration name, logos and tagline (web/brand/) are NOT licensed under Apache-2.0 or CC BY 4.0;
+all rights reserved by their owner. Replace them when you fork (web/brand/brand.json).
+
+Trademarks: Java and OpenJDK are trademarks or registered trademarks of Oracle and/or its affiliates.
+Spring is a trademark of Broadcom Inc. and/or its subsidiaries. All other names belong to their owners.
+They are used only to identify technologies. This project is independent and is not affiliated with,
+sponsored or endorsed by any of them, nor by any coding-test platform.
+
+The Docker image is built on top of the Eclipse Temurin image (OpenJDK, GPLv2 with Classpath Exception).
+It is downloaded by the user when building; it is not redistributed by this repository.

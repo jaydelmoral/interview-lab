@@ -1,0 +1,78 @@
+{
+  "id": "002-first-non-repeating-char",
+  "title": "First Non-Repeating Character",
+  "class": "Solution",
+  "time_limit_min": 20,
+  "module": "coding",
+  "level": "jr",
+  "language": "java",
+  "min_java": 8,
+  "tags": [
+    "hashmap",
+    "o(n)",
+    "casos-borde",
+    "optional"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "basic",
+      "category": "Problem solving",
+      "title": "Finds the first unique character in simple strings",
+      "points": 50,
+      "fail_why": "Falla en ejemplos simples como 'swiss' -> 'w': error de lógica básico.",
+      "fail_how": "Cuenta cuántas veces aparece cada carácter y luego recorre el texto en orden buscando el primero con conteo 1.",
+      "fail_why_en": "Fails simple examples such as 'swiss' -> 'w': a basic logic error.",
+      "fail_how_en": "Count how many times each character appears, then walk the text in order looking for the first one with count 1."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles null, empty and all-repeated strings",
+      "points": 35,
+      "fail_why": "No maneja null, vacío o texto donde todo se repite (devolvió algo o lanzó una excepción).",
+      "fail_how": "Primera línea: if (s == null || s.isEmpty()) return Optional.empty(); y si al final no hay ninguno, también Optional.empty().",
+      "fail_why_en": "It does not handle null, empty, or text where everything repeats (it returned something or threw).",
+      "fail_how_en": "First line: if (s == null || s.isEmpty()) return Optional.empty(); and if nothing is found at the end, also Optional.empty()."
+    },
+    {
+      "id": "order",
+      "category": "Problem solving",
+      "title": "Returns the first in order of appearance",
+      "points": 35,
+      "fail_why": "Devolvió un carácter único, pero no el primero en orden de aparición (por ejemplo el menor alfabéticamente).",
+      "fail_how": "Un HashMap no conserva orden. Usa LinkedHashMap (orden de inserción) o recorre la cadena original una segunda vez consultando el conteo.",
+      "fail_why_en": "It returned a unique character, but not the first one in order of appearance (for example the alphabetically smallest).",
+      "fail_how_en": "A HashMap does not keep order. Use LinkedHashMap (insertion order) or walk the original string a second time checking the count."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 300,000 characters in reasonable time",
+      "points": 140,
+      "fail_why": "Tu solución es O(n²): compara cada carácter con todos los demás. Con 300 mil caracteres excede el tiempo.",
+      "fail_how": "Dos pasadas O(n): (1) llenar un Map de conteos, (2) recorrer en orden y devolver el primero con conteo 1. Total O(n) tiempo, O(k) espacio con k = caracteres distintos.",
+      "fail_why_en": "Your solution is O(n²): it compares every character with all the others. With 300 thousand characters it exceeds the time limit.",
+      "fail_how_en": "Two O(n) passes: (1) fill a Map of counts, (2) walk in order and return the first with count 1. Total O(n) time, O(k) space with k = distinct characters."
+    },
+    {
+      "id": "collections",
+      "category": "Language knowledge",
+      "title": "Uses a standard collection (Map or counting array)",
+      "points": 40,
+      "fail_why": "El enunciado pide colecciones estándar de Java; no se detectó ningún Map ni arreglo de conteos.",
+      "fail_how": "Map<Character,Integer> con merge(c, 1, Integer::sum) es la forma idiomática. LinkedHashMap si necesitas conservar el orden.",
+      "fail_why_en": "The statement asks for standard Java collections; no Map or counting array was detected.",
+      "fail_how_en": "Map<Character,Integer> with merge(c, 1, Integer::sum) is the idiomatic way. Use LinkedHashMap if you need to keep order."
+    }
+  ],
+  "static_checks": {
+    "collections": "HashMap|LinkedHashMap|Map<|new int\\[|new long\\["
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

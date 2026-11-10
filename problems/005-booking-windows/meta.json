@@ -1,0 +1,77 @@
+{
+  "id": "005-booking-windows",
+  "title": "Merge Booking Windows",
+  "class": "Solution",
+  "time_limit_min": 25,
+  "module": "coding",
+  "level": "mid",
+  "language": "java",
+  "min_java": 8,
+  "domain": "hospitality",
+  "tags": [
+    "sorting",
+    "arrays",
+    "o(n log n)",
+    "hospitality"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example",
+      "points": 40,
+      "fail_why": "Falla el ejemplo del enunciado.",
+      "fail_how": "Ordena por inicio y recorre una sola vez.",
+      "fail_why_en": "The statement's example fails.",
+      "fail_how_en": "Sort by start and walk once."
+    },
+    {
+      "id": "touching",
+      "category": "Reliability",
+      "title": "Merges touching and contained intervals",
+      "points": 45,
+      "fail_why": "No fusiona ventanas que se tocan ([8,10] y [10,12]) o que están contenidas en otra.",
+      "fail_how": "Condición de fusión: inicio_actual <= fin_de_la_última. Al fusionar usa Math.max del fin: una ventana contenida NO debe achicar el fin.",
+      "fail_why_en": "It does not merge windows that touch ([8,10] and [10,12]) or windows contained in another.",
+      "fail_how_en": "Merge condition: current_start <= end_of_last. When merging use Math.max on the end: a contained window must NOT shrink the end."
+    },
+    {
+      "id": "unsorted",
+      "category": "Problem solving",
+      "title": "Works when the input is not sorted",
+      "points": 45,
+      "fail_why": "Asumiste que la entrada viene ordenada. No lo dice el enunciado.",
+      "fail_how": "Arrays.sort(windows, Comparator.comparingInt(a -> a[0])) como primer paso. Cuesta O(n log n) y es lo que domina la complejidad total.",
+      "fail_why_en": "You assumed the input is sorted. The statement does not say so.",
+      "fail_how_en": "Arrays.sort(windows, Comparator.comparingInt(a -> a[0])) as the first step. It costs O(n log n) and dominates the total complexity."
+    },
+    {
+      "id": "empty",
+      "category": "Reliability",
+      "title": "Handles empty input and a single interval",
+      "points": 30,
+      "fail_why": "Falla con arreglo vacío o con una sola ventana.",
+      "fail_how": "if (windows.length == 0) return new int[0][]; y revisa el caso de resultado vacío antes de leer su último elemento.",
+      "fail_why_en": "Fails with an empty array or a single window.",
+      "fail_how_en": "if (windows.length == 0) return new int[0][]; and check for an empty result before reading its last element."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n log n): works with 200,000 intervals in reasonable time",
+      "points": 140,
+      "fail_why": "Comparar cada ventana con todas las demás es O(n²).",
+      "fail_how": "Sort + un solo recorrido: O(n log n) tiempo. Tip Java 21: List.getLast() para la última ventana fusionada.",
+      "fail_why_en": "Comparing every window with all the others is O(n²).",
+      "fail_how_en": "Sort + a single pass: O(n log n) time. Java 21 tip: List.getLast() for the last merged window."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

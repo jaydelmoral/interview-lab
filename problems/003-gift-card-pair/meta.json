@@ -1,0 +1,76 @@
+{
+  "id": "003-gift-card-pair",
+  "title": "Gift Card Pairing",
+  "class": "Solution",
+  "time_limit_min": 20,
+  "module": "coding",
+  "level": "jr",
+  "language": "java",
+  "min_java": 8,
+  "domain": "ecommerce",
+  "tags": [
+    "hashmap",
+    "o(n)",
+    "ecommerce"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "example",
+      "category": "Problem solving",
+      "title": "Works with the example",
+      "points": 40,
+      "fail_why": "Ni el ejemplo del enunciado funciona.",
+      "fail_how": "Traza a mano {1200,350,899,4500} con saldo 1550 antes de enviar.",
+      "fail_why_en": "Not even the statement's example works.",
+      "fail_how_en": "Trace {1200,350,899,4500} with balance 1550 by hand before submitting."
+    },
+    {
+      "id": "duplicates",
+      "category": "Reliability",
+      "title": "Does not reuse the same index (e.g. [500,500] with balance 1000)",
+      "points": 45,
+      "fail_why": "Reutilizas el mismo elemento dos veces, o fallas con valores repetidos.",
+      "fail_how": "En el HashMap guarda el elemento DESPUÉS de revisar si existe su complemento; así nunca te encuentras a ti mismo.",
+      "fail_why_en": "You reuse the same element twice, or you fail with repeated values.",
+      "fail_how_en": "In the HashMap, store the element AFTER checking whether its complement exists; that way you never find yourself."
+    },
+    {
+      "id": "negatives",
+      "category": "Reliability",
+      "title": "Works with negative numbers",
+      "points": 35,
+      "fail_why": "Falla con negativos o saldo cero.",
+      "fail_how": "No asumas valores positivos ni ordenados; el complemento target - x puede ser negativo. Con HashMap no importa.",
+      "fail_why_en": "Fails with negative numbers or a zero balance.",
+      "fail_how_en": "Do not assume positive or sorted values; the complement balance - x can be negative. With a HashMap it does not matter."
+    },
+    {
+      "id": "nosolution",
+      "category": "Reliability",
+      "title": "Throws IllegalArgumentException when there is no solution",
+      "points": 30,
+      "fail_why": "No lanzaste IllegalArgumentException cuando no hay solución (devolviste null, [] u otra cosa).",
+      "fail_how": "Al terminar el ciclo: throw new IllegalArgumentException(\"No solution\"). Las reglas del enunciado son parte del contrato.",
+      "fail_why_en": "You did not throw IllegalArgumentException when there is no solution (you returned null, [] or something else).",
+      "fail_how_en": "After the loop: throw new IllegalArgumentException(\"No solution\"). The rules in the statement are part of the contract."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 200,000 elements in reasonable time",
+      "points": 140,
+      "fail_why": "Dos ciclos anidados son O(n²): con 200 mil elementos son 20 mil millones de comparaciones.",
+      "fail_how": "Un solo pase con HashMap complemento -> índice: O(n) tiempo y O(n) espacio. Intercambias memoria por velocidad.",
+      "fail_why_en": "Two nested loops are O(n²): with 200 thousand elements that is 20 billion comparisons.",
+      "fail_how_en": "A single pass with a HashMap complement -> index: O(n) time and O(n) space. You trade memory for speed."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

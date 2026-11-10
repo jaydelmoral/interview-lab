@@ -1,0 +1,208 @@
+[
+  {
+    "id": "devops-001",
+    "type": "mcq",
+    "module": "devops",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "docker"
+    ],
+    "q": {
+      "en": "What is the difference between a Docker image and a container?",
+      "es": "¿Cuál es la diferencia entre una imagen y un contenedor de Docker?"
+    },
+    "options": [
+      {
+        "en": "An image is a read-only template; a container is a running instance of it",
+        "es": "La imagen es una plantilla de solo lectura; el contenedor es una instancia en ejecución de ella"
+      },
+      {
+        "en": "They are the same thing",
+        "es": "Son lo mismo"
+      },
+      {
+        "en": "A container is a file and an image is a process",
+        "es": "El contenedor es un archivo y la imagen es un proceso"
+      },
+      {
+        "en": "An image only exists in the cloud",
+        "es": "La imagen solo existe en la nube"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "You can start many containers from one image. Data written inside a container is lost unless you use volumes.",
+      "es": "Puedes iniciar muchos contenedores desde una imagen. Lo que se escribe dentro del contenedor se pierde si no usas volúmenes."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "devops-002",
+    "type": "mcq",
+    "module": "devops",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "ci-cd"
+    ],
+    "q": {
+      "en": "What does continuous integration (CI) mainly ensure?",
+      "es": "¿Qué asegura principalmente la integración continua (CI)?"
+    },
+    "options": [
+      {
+        "en": "Every change is merged often and automatically built and tested",
+        "es": "Cada cambio se integra con frecuencia y se compila y prueba automáticamente"
+      },
+      {
+        "en": "Every change is deployed to production without review",
+        "es": "Cada cambio se despliega a producción sin revisión"
+      },
+      {
+        "en": "Servers never fail",
+        "es": "Los servidores nunca fallan"
+      },
+      {
+        "en": "Code is written by one person",
+        "es": "El código lo escribe una sola persona"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "CI gives fast feedback about broken builds and tests. Continuous delivery/deployment extends it to release.",
+      "es": "CI da retroalimentación rápida sobre compilaciones y pruebas rotas. La entrega/despliegue continuo lo extiende hasta el lanzamiento."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "devops-003",
+    "type": "mcq",
+    "module": "devops",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "kubernetes"
+    ],
+    "q": {
+      "en": "In Kubernetes, which object keeps the desired number of identical pods running (behind a Deployment)?",
+      "es": "En Kubernetes, ¿qué objeto mantiene el número deseado de pods idénticos en ejecución (detrás de un Deployment)?"
+    },
+    "options": [
+      {
+        "en": "ReplicaSet",
+        "es": "ReplicaSet"
+      },
+      {
+        "en": "Service",
+        "es": "Service"
+      },
+      {
+        "en": "Ingress",
+        "es": "Ingress"
+      },
+      {
+        "en": "ConfigMap",
+        "es": "ConfigMap"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "A Deployment manages ReplicaSets, which recreate pods that die. A Service gives pods a stable network address.",
+      "es": "Un Deployment administra ReplicaSets, que recrean los pods que mueren. Un Service da a los pods una dirección de red estable."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "devops-004",
+    "type": "mcq",
+    "module": "devops",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "kubernetes",
+      "probes"
+    ],
+    "q": {
+      "en": "What is the difference between a liveness probe and a readiness probe?",
+      "es": "¿Cuál es la diferencia entre una liveness probe y una readiness probe?"
+    },
+    "options": [
+      {
+        "en": "Liveness decides whether to restart the container; readiness decides whether it receives traffic",
+        "es": "Liveness decide si se reinicia el contenedor; readiness decide si recibe tráfico"
+      },
+      {
+        "en": "They are the same",
+        "es": "Son lo mismo"
+      },
+      {
+        "en": "Readiness restarts the pod",
+        "es": "Readiness reinicia el pod"
+      },
+      {
+        "en": "Liveness controls the CPU",
+        "es": "Liveness controla la CPU"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "A pod can be alive but not ready (for example warming up or waiting for a database). Readiness removes it from the Service endpoints without killing it.",
+      "es": "Un pod puede estar vivo pero no listo (por ejemplo calentando o esperando una base de datos). Readiness lo saca de los endpoints del Service sin matarlo."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "devops-005",
+    "type": "mcq",
+    "module": "devops",
+    "level": "sr",
+    "lang": "any",
+    "tags": [
+      "deployment"
+    ],
+    "q": {
+      "en": "What is the main advantage of a blue/green deployment?",
+      "es": "¿Cuál es la principal ventaja de un despliegue blue/green?"
+    },
+    "options": [
+      {
+        "en": "Near-instant switch and rollback by changing which environment receives traffic",
+        "es": "Cambio y reversión casi instantáneos al cambiar qué ambiente recibe el tráfico"
+      },
+      {
+        "en": "It uses half the servers",
+        "es": "Usa la mitad de los servidores"
+      },
+      {
+        "en": "It needs no testing",
+        "es": "No requiere pruebas"
+      },
+      {
+        "en": "It avoids database migrations",
+        "es": "Evita las migraciones de base de datos"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "The cost is running two environments, and database schema changes still need backward-compatible migrations.",
+      "es": "El costo es operar dos ambientes y los cambios de esquema de base de datos aún requieren migraciones compatibles hacia atrás."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  }
+]

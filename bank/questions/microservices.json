@@ -1,0 +1,208 @@
+[
+  {
+    "id": "microservices-001",
+    "type": "mcq",
+    "module": "microservices",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "gateway"
+    ],
+    "q": {
+      "en": "What is the main role of an API gateway?",
+      "es": "¿Cuál es el rol principal de un API gateway?"
+    },
+    "options": [
+      {
+        "en": "Single entry point that routes requests and applies cross-cutting concerns such as authentication and rate limiting",
+        "es": "Punto de entrada único que enruta las peticiones y aplica aspectos transversales como autenticación y límite de tasa"
+      },
+      {
+        "en": "Store the data of every service",
+        "es": "Guardar los datos de todos los servicios"
+      },
+      {
+        "en": "Compile the services",
+        "es": "Compilar los servicios"
+      },
+      {
+        "en": "Replace the database",
+        "es": "Reemplazar la base de datos"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "It hides the internal topology from clients and centralizes routing, security and throttling.",
+      "es": "Oculta la topología interna a los clientes y centraliza enrutamiento, seguridad y limitación de tráfico."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "microservices-002",
+    "type": "mcq",
+    "module": "microservices",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "resilience",
+      "circuit-breaker"
+    ],
+    "q": {
+      "en": "In a circuit breaker, which state lets a few trial calls through to test recovery?",
+      "es": "En un circuit breaker, ¿qué estado deja pasar unas pocas llamadas de prueba para verificar la recuperación?"
+    },
+    "options": [
+      {
+        "en": "Half-open",
+        "es": "Semiabierto (half-open)"
+      },
+      {
+        "en": "Closed",
+        "es": "Cerrado"
+      },
+      {
+        "en": "Open",
+        "es": "Abierto"
+      },
+      {
+        "en": "Idle",
+        "es": "Inactivo"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Closed = normal; Open = fail fast; Half-open = limited trial calls: if they succeed it closes, otherwise it opens again.",
+      "es": "Cerrado = normal; Abierto = falla rápido; Semiabierto = llamadas de prueba limitadas: si tienen éxito se cierra, si no se abre de nuevo."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "microservices-003",
+    "type": "mcq",
+    "module": "microservices",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "idempotency"
+    ],
+    "q": {
+      "en": "Why should a payment endpoint accept an idempotency key?",
+      "es": "¿Por qué un endpoint de pagos debe aceptar una llave de idempotencia?"
+    },
+    "options": [
+      {
+        "en": "So a client can safely retry without charging twice",
+        "es": "Para que el cliente pueda reintentar sin cobrar dos veces"
+      },
+      {
+        "en": "To make the request faster",
+        "es": "Para que la petición sea más rápida"
+      },
+      {
+        "en": "To encrypt the body",
+        "es": "Para cifrar el cuerpo"
+      },
+      {
+        "en": "To avoid authentication",
+        "es": "Para evitar la autenticación"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Networks fail and clients retry. The server remembers the key and returns the original result instead of repeating the side effect.",
+      "es": "Las redes fallan y los clientes reintentan. El servidor recuerda la llave y devuelve el resultado original en lugar de repetir el efecto."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "microservices-004",
+    "type": "mcq",
+    "module": "microservices",
+    "level": "sr",
+    "lang": "any",
+    "tags": [
+      "saga"
+    ],
+    "q": {
+      "en": "In a saga, step 3 of 5 fails. What should happen?",
+      "es": "En una saga, falla el paso 3 de 5. ¿Qué debe ocurrir?"
+    },
+    "options": [
+      {
+        "en": "Run compensating actions for the steps already completed",
+        "es": "Ejecutar acciones compensatorias de los pasos ya completados"
+      },
+      {
+        "en": "Do a distributed two-phase lock on everything",
+        "es": "Hacer un bloqueo distribuido de dos fases sobre todo"
+      },
+      {
+        "en": "Ignore the failure",
+        "es": "Ignorar el fallo"
+      },
+      {
+        "en": "Restart the database",
+        "es": "Reiniciar la base de datos"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "A saga replaces a distributed ACID transaction with local transactions plus compensations (for example refund the payment, release the stock).",
+      "es": "Una saga reemplaza una transacción ACID distribuida con transacciones locales más compensaciones (por ejemplo reembolsar el pago, liberar el inventario)."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "microservices-005",
+    "type": "mcq",
+    "module": "microservices",
+    "level": "sr",
+    "lang": "any",
+    "tags": [
+      "cap"
+    ],
+    "q": {
+      "en": "During a network partition, the CAP theorem says a distributed data store must choose between:",
+      "es": "Durante una partición de red, el teorema CAP dice que un almacén de datos distribuido debe elegir entre:"
+    },
+    "options": [
+      {
+        "en": "Consistency and availability",
+        "es": "Consistencia y disponibilidad"
+      },
+      {
+        "en": "Speed and cost",
+        "es": "Velocidad y costo"
+      },
+      {
+        "en": "Security and privacy",
+        "es": "Seguridad y privacidad"
+      },
+      {
+        "en": "Latency and throughput",
+        "es": "Latencia y rendimiento"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Partitions happen, so the real trade-off is C or A when one occurs: refuse some requests (consistency) or answer possibly stale data (availability).",
+      "es": "Las particiones ocurren, así que el dilema real es C o A cuando sucede una: rechazar peticiones (consistencia) o responder datos posiblemente desactualizados (disponibilidad)."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  }
+]

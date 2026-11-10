@@ -1,0 +1,77 @@
+{
+  "id": "001-seat-lookup",
+  "title": "Booked Seat Lookup",
+  "class": "Solution",
+  "signature": "static boolean isBooked(int[] seats, int seat)",
+  "time_limit_min": 20,
+  "module": "coding",
+  "level": "jr",
+  "language": "java",
+  "min_java": 8,
+  "tags": [
+    "binary-search",
+    "big-o",
+    "edge-cases",
+    "standard-api",
+    "airline"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "small",
+      "category": "Problem solving",
+      "title": "The solution works with a small array",
+      "points": 55,
+      "fail_why": "Ni el ejemplo del enunciado pasa: hay un error de lógica básico.",
+      "fail_how": "Ejecuta a mano el ejemplo {12,18,33,47} con los asientos 33 y 20 antes de entregar.",
+      "fail_why_en": "Not even the statement's example passes: there is a basic logic error.",
+      "fail_how_en": "Trace the example {12,18,33,47} by hand with seats 33 and 20 before submitting."
+    },
+    {
+      "id": "empty",
+      "category": "Reliability",
+      "title": "The solution works when no seat is booked yet (empty array)",
+      "points": 35,
+      "fail_why": "El arreglo puede venir vacío (el enunciado solo garantiza que no es null). Accedes a seats[0] o seats[mid] sin revisar el largo y se lanza ArrayIndexOutOfBoundsException.",
+      "fail_how": "Primera línea de todo método con arreglos: if (seats.length == 0) return false; Antes de escribir lógica, pregúntate: ¿qué pasa con 0 elementos, 1 elemento, un valor menor que el mínimo y uno mayor que el máximo?",
+      "fail_why_en": "The array can be empty (the statement only guarantees it is not null). You access seats[0] or seats[mid] without checking the length and an ArrayIndexOutOfBoundsException is thrown.",
+      "fail_how_en": "First line of any array method: if (seats.length == 0) return false; Before writing logic, ask yourself: what happens with 0 items, 1 item, a value below the minimum and a value above the maximum?"
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "The solution stays fast with one million seats and many queries",
+      "points": 140,
+      "fail_why": "Tu solución recorre el arreglo con un for lineal: es O(n). Con 1 millón de elementos y muchas consultas, se pasa del tiempo. No aprovechaste que el arreglo está ordenado.",
+      "fail_how": "Patrón del enunciado: 'ordenado ascendente' + 'hasta 1 millón' + 'ahorra ciclos de CPU' = búsqueda binaria, O(log n) (unas 20 comparaciones en vez de 1,000,000). Divide el rango [lo, hi] a la mitad en cada paso y descarta la mitad donde el valor no puede estar.",
+      "fail_why_en": "Your solution walks the array with a linear for: it is O(n). With 1 million items and many queries it exceeds the time limit. You did not take advantage of the array being sorted.",
+      "fail_how_en": "Statement pattern: 'sorted ascending' + 'up to 1 million' + 'save CPU cycles' = binary search, O(log n) (about 20 comparisons instead of 1,000,000). Halve the [lo, hi] range at every step and discard the half where the value cannot be."
+    },
+    {
+      "id": "first",
+      "category": "Reliability",
+      "title": "The solution handles the first seat, the last seat and values outside the range",
+      "points": 35,
+      "fail_why": "Falla en los extremos: el valor es el primer o el último elemento, o está fuera del rango del arreglo.",
+      "fail_how": "En búsqueda binaria revisa los límites: while (lo <= hi) (con <=, no <), mid = lo + (hi - lo) / 2, y mueve lo = mid + 1 o hi = mid - 1 para no caer en un ciclo infinito.",
+      "fail_why_en": "It fails at the extremes: the value is the first or last element, or it is outside the array's range.",
+      "fail_how_en": "In binary search check the bounds: while (lo <= hi) (with <=, not <), mid = lo + (hi - lo) / 2, and move lo = mid + 1 or hi = mid - 1 so you do not loop forever."
+    },
+    {
+      "id": "api",
+      "category": "Language knowledge",
+      "title": "The solution uses the standard library for the search",
+      "points": 60,
+      "fail_why": "La prueba espera que uses la API estándar de Java en lugar de reinventar la búsqueda.",
+      "fail_how": "Conoce java.util.Arrays: Arrays.binarySearch(int[], int) devuelve el índice si lo encuentra y un valor negativo si no. La solución completa: return Arrays.binarySearch(seats, seat) >= 0; En entrevista di en voz alta: 'usaría la API estándar, que es O(log n) y está probada'.",
+      "fail_why_en": "The test expects you to use Java's standard API instead of reinventing the search.",
+      "fail_how_en": "Know java.util.Arrays: Arrays.binarySearch(int[], int) returns the index if found and a negative value if not. The full solution: return Arrays.binarySearch(seats, seat) >= 0; In an interview say out loud: 'I would use the standard API, which is O(log n) and well tested'."
+    }
+  ],
+  "static_checks": {
+    "api": "Arrays\\.binarySearch|Collections\\.binarySearch"
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

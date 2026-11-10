@@ -1,0 +1,21 @@
+# docker compose up --build      ->  open http://localhost:8765
+# Your problems go in ./workspace/problems and your results in ./workspace/runs (created on first run).
+services:
+  interview-lab:
+    build: .
+    image: interview-lab
+    ports:
+      - "127.0.0.1:8765:8765"   # only this computer can reach it. Do NOT change to 0.0.0.0:8765
+    volumes:
+      - ./workspace:/data
+    read_only: true              # the container filesystem is read-only...
+    tmpfs:
+      - /tmp:size=256m,exec      # ...except a scratch area where the code is compiled (exec: needed by javac/java)
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: 2.0
+    user: "${ILAB_UID:-1000}:${ILAB_GID:-1000}"   # so the container can write to ./workspace (Linux: ILAB_UID=$(id -u) ILAB_GID=$(id -g))
+    restart: unless-stopped

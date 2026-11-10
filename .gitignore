@@ -1,0 +1,12 @@
+# Your personal data never goes to git / Tus datos personales nunca van a git
+workspace/*
+!workspace/README.md
+runs/
+__pycache__/
+*.class
+.env
+.DS_Store
+
+# Content packs are separate (private) repositories; never commit them here / Los paquetes son repos aparte
+packs/*
+!packs/README.md

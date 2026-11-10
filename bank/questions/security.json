@@ -1,0 +1,207 @@
+[
+  {
+    "id": "security-001",
+    "type": "mcq",
+    "module": "security",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "injection"
+    ],
+    "q": {
+      "en": "What is the primary defense against SQL injection?",
+      "es": "¿Cuál es la defensa principal contra la inyección SQL?"
+    },
+    "options": [
+      {
+        "en": "Parameterized queries (prepared statements)",
+        "es": "Consultas parametrizadas (prepared statements)"
+      },
+      {
+        "en": "Hiding the table names",
+        "es": "Ocultar los nombres de las tablas"
+      },
+      {
+        "en": "Using longer passwords",
+        "es": "Usar contraseñas más largas"
+      },
+      {
+        "en": "Disabling the firewall",
+        "es": "Desactivar el firewall"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Parameters keep data separate from the SQL text, so input is never executed as code. Input validation and least privilege add depth.",
+      "es": "Los parámetros separan los datos del texto SQL, así la entrada nunca se ejecuta como código. La validación y el mínimo privilegio suman capas."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "security-002",
+    "type": "mcq",
+    "module": "security",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "xss"
+    ],
+    "q": {
+      "en": "What is cross-site scripting (XSS)?",
+      "es": "¿Qué es el cross-site scripting (XSS)?"
+    },
+    "options": [
+      {
+        "en": "Injecting script that runs in another user's browser; mitigated with output encoding and a Content Security Policy",
+        "es": "Inyectar un script que se ejecuta en el navegador de otro usuario; se mitiga con codificación de salida y una Content Security Policy"
+      },
+      {
+        "en": "Copying a website's CSS",
+        "es": "Copiar el CSS de un sitio"
+      },
+      {
+        "en": "A database backup method",
+        "es": "Un método de respaldo de bases de datos"
+      },
+      {
+        "en": "A Java compiler error",
+        "es": "Un error del compilador de Java"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Always encode untrusted data for the context where it is rendered (HTML, attribute, JavaScript, URL).",
+      "es": "Codifica siempre los datos no confiables para el contexto donde se muestran (HTML, atributo, JavaScript, URL)."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "security-003",
+    "type": "mcq",
+    "module": "security",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "jwt"
+    ],
+    "q": {
+      "en": "A standard signed JWT (JWS) payload is:",
+      "es": "El payload de un JWT firmado estándar (JWS) es:"
+    },
+    "options": [
+      {
+        "en": "Readable by anyone who has the token (signed, not encrypted), so never put secrets in it",
+        "es": "Legible por cualquiera que tenga el token (firmado, no cifrado), por lo que nunca debes poner secretos en él"
+      },
+      {
+        "en": "Encrypted with AES by default",
+        "es": "Cifrado con AES por defecto"
+      },
+      {
+        "en": "Always stored on the server",
+        "es": "Siempre guardado en el servidor"
+      },
+      {
+        "en": "Impossible to modify, so signatures are unnecessary",
+        "es": "Imposible de modificar, por lo que la firma sobra"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "The signature proves integrity, not secrecy. Base64url is an encoding, not encryption. Use JWE or opaque tokens if you need confidentiality.",
+      "es": "La firma prueba integridad, no secreto. Base64url es una codificación, no cifrado. Usa JWE o tokens opacos si necesitas confidencialidad."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "security-004",
+    "type": "mcq",
+    "module": "security",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "oauth"
+    ],
+    "q": {
+      "en": "Which OAuth 2.0 flow is recommended for single-page and mobile (public) clients?",
+      "es": "¿Qué flujo de OAuth 2.0 se recomienda para clientes públicos de una sola página y móviles?"
+    },
+    "options": [
+      {
+        "en": "Authorization code with PKCE",
+        "es": "Código de autorización con PKCE"
+      },
+      {
+        "en": "Implicit flow",
+        "es": "Flujo implícito"
+      },
+      {
+        "en": "Password (resource owner) grant",
+        "es": "Concesión por contraseña"
+      },
+      {
+        "en": "Client credentials",
+        "es": "Credenciales de cliente"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Public clients cannot keep a secret; PKCE binds the code to the client that requested it. The implicit and password flows are discouraged.",
+      "es": "Los clientes públicos no pueden guardar un secreto; PKCE vincula el código con el cliente que lo pidió. Los flujos implícito y de contraseña están desaconsejados."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "security-005",
+    "type": "mcq",
+    "module": "security",
+    "level": "sr",
+    "lang": "any",
+    "tags": [
+      "passwords"
+    ],
+    "q": {
+      "en": "How should user passwords be stored?",
+      "es": "¿Cómo deben almacenarse las contraseñas de los usuarios?"
+    },
+    "options": [
+      {
+        "en": "Hashed with a slow, salted algorithm such as bcrypt, scrypt or Argon2",
+        "es": "Con hash usando un algoritmo lento y con sal, como bcrypt, scrypt o Argon2"
+      },
+      {
+        "en": "Encrypted with a key kept next to the database",
+        "es": "Cifradas con una llave guardada junto a la base de datos"
+      },
+      {
+        "en": "With plain SHA-256 and no salt",
+        "es": "Con SHA-256 simple y sin sal"
+      },
+      {
+        "en": "In plain text, protected by the firewall",
+        "es": "En texto plano, protegidas por el firewall"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Slow hashes make brute force expensive and per-user salts defeat rainbow tables. Reversible encryption lets an attacker recover every password at once.",
+      "es": "Los hashes lentos encarecen la fuerza bruta y la sal por usuario anula las tablas arcoíris. El cifrado reversible permite recuperar todas las contraseñas de golpe."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  }
+]

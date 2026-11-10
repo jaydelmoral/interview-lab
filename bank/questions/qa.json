@@ -1,0 +1,208 @@
+[
+  {
+    "id": "qa-001",
+    "type": "mcq",
+    "module": "qa",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "tdd"
+    ],
+    "q": {
+      "en": "In test-driven development (TDD), what is the order of the basic cycle?",
+      "es": "En desarrollo guiado por pruebas (TDD), ¿cuál es el orden del ciclo básico?"
+    },
+    "options": [
+      {
+        "en": "Red, Green, Refactor",
+        "es": "Rojo, Verde, Refactorizar"
+      },
+      {
+        "en": "Green, Red, Refactor",
+        "es": "Verde, Rojo, Refactorizar"
+      },
+      {
+        "en": "Refactor, Red, Green",
+        "es": "Refactorizar, Rojo, Verde"
+      },
+      {
+        "en": "Design, Code, Test",
+        "es": "Diseñar, Codificar, Probar"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "You first write a failing test (red), then the minimum code to pass it (green), and finally improve the design without changing behavior (refactor).",
+      "es": "Primero escribes una prueba que falla (rojo), luego el mínimo código para que pase (verde) y al final mejoras el diseño sin cambiar el comportamiento (refactorizar)."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "qa-002",
+    "type": "mcq",
+    "module": "qa",
+    "level": "jr",
+    "lang": "any",
+    "tags": [
+      "bdd",
+      "gherkin"
+    ],
+    "q": {
+      "en": "Which keywords structure a scenario in Gherkin (BDD)?",
+      "es": "¿Qué palabras clave estructuran un escenario en Gherkin (BDD)?"
+    },
+    "options": [
+      {
+        "en": "Given / When / Then",
+        "es": "Given / When / Then (Dado / Cuando / Entonces)"
+      },
+      {
+        "en": "Setup / Run / Assert",
+        "es": "Setup / Run / Assert"
+      },
+      {
+        "en": "If / Then / Else",
+        "es": "If / Then / Else"
+      },
+      {
+        "en": "Before / During / After",
+        "es": "Before / During / After"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Given sets the context, When describes the action and Then states the expected outcome. And/But extend a step.",
+      "es": "Given fija el contexto, When describe la acción y Then el resultado esperado. And/But extienden un paso."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "qa-003",
+    "type": "mcq",
+    "module": "qa",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "mockito"
+    ],
+    "q": {
+      "en": "In Mockito, what is the main difference between a mock and a spy?",
+      "es": "En Mockito, ¿cuál es la diferencia principal entre un mock y un spy?"
+    },
+    "options": [
+      {
+        "en": "A spy wraps a real object and calls real methods unless you stub them; a mock replaces all behavior with defaults",
+        "es": "Un spy envuelve un objeto real y llama a sus métodos reales salvo que los configures; un mock reemplaza todo el comportamiento con valores por defecto"
+      },
+      {
+        "en": "A mock calls real methods and a spy does not",
+        "es": "Un mock llama a los métodos reales y un spy no"
+      },
+      {
+        "en": "They are the same; spy is the old name",
+        "es": "Son lo mismo; spy es el nombre antiguo"
+      },
+      {
+        "en": "A spy can only be used with interfaces",
+        "es": "Un spy solo se puede usar con interfaces"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Use a mock to isolate a collaborator completely; use a spy only when you need real behavior with a few overridden methods (it is often a design smell).",
+      "es": "Usa un mock para aislar por completo a un colaborador; usa un spy solo si necesitas comportamiento real con pocos métodos sobrescritos (suele ser señal de mal diseño)."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "qa-004",
+    "type": "mcq",
+    "module": "qa",
+    "level": "mid",
+    "lang": "any",
+    "tags": [
+      "pyramid"
+    ],
+    "q": {
+      "en": "According to the test pyramid, which kind of tests should be the most numerous?",
+      "es": "Según la pirámide de pruebas, ¿qué tipo de pruebas debe haber en mayor cantidad?"
+    },
+    "options": [
+      {
+        "en": "Unit tests",
+        "es": "Pruebas unitarias"
+      },
+      {
+        "en": "End-to-end UI tests",
+        "es": "Pruebas de UI de extremo a extremo"
+      },
+      {
+        "en": "Manual exploratory tests",
+        "es": "Pruebas exploratorias manuales"
+      },
+      {
+        "en": "Load tests",
+        "es": "Pruebas de carga"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Unit tests are fast, cheap and precise, so they form the base. Integration tests are fewer and end-to-end tests are the fewest because they are slow and brittle.",
+      "es": "Las unitarias son rápidas, baratas y precisas, por eso forman la base. Las de integración son menos y las de extremo a extremo son las menos porque son lentas y frágiles."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  },
+  {
+    "id": "qa-005",
+    "type": "mcq",
+    "module": "qa",
+    "level": "sr",
+    "lang": "any",
+    "tags": [
+      "flaky"
+    ],
+    "q": {
+      "en": "A test passes or fails randomly with no code change. What is the best first response?",
+      "es": "Una prueba pasa o falla al azar sin cambios en el código. ¿Cuál es la mejor primera respuesta?"
+    },
+    "options": [
+      {
+        "en": "Quarantine it and find the root cause (shared state, time, async waits, ordering)",
+        "es": "Ponerla en cuarentena y buscar la causa raíz (estado compartido, tiempo, esperas asíncronas, orden)"
+      },
+      {
+        "en": "Re-run the pipeline until it is green",
+        "es": "Volver a correr el pipeline hasta que salga en verde"
+      },
+      {
+        "en": "Double every timeout",
+        "es": "Duplicar todos los timeouts"
+      },
+      {
+        "en": "Delete the test",
+        "es": "Borrar la prueba"
+      }
+    ],
+    "answer": [
+      0
+    ],
+    "explain": {
+      "en": "Retrying hides the problem. Isolate it so it does not block the team, then fix the cause: shared state, clocks, race conditions or test order dependence.",
+      "es": "Reintentar esconde el problema. Aíslala para no bloquear al equipo y corrige la causa: estado compartido, relojes, condiciones de carrera o dependencia del orden."
+    },
+    "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+    "license": "CC-BY-4.0"
+  }
+]

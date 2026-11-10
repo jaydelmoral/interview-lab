@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interview Lab</title>
+<meta name="color-scheme" content="dark light">
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/common.css">
+</head>
+<body>
+<div id="appbar"></div>
+<div class="wrap" style="padding-bottom:0">
+  <div class="card runbar">
+    <select id="sel" aria-label="Problem" style="min-width:260px;max-width:100%"></select>
+    <div class="row" style="margin:0"><span class="timer" id="timer">--:--</span><button id="startBtn"></button></div>
+  </div>
+</div>
+
+<div class="wrap" style="padding-top:0"><main class="practice">
+  <section>
+    <div class="card statement" id="statementCard">
+      <div class="toolbar" id="toolbar" style="display:none">
+        <button id="trBtn"></button>
+        <label id="hoverLbl"><input type="checkbox" id="hoverChk"> <span id="hoverTxt"></span></label>
+        <span class="badge" id="srcBadge"></span>
+      </div>
+      <div id="statement"><p class="muted">…</p></div>
+    </div>
+    <div class="card" id="testsCard" style="margin-top:14px">
+      <h2 id="hTests"></h2>
+      <ul class="tests" id="testList"></ul>
+      <p class="muted" id="testsNote"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="card" id="quizCard" style="display:none"></div>
+    <div class="card" id="editorCard">
+      <h2 id="hCode"></h2>
+      <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Code editor"></textarea>
+      <div class="row">
+        <button class="primary" id="submitBtn"></button>
+        <button id="resetBtn"></button>
+        <span class="muted" id="status"></span>
+      </div>
+    </div>
+    <div class="card" id="result" style="margin-top:14px;display:none"></div>
+    <div class="card hist" id="history" style="margin-top:14px;display:none"></div>
+  </section>
+</main></div>
+<div id="tip" role="tooltip"></div>
+<footer id="foot"></footer>
+
+<script src="/common.js"></script>
+<script>
+const I18N = {
+  es: {
+    start: 'Iniciar prueba', restart: 'Reiniciar tiempo', hTests: 'Pruebas ocultas',
+    testsNote: 'Ves los nombres de las pruebas, no el resultado, hasta enviar.',
+    hCode: 'Tu código (sin autocompletar, sin IDE)', submit: 'Enviar y calificar', reset: 'Restaurar plantilla',
+    resetConfirm: '¿Borrar tu código y restaurar la plantilla?', running: 'Compilando y ejecutando pruebas…',
+    timeUp: 'Se acabó el tiempo: envía lo que tengas.', attempts: 'Tus intentos', result: 'Resultado',
+    timeUsed: 'Tiempo usado', min: 'min', sec: 's', noCompile: 'No compiló.',
+    noCompileHint: 'Una solución que no compila vale 0. Lee el primer error: dice línea y causa.',
+    why: 'Por qué falló', how: 'Cómo mejorar', next: 'Siguiente paso:',
+    nextOk: 'explica tu solución en voz alta, en inglés, en 60 segundos: qué hace, su complejidad Big O y los casos borde que cubriste.',
+    nextBad: 'Antes de reenviar: escribe en una línea qué cambiarás y por qué. Si no puedes decirlo, aún no entiendes el fallo.',
+    translate: '🌐 Convertir al español para mayor ayuda', original: '🌐 Ver el original en inglés',
+    hover: 'Traducir al pasar el cursor', noTr: 'Este problema no tiene traducción (falta problem.es.md)',
+    quizIntro: 'Escribe exactamente lo que imprimirá cada fragmento, o el nombre de la excepción si lanza una. Sin ejecutar nada, como en una llamada técnica. Si imprime varias líneas, escribe una por línea.',
+    yourAnswer: 'Tu respuesta', verify: 'Verificar respuestas', verifying: 'Verificando…', right: 'Correcto.', expected: 'Esperado:',
+    quizSum: (s, m, p) => `${s}/${m} correctas (${p}%). Las falladas son tu lista de estudio.`, err: 'Error',
+    builtin: 'Incluidos', mine: 'Mis problemas', srcB: 'Incluido', srcU: 'Tuyo', locale: 'es-MX'
+  },
+  en: {
+    start: 'Start test', restart: 'Restart timer', hTests: 'Hidden tests',
+    testsNote: 'You see the test names, not the result, until you submit.',
+    hCode: 'Your code (no autocomplete, no IDE)', submit: 'Submit and grade', reset: 'Restore template',
+    resetConfirm: 'Delete your code and restore the template?', running: 'Compiling and running tests…',
+    timeUp: 'Time is up: submit what you have.', attempts: 'Your attempts', result: 'Result',
+    timeUsed: 'Time used', min: 'min', sec: 's', noCompile: 'It did not compile.',
+    noCompileHint: 'A solution that does not compile scores 0. Read the first error: it gives the line and the cause.',
+    why: 'Why it failed', how: 'How to improve', next: 'Next step:',
+    nextOk: 'explain your solution out loud, in 60 seconds: what it does, its Big O complexity and the edge cases you covered.',
+    nextBad: 'Before resubmitting: write in one line what you will change and why. If you cannot say it, you do not understand the failure yet.',
+    translate: '🌐 Show in Spanish for extra help', original: '🌐 Show the English original',
+    hover: 'Translate on hover', noTr: 'This problem has no Spanish translation (problem.es.md is missing)',
+    quizIntro: 'Write exactly what each snippet will print, or the name of the exception if it throws one. Run nothing, as in a technical call. If it prints several lines, write one per line.',
+    yourAnswer: 'Your answer', verify: 'Check answers', verifying: 'Checking…', right: 'Correct.', expected: 'Expected:',
+    quizSum: (s, m, p) => `${s}/${m} correct (${p}%). The ones you missed are your study list.`, err: 'Error',
+    builtin: 'Built-in', mine: 'My problems', srcB: 'Built-in', srcU: 'Yours', locale: 'en-US'
+  }
+};
+addStrings(I18N);
+let problem = null, timerId = null, endAt = null, stmtMode = 'en', hoverOn = false;
+/* ---- UI text ---- */
+function applyLang(){
+  document.documentElement.lang = lang;
+  $('hTests').textContent = T('hTests'); $('testsNote').textContent = T('testsNote');
+  $('hCode').textContent = T('hCode'); $('submitBtn').textContent = T('submit'); $('resetBtn').textContent = T('reset');
+  $('hoverTxt').textContent = T('hover');
+  $('startBtn').textContent = timerId ? T('restart') : T('start');
+}
+function renderStatement(){
+  const card = $('toolbar');
+  if (!problem || problem.kind === 'quiz') { card.style.display = 'none'; return; }
+  const hasEs = !!problem.statement_es;
+  card.style.display = 'flex';
+  $('trBtn').disabled = !hasEs; $('trBtn').title = hasEs ? '' : T('noTr');
+  $('trBtn').textContent = stmtMode === 'es' ? T('original') : T('translate');
+  $('hoverLbl').style.display = (stmtMode === 'en' && hasEs) ? '' : 'none';
+  $('srcBadge').textContent = problem.source === 'user' ? T('srcU') : T('srcB');
+  const en = splitBlocks(problem.statement), es = hasEs ? splitBlocks(problem.statement_es) : [];
+  if (stmtMode === 'es' && hasEs) { $('statement').innerHTML = es.map(renderBlock).join(''); return; }
+  const aligned = hasEs && en.length === es.length;
+  $('statement').innerHTML = en.map((b, i) =>
+    `<div class="blk${hoverOn && aligned && !b.startsWith('```') ? ' hoverable' : ''}" data-i="${i}">${renderBlock(b)}</div>`).join('');
+  if (hoverOn && aligned) wireHover(es);
+}
+function wireHover(es){
+  const tip = $('tip');
+  document.querySelectorAll('#statement .blk.hoverable').forEach(el => {
+    const show = () => {
+      tip.innerHTML = renderBlock(es[+el.dataset.i]); tip.style.display = 'block';
+      const r = el.getBoundingClientRect(), h = tip.offsetHeight;
+      tip.style.left = Math.max(8, Math.min(r.left, innerWidth - tip.offsetWidth - 8)) + 'px';
+      tip.style.top = (r.bottom + h + 12 < innerHeight ? r.bottom + 6 : Math.max(8, r.top - h - 6)) + 'px';
+    };
+    el.addEventListener('mouseenter', show); el.addEventListener('focus', show);
+    el.addEventListener('mouseleave', () => tip.style.display = 'none');
+    el.addEventListener('click', show);  // touch screens
+  });
+}
+
+async function loadList(keep){
+  const list = await (await fetch('/api/problems')).json();
+  const opt = p => `<option value="${esc(p.id)}">${esc(p.title)} · ${p.time_limit_min} min</option>`;
+  const b = list.filter(p => p.source === 'builtin'), u = list.filter(p => p.source === 'user');
+  $('sel').innerHTML = (u.length ? `<optgroup label="${esc(T('builtin'))}">` + b.map(opt).join('') + `</optgroup><optgroup label="${esc(T('mine'))}">` + u.map(opt).join('') + '</optgroup>'
+                                 : b.map(opt).join(''));
+  $('sel').onchange = () => loadProblem($('sel').value);
+  const id = keep && list.some(p => p.id === keep) ? keep : (store('last') && list.some(p => p.id === store('last')) ? store('last') : list[0].id);
+  $('sel').value = id; loadProblem(id);
+}
+
+function renderQuiz(){
+  $('statement').innerHTML = '<h3>' + esc(problem.title) + '</h3><p>' + esc(T('quizIntro')) + '</p>';
+  $('testsCard').style.display = 'none'; $('editorCard').style.display = 'none';
+  const qc = $('quizCard'); qc.style.display = 'block';
+  qc.innerHTML = problem.questions.map((q, i) => `<div class="q" data-id="${esc(q.id)}"><div class="cat">${i + 1}. ${esc(q.topic)}</div>
+    <pre class="qcode"><code>${esc(q.code)}</code></pre>
+    <textarea class="qans" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="${esc(T('yourAnswer'))}"></textarea><div class="qres"></div></div>`).join('')
+    + `<div class="row"><button class="primary" id="quizBtn">${esc(T('verify'))}</button><span class="muted" id="quizStatus"></span></div>`;
+  $('quizBtn').onclick = submitQuiz;
+}
+
+function pushHistory(pct){
+  const h = store('hist:' + problem.id) || [];
+  h.push({when: new Date().toLocaleString(T('locale'), {dateStyle:'short', timeStyle:'short'}), pct});
+  store('hist:' + problem.id, h.slice(-20)); renderHistory();
+}
+
+async function submitQuiz(){
+  const answers = {};
+  document.querySelectorAll('#quizCard .q').forEach(d => { answers[d.dataset.id] = d.querySelector('.qans').value; });
+  $('quizBtn').disabled = true; $('quizStatus').textContent = T('verifying');
+  try {
+    const r = await post('/api/quiz', {problem: problem.id, answers, lang});
+    r.results.forEach(x => {
+      const box = document.querySelector(`#quizCard .q[data-id="${x.id}"] .qres`);
+      box.className = 'qres ' + (x.correct ? 'ok' : 'no');
+      box.innerHTML = x.correct ? '✅ ' + esc(T('right')) + ' ' + esc(x.explanation)
+        : '❌ ' + esc(T('expected')) + ' <code>' + esc(x.expected).replace(/\n/g, ' ⏎ ') + '</code><br>' + esc(x.explanation);
+    });
+    const pct = Math.round(100 * r.score / r.max);
+    $('quizStatus').textContent = T('quizSum')(r.score, r.max, pct);
+    pushHistory(pct);
+  } catch (e) { $('quizStatus').textContent = T('err') + ': ' + e.message; }
+  $('quizBtn').disabled = false;
+}
+
+async function loadProblem(id){
+  store('last', id);
+  problem = await (await fetch('/api/problems/' + id + '?lang=' + lang)).json();
+  $('tip').style.display = 'none';
+  $('testsCard').style.display = ''; $('editorCard').style.display = ''; $('quizCard').style.display = 'none';
+  stopTimer(); $('timer').textContent = String(problem.time_limit_min).padStart(2,'0') + ':00'; $('timer').classList.remove('low');
+  $('result').style.display = 'none';
+  if (problem.kind === 'quiz') { renderQuiz(); renderStatement(); renderHistory(); return; }
+  renderStatement();
+  $('testList').innerHTML = problem.tests.map(t =>
+    `<li><span class="cat">${esc(t.category)} · +${t.points} pts</span><br>${esc(t.title)}</li>`).join('');
+  $('code').value = store('draft:' + id) || problem.starter;
+  renderHistory();
+}
+
+function startTimer(){
+  stopTimer();
+  endAt = Date.now() + problem.time_limit_min * 60000;
+  timerId = setInterval(() => {
+    const left = Math.max(0, endAt - Date.now());
+    const m = Math.floor(left / 60000), s = Math.floor(left % 60000 / 1000);
+    $('timer').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    $('timer').classList.toggle('low', left < 120000);
+    if (left === 0) { stopTimer(); $('status').textContent = T('timeUp'); }
+  }, 500);
+  $('startBtn').textContent = T('restart');
+}
+function stopTimer(){ if (timerId) clearInterval(timerId); timerId = null; $('startBtn').textContent = T('start'); }
+
+function renderHistory(){
+  const h = (store('hist:' + problem.id) || []);
+  const box = $('history');
+  if (!h.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = '<h2>' + esc(T('attempts')) + '</h2>' + h.map(x => `<span>${esc(x.when)} · ${x.pct}%</span>`).join('');
+}
+
+async function submit(){
+  const code = $('code').value;
+  store('draft:' + problem.id, code);
+  $('submitBtn').disabled = true; $('status').textContent = T('running');
+  const used = endAt ? Math.round((Date.now() - (endAt - problem.time_limit_min * 60000)) / 1000) : null;
+  try {
+    const r = await post('/api/grade', {problem: problem.id, code, lang});
+    showResult(r, used);
+    pushHistory(Math.round(100 * r.score / r.max));
+    $('status').textContent = '';
+  } catch (e) { $('status').textContent = T('err') + ': ' + e.message; }
+  $('submitBtn').disabled = false;
+}
+
+function showResult(r, used){
+  const pct = Math.round(100 * r.score / r.max);
+  let html = `<h2>${esc(T('result'))}</h2><div class="score">${r.score}/${r.max} · ${pct}%</div>`;
+  if (used !== null) html += `<p class="muted">${esc(T('timeUsed'))}: ${Math.floor(used/60)} ${T('min')} ${used%60} ${T('sec')}</p>`;
+  if (!r.compile.ok) html += `<p><b>${esc(T('noCompile'))}</b> ${esc(T('noCompileHint'))}</p><div class="errbox">${esc(r.compile.message)}</div>`;
+  html += '<ul class="tests" style="margin-top:12px">' + r.tests.map(t => `
+    <li class="${t.passed ? 'pass' : 'fail'}">
+      <span class="cat">${esc(t.category)} · +${t.points} pts · ${t.ms} ms</span><br>
+      ${t.passed ? '✅' : '❌'} ${esc(t.title)}
+      ${t.passed ? '' : `<div class="why"><span class="muted">${esc(t.detail)}</span>
+        <b>${esc(T('why'))}</b>${esc(t.fail_why)}<b>${esc(T('how'))}</b>${esc(t.fail_how)}</div>`}
+    </li>`).join('') + '</ul>';
+  html += r.tests.every(t => t.passed) ? `<p class="hint"><b>${esc(T('next'))}</b> ${esc(T('nextOk'))}</p>` : `<p class="hint">${esc(T('nextBad'))}</p>`;
+  $('result').innerHTML = html; $('result').style.display = 'block';
+  $('result').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+$('code').addEventListener('keydown', e => {
+  if (e.key === 'Tab') { e.preventDefault(); const t = e.target, s = t.selectionStart;
+    t.value = t.value.slice(0, s) + '    ' + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = s + 4; }
+});
+$('code').addEventListener('input', () => { if (problem && problem.kind !== 'quiz') store('draft:' + problem.id, $('code').value); });
+$('startBtn').onclick = startTimer;
+$('submitBtn').onclick = submit;
+$('resetBtn').onclick = () => { if (confirm(T('resetConfirm'))) $('code').value = problem.starter; };
+$('trBtn').onclick = () => { stmtMode = stmtMode === 'es' ? 'en' : 'es'; store('stmtMode', stmtMode); $('tip').style.display = 'none'; renderStatement(); };
+$('hoverChk').onchange = () => { hoverOn = $('hoverChk').checked; store('hoverOn', hoverOn); renderStatement(); };
+
+stmtMode = store('stmtMode') === 'es' ? 'es' : 'en';
+hoverOn = !!store('hoverOn'); $('hoverChk').checked = hoverOn;
+renderChrome('practice', () => { applyLang(); loadList(problem && problem.id); }).then(() => { applyLang(); loadList(); });
+</script>
+</body>
+</html>

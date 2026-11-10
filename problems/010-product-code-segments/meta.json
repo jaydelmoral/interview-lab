@@ -1,0 +1,67 @@
+{
+  "id": "010-product-code-segments",
+  "title": "Product Code Segmentation",
+  "class": "Solution",
+  "time_limit_min": 30,
+  "module": "coding",
+  "level": "sr",
+  "language": "java",
+  "min_java": 8,
+  "domain": "retail",
+  "tags": [
+    "dynamic-programming",
+    "dp",
+    "o(n^2)",
+    "retail"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "examples",
+      "category": "Problem solving",
+      "title": "Works with the examples",
+      "points": 50,
+      "fail_why": "Fallan los ejemplos del enunciado.",
+      "fail_how": "dp[i] = true si el prefijo de largo i se puede formar. dp[0] = true (cadena vacía).",
+      "fail_why_en": "The statement's examples fail.",
+      "fail_how_en": "dp[i] = true if the prefix of length i can be built. dp[0] = true (empty string)."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles empty string and empty dictionary",
+      "points": 30,
+      "fail_why": "Falla con cadena vacía o catálogo vacío.",
+      "fail_how": "dp[0] = true resuelve la cadena vacía. Con catálogo vacío, ningún dp[i>0] se activa.",
+      "fail_why_en": "Fails with an empty string or an empty catalog.",
+      "fail_how_en": "dp[0] = true handles the empty string. With an empty catalog no dp[i>0] is ever set."
+    },
+    {
+      "id": "greedy",
+      "category": "Problem solving",
+      "title": "Does not use a greedy strategy",
+      "points": 45,
+      "fail_why": "Tomar siempre la palabra más larga (o la primera que encaja) falla: 'cars' con car/ca/rs.",
+      "fail_how": "No es voraz: necesitas probar todas las particiones. DP bottom-up: para cada i busca un j < i con dp[j] verdadero y s[j..i] en el catálogo.",
+      "fail_why_en": "Always taking the longest code (or the first that fits) fails: 'cars' with car/ca/rs.",
+      "fail_how_en": "It is not greedy: you must try every split. Bottom-up DP: for each i look for a j < i with dp[j] true and s[j..i] in the catalog."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "Works with 800 characters in reasonable time (needs memoization/DP)",
+      "points": 140,
+      "fail_why": "La recursión sin memoria explora un número exponencial de particiones.",
+      "fail_how": "Programación dinámica: O(n²) comparaciones. Guarda el catálogo en un HashSet para búsquedas O(1). Si usas recursión, memoíza por índice.",
+      "fail_why_en": "Recursion without memory explores an exponential number of splits.",
+      "fail_how_en": "Dynamic programming: O(n²) comparisons. Keep the catalog in a HashSet for O(1) lookups. If you use recursion, memoize by index."
+    }
+  ],
+  "static_checks": {},
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}

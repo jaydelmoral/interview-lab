@@ -1,0 +1,17 @@
+{
+  "id": "101-predice-la-salida",
+  "kind": "quiz",
+  "title": "Predice la salida (Java 17/21)",
+  "time_limit_min": 15,
+  "tags": [
+    "trivia",
+    "strings",
+    "autoboxing",
+    "streams",
+    "java21"
+  ],
+  "origin": "original",
+  "license": "CC-BY-4.0",
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "module": "java-trivia"
+}

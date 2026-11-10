@@ -1,0 +1,79 @@
+{
+  "id": "014-balanced-parentheses-o1",
+  "title": "Balanced Parentheses in O(1) Space",
+  "class": "Solution",
+  "time_limit_min": 15,
+  "module": "coding",
+  "level": "jr",
+  "language": "java",
+  "min_java": 8,
+  "tags": [
+    "contador",
+    "o(1)",
+    "strings"
+  ],
+  "support": [
+    "Harness.java"
+  ],
+  "timeout_ms": 2000,
+  "tests": [
+    {
+      "id": "basic",
+      "category": "Problem solving",
+      "title": "Works with the basic examples",
+      "points": 50,
+      "fail_why": "Falla alguno de los ejemplos.",
+      "fail_how": "Contador: '(' suma 1, ')' resta 1.",
+      "fail_why_en": "One of the examples fails.",
+      "fail_how_en": "Counter: '(' adds 1, ')' subtracts 1."
+    },
+    {
+      "id": "order",
+      "category": "Problem solving",
+      "title": "Order matters: \")(\" is invalid",
+      "points": 55,
+      "fail_why": "Solo comparaste que el total de '(' y ')' fuera igual. ')(' tiene el mismo conteo pero es inválida.",
+      "fail_how": "Revisa el contador en CADA paso: si baja de 0, hay un cierre sin apertura y la respuesta es false de inmediato.",
+      "fail_why_en": "You only compared that the total of '(' and ')' was equal. ')(' has the same count but is invalid.",
+      "fail_how_en": "Check the counter at EVERY step: if it drops below 0 there is a closing without an opening and the answer is false immediately."
+    },
+    {
+      "id": "edge",
+      "category": "Reliability",
+      "title": "Handles empty string and single brackets",
+      "points": 30,
+      "fail_why": "Falla con vacío o un solo paréntesis.",
+      "fail_how": "Al final debe cumplirse open == 0 (no solo 'nunca fue negativo').",
+      "fail_why_en": "Fails with empty input or a single parenthesis.",
+      "fail_how_en": "At the end open == 0 must hold (not just 'it was never negative')."
+    },
+    {
+      "id": "large",
+      "category": "Problem solving",
+      "title": "O(n): works with 5,000,000 characters",
+      "points": 80,
+      "fail_why": "No es lineal o consume memoria extra.",
+      "fail_how": "Un solo recorrido con un int.",
+      "fail_why_en": "It is not linear or it uses extra memory.",
+      "fail_how_en": "A single pass with one int."
+    },
+    {
+      "id": "nocollections",
+      "category": "Language knowledge",
+      "title": "Uses O(1) space: no collections or arrays",
+      "points": 40,
+      "fail_why": "Usaste una pila, lista o arreglo, y el enunciado pide O(1) de espacio.",
+      "fail_how": "Para un solo tipo de paréntesis basta un contador. La pila solo hace falta con varios tipos ( ) [ ] { }.",
+      "fail_why_en": "You used a stack, list or array, and the statement asks for O(1) space.",
+      "fail_how_en": "For a single kind of parenthesis a counter is enough. A stack is only needed with several kinds ( ) [ ] { }."
+    }
+  ],
+  "static_checks": {
+    "nocollections": {
+      "forbid": "\\bStack\\b|Deque|ArrayList|LinkedList|\\bList<|\\bMap<|new\\s+\\w+\\s*\\[|toCharArray"
+    }
+  },
+  "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
+  "license": "CC-BY-4.0",
+  "origin": "original"
+}
