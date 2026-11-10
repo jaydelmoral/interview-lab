@@ -16,7 +16,7 @@ function addStrings(o){ for (const l of ['es', 'en']) Object.assign(STR[l], o[l]
 const T = k => (STR[lang][k] !== undefined ? STR[lang][k] : (STR.es[k] !== undefined ? STR.es[k] : k));
 
 addStrings({
-  es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', navHistory: 'Historial', cta: 'Iniciar simulación', theme: 'Cambiar entre modo claro y oscuro',
+  es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', navHistory: 'Historial', cta: 'Iniciar simulación', footBrand: 'Interview Lab · un producto de {n}', theme: 'Cambiar entre modo claro y oscuro',
        foot: 'Interview Lab · código Apache-2.0 · ejercicios CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) con Claude (Anthropic). Logotipos: © Collaboration, todos los derechos reservados. Proyecto independiente, sin relación con Oracle, plataformas de pruebas ni empresas mencionadas. El código que escribes se ejecuta en tu equipo.',
        translate: '🌐 Convertir al español para mayor ayuda', original: '🌐 Ver el original en inglés', hover: 'Traducir al pasar el cursor',
        noTr: 'Este problema no tiene traducción (falta problem.es.md)', err: 'Error',
@@ -28,7 +28,7 @@ addStrings({
        tipTag: 'Repasa este tema: abajo están las preguntas que fallaste, con su explicación.', tipSection: 'Quedó bajo el umbral de 60 %. Practica sus ejercicios en «Práctica libre» y repite el simulacro.',
        tipPS: 'Descompón el problema y escribe los casos límite antes de codificar.', tipRel: 'Cubre entradas vacías, nulos y límites: ahí fallan las pruebas ocultas.', tipLang: 'Repasa la API y la semántica del lenguaje que usaste.',
        catPS: 'Resolución de problemas', catRel: 'Fiabilidad', catLang: 'Conocimiento del lenguaje'},
-  en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', navHistory: 'History', cta: 'Start simulation', theme: 'Switch between light and dark mode',
+  en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', navHistory: 'History', cta: 'Start simulation', footBrand: 'Interview Lab · a {n} product', theme: 'Switch between light and dark mode',
        foot: 'Interview Lab · code Apache-2.0 · exercises CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) with Claude (Anthropic). Logos: © Collaboration, all rights reserved. Independent project, not affiliated with Oracle, testing platforms or any company mentioned. The code you write runs on your machine.',
        translate: '🌐 Show in Spanish for extra help', original: '🌐 Show the English original', hover: 'Translate on hover',
        noTr: 'This problem has no Spanish translation (problem.es.md is missing)', err: 'Error',
@@ -77,6 +77,16 @@ function logoPair(set, h, name){
   if (!set) return esc(name);
   return `<img class="logo-d" src="/brand/${esc(set.dark)}" alt="${esc(name)}" style="height:${h}px"><img class="logo-l" src="/brand/${esc(set.light)}" alt="${esc(name)}" style="height:${h}px">`;
 }
+/* The product is Interview Lab; the company (Collaboration) signs it. With an isotype: vector mark (a link only if brand.link is set) + divider + product name.
+   Without one: the PNG logo, as before. brand.link stays empty until the owner confirms the domain is theirs. */
+const PRODUCT = 'Interview Lab';
+function brandBlock(b){
+  if (!document.documentElement.classList.contains('has-iso')) return `<a class="brand" href="/" aria-label="${esc(b.name)}">${logoPair(b.logo_mark, 30, b.name)}</a>`;
+  const mark = `<svg viewBox="0 0 480 480" focusable="false">${ISOTYPE_MARK}</svg>`;
+  const iso = b.link ? `<a class="brand-iso" href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(b.name)}">${mark}</a>`
+                     : `<span class="brand-iso" role="img" aria-label="${esc(b.name)}">${mark}</span>`;
+  return `<div class="brand">${iso}<i class="brand-sep" aria-hidden="true"></i><a class="brand-name" href="/">${esc(PRODUCT)}</a></div>`;
+}
 async function renderChrome(active, onLangChange){
   let b = {name: 'Interview Lab', logo_mark: null, logo_full: null};
   try { b = await api('/api/brand'); } catch (e) {}
@@ -85,7 +95,7 @@ async function renderChrome(active, onLangChange){
   const bar = $('appbar');
   bar.className = 'appbar';
   const lk = (id, href, key, on) => `<a href="${href}" id="${id}" class="${active === on ? 'active' : ''}"></a>`;
-  bar.innerHTML = `<div class="appbar-in"><a class="brand" href="/" aria-label="${esc(b.name)}">${logoPair(b.logo_mark, 30, b.name)}</a>
+  bar.innerHTML = `<div class="appbar-in">${brandBlock(b)}
     <nav class="pill-nav" aria-label="Main">${lk('navHome', '/', 'navHome', 'home')}${lk('navEval', '/#evaluacion', 'navEval', 'eval')}${lk('navBuild', '/#crear', 'navBuild', 'build')}${lk('navPractice', '/practice', 'navPractice', 'practice')}${lk('navHistory', '/history', 'navHistory', 'history')}</nav>
     <div class="actions"><select id="langSel" aria-label="Language / Idioma"><option value="es">Español</option><option value="en">English</option></select>
     <button class="icon-btn" id="themeBtn" type="button">${SVG_SUN}${SVG_MOON}</button></div></div>`;
@@ -99,7 +109,13 @@ function chromeText(){
   document.documentElement.lang = lang;
   if ($('navHome')) { for (const k of ['navHome', 'navEval', 'navBuild', 'navPractice', 'navHistory']) $(k).textContent = T(k); }
   if ($('themeBtn')) { $('themeBtn').title = T('theme'); $('themeBtn').setAttribute('aria-label', T('theme')); }
-  if ($('foot')) { $('foot').className = 'foot'; $('foot').textContent = T('foot'); }
+  if ($('foot')) {
+    const b = window.BRAND || {}, name = b.name || 'Collaboration';
+    const who = b.link ? `<a href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : esc(name);
+    const line = esc(T('footBrand')).replace('{n}', who);
+    $('foot').className = 'foot';
+    $('foot').innerHTML = `<div class="foot-brand">${window.brandFull && b.logo_full ? window.brandFull(26) : ''}<span>${line}${b.tagline ? ' · ' + esc(b.tagline) : ''}</span></div><p>${esc(T('foot'))}</p>`;
+  }
 }
 
 /* ---- minimal markdown (blocks aligned between problem.md and problem.es.md) ---- */
