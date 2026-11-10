@@ -1,6 +1,6 @@
 addStrings({
   es: {
-    heroBadge: 'Código abierto · Apache-2.0 · 100 % local', heroTitle: 'Entrevistas técnicas a la medida, ejecutadas en tu propia computadora',
+    heroBadge: 'Código abierto · Apache-2.0 · 100 % local', heroT1: 'Entrevistas técnicas', heroEm: 'a la medida', heroT3: ', ejecutadas en tu propia computadora',
     heroSub: 'Sube tu CV o pega la vacante. Interview Lab detecta qué te van a preguntar, arma el simulacro con tiempo por sección y califica tu código de verdad.',
     ctaBuild: 'Crear mi simulacro', ctaEval: 'Ver cómo se evalúa',
     evalNote: 'Datos de ejemplo. Tu reporte real aparece aquí mismo al terminar cada simulacro.',
@@ -8,9 +8,15 @@ addStrings({
     c2t: 'El código se ejecuta de verdad', c2p: 'Tu solución se compila y corre contra pruebas ocultas. Cada prueba suma puntos en una categoría: resolución de problemas, fiabilidad o conocimiento del lenguaje.',
     c3t: 'Preguntas con corrección exacta', c3p: 'Las de opción múltiple y «predice la salida» se corrigen al momento, con la explicación. Las tarjetas son de autoevaluación.',
     c4t: 'Cronómetro por sección', c4p: 'Cada sección tiene su propio tiempo. Si se agota, la sección se cierra con lo que respondiste y el reporte compara el tiempo usado con el asignado.',
-    howEyebrow: 'Cómo funciona', howTitle: 'De la vacante al simulacro en minutos', howSub: 'Todo el análisis ocurre en tu equipo. Esto es lo que verás al usarlo.',
-    termCaption: 'Ilustración del flujo. Se usa desde el navegador, en localhost; nada sale de tu equipo.',
-    tVac: 'vacante recibida', tLevel: 'nivel', tLang: 'lenguaje', tMods: 'módulos', tSim: 'simulacro', tSec: 'secciones', tSecN: 'sección', tHidden: 'pruebas ocultas', tEdge: 'caso borde: lista vacía', tLocal: 'escuchando en http://127.0.0.1:8765 · solo local', tChars: 'caracteres',
+    howEyebrow: 'Cómo funciona', stepsTitle: 'Tres piezas que encajan', stepsSub: 'De la vacante a saber qué estudiar, en tres pasos.', stepWord: 'Paso',
+    s1t: 'Analiza', s1p: 'Pega la vacante o tu CV y revisa lo que detectó.',
+    s2t: 'Practica con reloj', s2p: 'Resuelve cada sección en su tiempo, con código calificado de verdad.',
+    s3t: 'Mide y refuerza', s3p: 'El reporte y el historial te dicen qué estudiar antes de la entrevista real.',
+    fact1: 'local, sin cuenta', fact2: 'módulos', fact3: 'preguntas y ejercicios', fact4: 'dos idiomas',
+    evalEyebrow: 'Así se evalúa', evalTitle: 'Un reporte que dice qué reforzar', evalSub: 'Esto es lo que verás al terminar cada simulacro: resultado por sección, tiempo y temas débiles.',
+    whyEyebrow: 'Por qué Interview Lab', w1tag: 'Vacante analizada', w1h: 'Solo lo que te van a preguntar.', w2h: 'No es una opinión: es un resultado.', w3h: 'Cada sección con su cronómetro.', w4h: 'Tu CV y tu código se quedan contigo.',
+    tSecN: 'sección', tSubmit: 'enviar Solution.java', tCase1: 'caso base', tCase2: 'entradas grandes', tHidden: 'pruebas ocultas', tEdge: 'caso borde: lista vacía',
+    flowBrowser: 'Tu navegador', flowFiles: 'Tus archivos', flowNote: 'Nada sale de tu equipo. La IA es opcional y usa tu propia llave.',
     pilTitle: 'Practica como si fuera la entrevista real', pilSub: 'Cuatro ideas simples detrás de todo el producto.',
     p1t: 'Hecho a la medida', p1p: 'Pega la descripción de la vacante o sube tu CV. El análisis detecta seniority, lenguaje y versión, y los módulos que piden, y arma un simulacro solo con lo que te van a preguntar. Tú corriges lo que no cuadre antes de empezar.',
     p2t: 'Privacidad total', p2p: 'Todo corre en tu máquina. Tu CV, tus respuestas y tu código no viajan a ningún servidor. La IA es opcional y usa tu propia llave, nunca la nuestra.',
@@ -38,7 +44,7 @@ addStrings({
     genLocalAi: 'Generador activo: IA local (Ollama). Tu texto no sale de tu equipo; la calidad depende del modelo que tengas instalado y las preguntas salen como borrador.', genOffline: 'Generador activo: local (sin IA). Tu texto no sale de tu equipo.', genAi: 'Generador activo: IA (proveedor externo con tu propia llave). El texto que agregues se envía al proveedor y el costo es de tu cuenta.'
   },
   en: {
-    heroBadge: 'Open source · Apache-2.0 · 100% local', heroTitle: 'Interview simulations tailored to the job, running on your own machine',
+    heroBadge: 'Open source · Apache-2.0 · 100% local', heroT1: 'Interview simulations', heroEm: 'tailored to the job', heroT3: ', running on your own machine',
     heroSub: 'Upload your CV or paste the job post. Interview Lab detects what you will be asked, builds the simulation with a timer per section and grades your code for real.',
     ctaBuild: 'Build my simulation', ctaEval: 'See how you are scored',
     evalNote: 'Sample data. Your real report appears right here after each simulation.',
@@ -46,9 +52,15 @@ addStrings({
     c2t: 'Your code really runs', c2p: 'Your solution is compiled and run against hidden tests. Each test earns points in a category: problem solving, reliability or language knowledge.',
     c3t: 'Questions graded exactly', c3p: 'Multiple-choice and “predict the output” are graded instantly, with the explanation. Flashcards are self-assessed.',
     c4t: 'A timer per section', c4p: 'Each section has its own time. If it runs out, the section closes with what you answered and the report compares time used with time allotted.',
-    howEyebrow: 'How it works', howTitle: 'From the job post to a simulation in minutes', howSub: 'All the analysis happens on your machine. This is what you will see when you use it.',
-    termCaption: 'Illustration of the flow. You use it from the browser, on localhost; nothing leaves your machine.',
-    tVac: 'job post received', tLevel: 'level', tLang: 'language', tMods: 'modules', tSim: 'simulation', tSec: 'sections', tSecN: 'section', tHidden: 'hidden tests', tEdge: 'edge case: empty list', tLocal: 'listening on http://127.0.0.1:8765 · local only', tChars: 'characters',
+    howEyebrow: 'How it works', stepsTitle: 'Three pieces that fit together', stepsSub: 'From the job post to knowing what to study, in three steps.', stepWord: 'Step',
+    s1t: 'Analyse', s1p: 'Paste the job post or your CV and review what was detected.',
+    s2t: 'Practise against the clock', s2p: 'Solve each section in its time, with code graded for real.',
+    s3t: 'Measure and reinforce', s3p: 'The report and the history tell you what to study before the real interview.',
+    fact1: 'local, no account', fact2: 'modules', fact3: 'questions and exercises', fact4: 'two languages',
+    evalEyebrow: 'How you are scored', evalTitle: 'A report that tells you what to reinforce', evalSub: 'This is what you get after each simulation: result per section, time and weak topics.',
+    whyEyebrow: 'Why Interview Lab', w1tag: 'Job post analysed', w1h: 'Only what you will be asked.', w2h: 'Not an opinion: a result.', w3h: 'Every section with its own timer.', w4h: 'Your CV and your code stay with you.',
+    tSecN: 'section', tSubmit: 'submit Solution.java', tCase1: 'base case', tCase2: 'large inputs', tHidden: 'hidden tests', tEdge: 'edge case: empty list',
+    flowBrowser: 'Your browser', flowFiles: 'Your files', flowNote: 'Nothing leaves your machine. AI is optional and uses your own key.',
     pilTitle: 'Practise as if it were the real interview', pilSub: 'Four simple ideas behind the whole product.',
     p1t: 'Tailored to the job', p1p: 'Paste the job description or upload your CV. The analysis detects seniority, language and version, and the modules required, and builds a simulation with only what you will be asked. You correct anything that does not fit before starting.',
     p2t: 'Total privacy', p2p: 'Everything runs on your machine. Your CV, your answers and your code never travel to a server. AI is optional and uses your own key, never ours.',
@@ -89,7 +101,7 @@ function applyI18n(){
   renderVersions(); renderModules(); renderBanks(); renderFound(); langNote(); renderRuntimes(); loadExams();
 }
 
-/* ---- marketing blocks: sample dashboard, criteria, terminal, module tags ---- */
+/* ---- landing blocks: sample dashboard, criteria, figures, and the visuals of the "why" panels. Everything is real data or real strings. ---- */
 function sampleData(){
   const es = lang === 'es';
   const S = (title, pct, done, total, unit, used, allotted) => ({title, pct, done, total, unit, used, allotted});
@@ -104,21 +116,40 @@ function sampleData(){
               expected: es ? 'Las filas de la izquierda con NULL en las columnas de la derecha' : 'Left rows with NULL in the right-hand columns',
               explanation: es ? 'El LEFT JOIN conserva todas las filas de la tabla izquierda.' : 'A LEFT JOIN keeps every row of the left table.'}]};
 }
+const DETECTED_DEMO = new Set(['coding', 'sql', 'microservices', 'security']);   /* which modules the illustrative "analysed job post" lights up */
 function renderMarketing(){
-  $('sampleDash').innerHTML = renderDashboard(sampleData()) + '<p class="caption">' + esc(T('evalNote')) + '</p>';
+  const sample = sampleData();
+  $('sampleDash').innerHTML = renderDashboard(sample) + '<p class="caption">' + esc(T('evalNote')) + '</p>';
   $('criteria').innerHTML = [1, 2, 3, 4].map(n => '<article><b>' + esc(T('c' + n + 't')) + '</b><p>' + esc(T('c' + n + 'p')) + '</p></article>').join('');
+  /* figures strip: counted from /api/modules, never typed by hand */
+  $('factMods').textContent = MODS.length ? MODS.length : '–';
+  $('factItems').textContent = MODS.length ? MODS.reduce((a, m) => a + (m.count || 0), 0).toLocaleString(lang) : '–';
+  /* panel 1: tailored to the job */
+  $('detectChips').innerHTML = [['Senior', 1], ['Java 21', 1]].concat(MODS.filter(m => m.id !== 'mybank').map(m => [m.title, DETECTED_DEMO.has(m.id) ? 1 : 0]))
+    .map(([t, hit]) => `<span class="chip${hit ? ' hit' : ''}">${esc(t)}</span>`).join('');
+  /* panel 2: real feedback, the terminal */
   const w = '<span class="w">', d = '<span class="d">', g = '<span class="g">', r = '<span class="r">', x = '</span>', es = lang === 'es';
-  $('termBody').innerHTML = [
-    d + '$' + x + ' ' + w + 'python3 server.py' + x, d + esc(T('tLocal')) + x, '',
-    d + '›' + x + ' ' + esc(T('tVac')) + ' ' + d + '(1 840 ' + esc(T('tChars')) + ')' + x,
-    d + '›' + x + ' ' + esc(T('tLevel')) + '      ' + w + 'senior' + x,
-    d + '›' + x + ' ' + esc(T('tLang')) + '   ' + w + 'Java 21' + x,
-    d + '›' + x + ' ' + esc(T('tMods')) + '    ' + w + (es ? 'código · SQL · microservicios · seguridad' : 'coding · SQL · microservices · security') + x,
-    d + '›' + x + ' ' + esc(T('tSim')) + '  ' + w + '4 ' + esc(T('tSec')) + ' · 95 min' + x, '',
+  $('termLines').innerHTML = [
     d + '›' + x + ' ' + esc(T('tSecN')) + ' 1/4 · ' + (es ? 'código' : 'coding') + ' ' + d + '· 25:00' + x,
-    '  ' + g + '✓' + x + ' ' + esc(T('tHidden')) + ' 6/8', '  ' + r + '✗' + x + ' ' + esc(T('tEdge')),
-    d + '$' + x + ' <span class="w cur">▍</span>'].join('\n');
-  $('pilTags').innerHTML = MODS.filter(m => m.id !== 'mybank').map(m => '<span class="chip">' + esc(m.title) + '</span>').join('');
+    d + '$' + x + ' ' + w + esc(T('tSubmit')) + x,
+    '  ' + g + '✓' + x + ' ' + esc(T('tCase1')),
+    '  ' + g + '✓' + x + ' ' + esc(T('tCase2')) + ' ' + d + '· 212 ms' + x,
+    '  ' + r + '✗' + x + ' ' + esc(T('tEdge')),
+    d + '›' + x + ' ' + esc(T('tHidden')) + ' ' + w + '6/8' + x + ' ' + d + '· 75 %' + x].map(l => '<div>' + l + '</div>').join('');
+  /* panel 3: a timer and a report per section; each bar's value goes through a CSS variable, no inline style attribute */
+  $('timeBars').innerHTML = sample.sections.map(sec => `<div class="mbar" data-v="${sec.pct / 100}"><span>${esc(sec.title)}</span><div><i></i></div><b>${sec.pct} %</b></div>`).join('');
+  $('timeBars').querySelectorAll('.mbar').forEach(el => el.style.setProperty('--v', el.dataset.v));
+}
+
+/* Panels appear one after another when they enter the screen; the fixed list highlights the panel in the middle of the screen. */
+function panels(){
+  const reveal = [...document.querySelectorAll('.reveal')];
+  if (!('IntersectionObserver' in window)) { reveal.forEach(e => e.classList.add('in')); return; }
+  const seen = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); seen.unobserve(e.target); } }), {threshold: .35});
+  reveal.forEach(e => seen.observe(e));
+  const links = [...document.querySelectorAll('.reasons-nav a')];
+  const active = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.classList.toggle('active', a.hash === '#' + e.target.id)); }), {rootMargin: '-45% 0px -45% 0px'});
+  document.querySelectorAll('.reasons-panels article').forEach(a => active.observe(a));
 }
 
 function renderVersions(){
@@ -278,5 +309,7 @@ function orbit(){
   try { const m = await api('/api/modules?lang=' + lang); MODS = m.modules; GEN = m.generator || 'offline'; if (!m.fetch) { $('links').disabled = true; $('links').placeholder = T('fetchOff'); } } catch (e) {}
   try { RUNTIMES = await api('/api/runtimes?lang=' + lang); } catch (e) {}
   applyI18n(); loadBanks();
+  if (window.BRAND && window.BRAND.tagline) $('tagline').textContent = window.BRAND.tagline;   /* the motto comes from /api/brand, not from this file */
+  panels();
   if (document.documentElement.classList.contains('has-iso')) orbit();
 })();
