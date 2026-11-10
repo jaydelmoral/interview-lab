@@ -59,3 +59,4 @@ Fixed (regression tests in `tests/test_hardening.py`):
 
 Se corrigieron los puntos anteriores (pruebas en `tests/test_hardening.py`). Lo que queda abierto está en "Not defended" y en el plan de trabajo.
 - Scripts live in `web/*.js` and the CSP no longer allows `'unsafe-inline'` for scripts (ADR-0013, audit P7). Styles still allow it. A test fails if a page gains an inline `<script>`, an `on*=` attribute or a `javascript:` URL.
+- Local data: `workspace/` is set to `0700` at startup (other users of the computer cannot read your history); exams, banks and attempts are written atomically (temporary file + rename); Ollama requests ignore `http_proxy` because the model runs on this computer.

@@ -1,4 +1,5 @@
 """P4: with an attempt id the server grades once per section and computes the final result itself (client scores are ignored)."""
+import threading
 import unittest
 
 from tests.helpers import RunningServer
@@ -133,6 +134,62 @@ class ServerSideAttemptTest(unittest.TestCase):
             self.assertEqual(400, self.c.post("/api/grade", {"problem": pid, "code": "x", "exam": self.eid} | body)[0], missing)
         self.assertEqual(400, self.c.post("/api/grade", {"problem": pid, "code": "x", "attempt": ATTEMPT})[0])   # an attempt without its exam
         self.assertEqual(200, self.c.post("/api/grade", {"problem": pid, "code": "x"})[0])                       # free practice is not an exam
+
+
+class LocalRobustnessTest(unittest.TestCase):
+    """Things that could break a local installation: hand-written content, crashes while saving, a proxy variable."""
+
+    def test_one_malformed_question_does_not_break_every_exam(self):
+        import json
+        rs = RunningServer()
+        try:
+            qdir = rs.home / "bank" / "questions"
+            qdir.mkdir(parents=True)
+            (qdir / "mine.json").write_text(json.dumps([{"module": "sql", "level": "mid"}, "text", {"id": 5}, None]))
+            (rs.home / "banks").mkdir()
+            (rs.home / "banks" / "b-00000000.json").write_text(json.dumps({"id": "b-00000000", "items": [{"id": "x"}, {"type": "mcq"}, 7]}))
+            (rs.home / "banks" / "b-11111111.json").write_text(json.dumps({"items": []}))
+            st, exam = rs.client.post("/api/exams", {"modules": ["sql"], "language": "java", "seniority": "mid"})
+            self.assertEqual(200, st, exam)
+            self.assertEqual(200, rs.client.get("/api/modules")[0])
+        finally:
+            rs.close()
+
+    def test_saving_replaces_the_file_atomically_and_leaves_no_temporary_files(self):
+        import tempfile
+        from pathlib import Path
+        from interview_lab.adapters.fs_repositories import FsAttemptRepository, FsBankRepository, FsExamRepository
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp)
+            FsExamRepository(home).save({"id": "20261110-120000-abcd", "sections": []})
+            FsBankRepository(home).save({"id": "b-0123abcd", "items": []})
+            FsAttemptRepository(home).save("20261110-120000-abcd", "a" * 32, {"sections": {}})
+            files = [p.name for p in home.rglob("*") if p.is_file()]
+            self.assertEqual(3, len(files), files)
+            self.assertFalse([f for f in files if f.endswith(".tmp")], files)
+            self.assertEqual({"id": "20261110-120000-abcd", "sections": []}, FsExamRepository(home).load("20261110-120000-abcd"))
+
+    def test_ollama_requests_never_go_through_a_proxy(self):
+        import http.server
+        import os
+        from unittest import mock
+        from interview_lab.adapters import ollama_generator as og
+
+        class Hello(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):
+                self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(b'{"models": []}')
+
+            def log_message(self, *a):
+                pass
+
+        srv = http.server.HTTPServer(("127.0.0.1", 0), Hello)
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+        try:
+            with mock.patch.dict(os.environ, {"http_proxy": "http://127.0.0.1:9", "HTTP_PROXY": "http://127.0.0.1:9", "no_proxy": "", "NO_PROXY": ""}):
+                self.assertEqual([], og.installed_models(f"http://127.0.0.1:{srv.server_port}"))   # a dead proxy would make this fail
+        finally:
+            srv.shutdown()
+            srv.server_close()
 
 
 class ServerClockTest(unittest.TestCase):

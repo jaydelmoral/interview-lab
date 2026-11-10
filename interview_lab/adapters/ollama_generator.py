@@ -37,10 +37,13 @@ def is_loopback(url: str) -> bool:
             return False
 
 
+_DIRECT = urllib.request.build_opener(urllib.request.ProxyHandler({}))   # Ollama runs on this computer: an http_proxy variable must not capture the request
+
+
 def _http_json(url: str, payload=None, timeout: float = 10):
     data = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST" if data else "GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:      # nosec: scheme and host are validated by the caller
+    with _DIRECT.open(req, timeout=timeout) as r:                # nosec: scheme and host are validated by the caller
         return json.loads(r.read())
 
 

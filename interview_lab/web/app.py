@@ -131,6 +131,10 @@ def main(root) -> None:
     settings = Settings.from_env(root)
     (settings.home / "problems").mkdir(parents=True, exist_ok=True)
     (settings.home / "runs" / "attempts").mkdir(parents=True, exist_ok=True)
+    try:
+        settings.home.chmod(0o700)                           # your history and answers are not for other users of this computer
+    except OSError:
+        pass
     server = make_server(settings)
     print(f"interview-lab on http://{'localhost' if settings.host in ('127.0.0.1', '0.0.0.0') else settings.host}:{settings.port}  (Ctrl+C to quit)")
     print(f"your data: {settings.home}")

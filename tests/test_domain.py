@@ -18,6 +18,9 @@ class ProfileTest(unittest.TestCase):
         self.assertEqual("sr", profile.analyze("Senior Java engineer")["seniority"])
         self.assertEqual("jr", profile.analyze("Junior Java developer")["seniority"])
         self.assertEqual("mid", profile.analyze("a developer")["seniority"])
+        for about_the_company in ("Somos una empresa con 25 años en el mercado. Java developer", "A company with 30 years in business. Java developer"):
+            self.assertIsNone(profile.analyze(about_the_company)["years"], about_the_company)   # the age of the company is not the experience asked for
+        self.assertEqual(5, profile.analyze("Empresa con 25 años en el mercado busca 5 años de experiencia en Java")["years"])
 
     def test_language_and_version(self):
         a = profile.analyze("Java 1.8 and Java 11 and JDK 17; some Python")

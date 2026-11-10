@@ -28,6 +28,12 @@ class FsCatalog:
                     except Exception:
                         continue
 
+    @staticmethod
+    def _valid(items, *, kind: str = "") -> list:
+        """Entries a user can write by hand may be malformed: keep only dicts with a text id (and a type, for bank items)."""
+        return [q for q in (items if isinstance(items, list) else []) if isinstance(q, dict) and isinstance(q.get("id"), str)
+                and (kind != "bank" or q.get("type") in ("mcq", "flash"))]
+
     def _question_lists(self):
         """Question files from the built-in bank, the user's workspace and every content pack (packs/<name>/questions)."""
         yield from self._json_files("bank", "questions")
@@ -52,7 +58,7 @@ class FsCatalog:
                     qs = json.loads((d / "quiz.json").read_text())
                 except Exception:
                     continue
-                for q in qs:
+                for q in self._valid(qs):
                     out.append({"ref": {"t": "output", "p": d.name, "q": q["id"]}, "module": m.get("module", "java-trivia"),
                                 "level": q.get("level", "mid"), "min_java": q.get("min_java", 8), "language": "java",
                                 "tags": [q.get("topic", "")], "minutes": MIN_PER_ITEM["output"]})
@@ -61,11 +67,13 @@ class FsCatalog:
                             "min_java": m.get("min_java", 8), "language": m.get("language", "java"), "tags": m.get("tags", []),
                             "minutes": m.get("time_limit_min", 20)})
         for lst in self._question_lists():
-            for q in lst if isinstance(lst, list) else []:
+            for q in self._valid(lst):
                 out.append({"ref": {"t": "mcq", "id": q["id"]}, "module": q.get("module", "unknown"), "level": q.get("level", "mid"),
                             "min_java": 0, "language": q.get("lang", "any"), "tags": q.get("tags", []), "minutes": MIN_PER_ITEM["mcq"]})
         for bank in self._json_files("banks"):
-            for q in bank.get("items", []):
+            if not isinstance(bank, dict) or not isinstance(bank.get("id"), str):
+                continue
+            for q in self._valid(bank.get("items"), kind="bank"):
                 out.append({"ref": {"t": "bank", "b": bank["id"], "q": q["id"]}, "module": "mybank", "level": "any", "min_java": 0,
                             "language": "any", "tags": q.get("tags", []), "bank": bank["id"],
                             "minutes": MIN_PER_ITEM["flash" if q["type"] == "flash" else "mcq"]})
@@ -84,13 +92,13 @@ class FsCatalog:
             return {"type": "code", "id": ref["id"], "title": m["title"], "minutes": m["time_limit_min"]} if m else None
         if t == "mcq":
             for lst in self._question_lists():
-                for q in lst if isinstance(lst, list) else []:
+                for q in self._valid(lst):
                     if q["id"] == ref["id"]:
                         return q | {"type": "mcq"}
         elif t == "bank":
             for bank in self._json_files("banks"):
-                if bank["id"] == ref["b"]:
-                    return next((q for q in bank["items"] if q["id"] == ref["q"]), None)
+                if isinstance(bank, dict) and bank.get("id") == ref.get("b"):
+                    return next((q for q in self._valid(bank.get("items"), kind="bank") if q["id"] == ref.get("q")), None)
         elif t == "output":
-            return next((q | {"type": "output"} for q in self.problems.quiz_questions(ref["p"]) if q["id"] == ref["q"]), None)
+            return next((q | {"type": "output"} for q in self._valid(self.problems.quiz_questions(ref["p"])) if q["id"] == ref["q"]), None)
         return None

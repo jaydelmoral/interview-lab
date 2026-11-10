@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Optional
@@ -11,13 +12,20 @@ BANK_ID = re.compile(r"^b-[0-9a-f]{8}$")
 ATTEMPT_ID = re.compile(r"^[0-9a-f]{32}$")
 
 
+def _write_atomic(path: Path, text: str) -> None:
+    """Write to a temporary file and rename it over the target, so a crash or a power cut never leaves a half-written JSON."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    tmp.write_text(text)
+    tmp.replace(path)
+
+
 class FsExamRepository:
     def __init__(self, home: Path):
         self.dir, self.runs = Path(home) / "exams", Path(home) / "runs"
 
     def save(self, exam: dict) -> None:
-        self.dir.mkdir(parents=True, exist_ok=True)
-        (self.dir / f"{exam['id']}.json").write_text(json.dumps(exam, ensure_ascii=False, indent=1))
+        _write_atomic(self.dir / f"{exam['id']}.json", json.dumps(exam, ensure_ascii=False, indent=1))
 
     def load(self, exam_id: str) -> Optional[dict]:
         f = self.dir / f"{exam_id}.json"
@@ -65,11 +73,7 @@ class FsAttemptRepository:
         return json.loads(f.read_text()) if f.exists() else None
 
     def save(self, exam_id: str, attempt_id: str, state: dict) -> None:
-        f = self._file(exam_id, attempt_id)
-        f.parent.mkdir(parents=True, exist_ok=True)
-        tmp = f.with_suffix(".tmp")
-        tmp.write_text(json.dumps(state, ensure_ascii=False))
-        tmp.replace(f)
+        _write_atomic(self._file(exam_id, attempt_id), json.dumps(state, ensure_ascii=False))
 
 
 class FsBankRepository:
@@ -77,8 +81,7 @@ class FsBankRepository:
         self.dir = Path(home) / "banks"
 
     def save(self, bank: dict) -> None:
-        self.dir.mkdir(parents=True, exist_ok=True)
-        (self.dir / f"{bank['id']}.json").write_text(json.dumps(bank, ensure_ascii=False, indent=1))
+        _write_atomic(self.dir / f"{bank['id']}.json", json.dumps(bank, ensure_ascii=False, indent=1))
 
     def list(self) -> list:
         out = []
