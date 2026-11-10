@@ -21,6 +21,7 @@ Un ADR documenta una decisión significativa: contexto, decisión y consecuencia
 | 0014 | [Section timers run in the browser](0014-client-side-section-timers.md) | Accepted |
 | 0015 | [Design system with light/dark themes and one results dashboard](0015-ui-design-system-and-results-dashboard.md) | Accepted |
 | 0016 | [No external contributions until a CLA; premium content in separate private repos](0016-contribution-policy-and-premium-content-separation.md) | Accepted |
+| 0017 | [SQLite history and analytics, per profile](0017-sqlite-history-and-analytics.md) | Accepted |
 
 ## Template
 
@@ -44,4 +45,3 @@ What we will do.
 ## Resumen (ES)
 Una o dos frases.
 ```
-| 0017 | [SQLite history and analytics, per profile](0017-sqlite-history-and-analytics.md) | Accepted |
