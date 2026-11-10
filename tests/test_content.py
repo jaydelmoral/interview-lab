@@ -122,5 +122,117 @@ class TestWebPages(unittest.TestCase):
         self.assertNotIn("unsafe-eval", directives["script-src"])
 
 
+def _strings(text, lang):
+    """Keys of the addStrings() block for one language (loose: enough to prove a data-t key exists)."""
+    import re
+    start = text.index(f"  {lang}: {{")
+    end = text.index("  en: {", start + 1) if lang == "es" and "  en: {" in text[start:] else len(text)
+    return set(re.findall(r"(?:^|[\s,{])([A-Za-z][A-Za-z0-9]*):\s", text[start:end]))
+
+
+class TestLandingPro(unittest.TestCase):
+    """The 'Pro' landing (ADR-0022, ADR-0023): the animated O, the anchors, the texts, the typeface and the weight budgets."""
+
+    LANDING = (ROOT / "web" / "landing.html").read_text()
+    CSS = (ROOT / "web" / "common.css").read_text()
+    COMMON_JS = (ROOT / "web" / "common.js").read_text()
+    LANDING_JS = (ROOT / "web" / "landing.js").read_text()
+
+    def test_o_layer_is_decorative_and_has_the_three_strokes(self):
+        import re
+        layer = self.LANDING[self.LANDING.index('class="orbit-layer'):self.LANDING.index('<section class="hero"')]
+        self.assertIn('aria-hidden="true"', layer.split(">")[0], "the layer must be hidden from assistive technology")
+        for arc in ("oA", "oB", "oC"):
+            self.assertIn(f'href="#{arc}"', layer)
+            self.assertEqual(1, self.COMMON_JS.count(f'<path id="{arc}"'), f"{arc} must be defined exactly once")
+        self.assertEqual(3, len(re.findall(r'class="arc arc-[abc]"', layer)))
+
+    def test_anchors_survive(self):
+        for anchor in ("inicio", "evaluacion", "porque", "pasos", "crear", "cierre", "pilares", "como"):
+            self.assertIn(f'id="{anchor}"', self.LANDING, anchor)
+        self.assertEqual(1, self.LANDING.count("<h1"), "one h1 per page")
+
+    def test_every_form_id_still_exists(self):
+        for i in ("c1", "c2", "c3", "c4", "src", "file", "analyzeBtn", "seniority", "language", "version", "pace", "title", "modules", "links", "notes", "bankTitle", "bankBtn", "banks", "createBtn", "exams"):
+            self.assertIn(f'id="{i}"', self.LANDING, i)
+
+    def test_every_text_key_exists_in_both_languages(self):
+        import re
+        keys = set(re.findall(r'data-tp?="([A-Za-z0-9]+)"', self.LANDING))
+        for lang in ("es", "en"):
+            known = _strings(self.LANDING_JS, lang) | _strings(self.COMMON_JS, lang)
+            self.assertEqual(set(), keys - known, f"missing in {lang}")
+        for lang in ("es", "en"):   # keys read from JS with T('...')
+            known = _strings(self.LANDING_JS, lang) | _strings(self.COMMON_JS, lang)
+            used = set(re.findall(r"T\('([A-Za-z0-9]+)'\)", self.LANDING_JS))
+            self.assertEqual(set(), used - known, f"T() keys missing in {lang}")
+
+    def test_no_inline_styles_outside_the_form_and_no_hardcoded_domain(self):
+        import re
+        before_form = self.LANDING[:self.LANDING.index('id="crear"')]
+        self.assertIsNone(re.search(r'\sstyle\s*=', before_form), "the new sections use classes and CSS variables, not style attributes")
+        for name in ("landing.html", "landing.js", "common.js", "common.css", "theme.js"):
+            self.assertNotIn("collaboration.mx", (ROOT / "web" / name).read_text(), name)
+        brand = json.loads((ROOT / "web" / "brand" / "brand.json").read_text())
+        self.assertEqual("collaboration-o", brand["isotype"])
+        self.assertIn("link", brand)
+
+    def test_o_animation_only_moves_transform_and_opacity(self):
+        import re
+        blocks = 0
+        for m in re.finditer(r"@keyframes (orbit-[a-z]+)\{", self.CSS):   # every orbit-* keyframes, including the phone override
+            depth, i = 1, m.end()
+            while depth:
+                depth += {"{": 1, "}": -1}.get(self.CSS[i], 0)
+                i += 1
+            props = set(re.findall(r"[{;]\s*([a-z-]+)\s*:", self.CSS[m.end():i - 1]))
+            self.assertLessEqual(props - {"transform", "opacity"}, set(), m.group(1))
+            blocks += 1
+        self.assertGreaterEqual(blocks, 6)
+        o_css = self.CSS[self.CSS.index("/* ---------- Collaboration isotype"):self.CSS.index("@media print{")]
+        for banned in ("filter", "backdrop-filter", "box-shadow:", "stroke-dashoffset"):
+            self.assertNotIn(banned, re.sub(r"/\*.*?\*/", "", o_css, flags=re.S), banned)
+        self.assertEqual(1, self.LANDING_JS.count("addEventListener('scroll'"), "at most one scroll listener")
+        self.assertIn("{passive: true}", self.LANDING_JS)
+
+    def test_primary_buttons_are_gold_and_tokens_exist_in_both_themes(self):
+        import re
+        self.assertRegex(self.CSS, r"button\.primary,\.btn\.primary\{background:linear-gradient\(135deg,var\(--gold-2\),var\(--gold\)\)")
+        dark = self.CSS[self.CSS.index(':root, html[data-theme="dark"]'):self.CSS.index('html[data-theme="light"]')]
+        light = self.CSS[self.CSS.index('html[data-theme="light"]'):self.CSS.index("*{box-sizing")]
+        for token in ("--o-a1", "--o-b2", "--o-c1", "--gold:", "--gold-2", "--gold-fg", "--gold-line", "--gold-ink", "--glint-1", "--glint-2"):
+            self.assertIn(token, dark, f"dark {token}")
+            self.assertIn(token, light, f"light {token}")
+        self.assertIn("--font-display", self.CSS)
+
+    def test_heading_typeface_is_hosted_licensed_and_under_budget(self):
+        fonts = ROOT / "web" / "fonts"
+        woff = fonts / "Outfit-latin-400-600.woff2"
+        self.assertTrue(woff.is_file())
+        self.assertLess(woff.stat().st_size, 40 * 1024)
+        self.assertEqual(b"wOF2", woff.read_bytes()[:4])
+        self.assertIn("SIL OPEN FONT LICENSE", (fonts / "OFL.txt").read_text().upper())
+        origin = (fonts / "ORIGEN.md").read_text()
+        import hashlib
+        self.assertIn(hashlib.sha256(woff.read_bytes()).hexdigest(), origin, "ORIGEN.md must carry the SHA-256 of the shipped file")
+        self.assertIn("font-display:swap", self.CSS)
+        self.assertIn('rel="preload" href="/fonts/Outfit-latin-400-600.woff2" as="font" type="font/woff2" crossorigin', self.LANDING)
+        self.assertIn("font-src 'self'", __import__("interview_lab.web.security", fromlist=["x"]).SECURITY_HEADERS["Content-Security-Policy"])
+
+    def test_o_and_panels_stay_under_12_kb_uncompressed(self):
+        """ADR-0022 budget: SVG + CSS + JS of the O and the panels, comments and indentation excluded (what a minifier would drop)."""
+        import re
+        css = lambda t: len(re.sub(r"\s+", " ", re.sub(r"/\*.*?\*/", "", t, flags=re.S)).strip().encode())   # noqa: E731
+        js = lambda t: len(re.sub(r"\n\s*", "\n", re.sub(r"^\s*//.*$", "", re.sub(r"/\*.*?\*/", "", t, flags=re.S), flags=re.M)).encode())   # noqa: E731
+        c, l, h = self.CSS, self.LANDING_JS, self.LANDING
+        total = (css(c[c.index("/* ---------- Collaboration isotype"):c.index("@media print{")])
+                 + css(c[c.index('/* "Why": a fixed list'):c.index("/* Three steps = three arcs */")])
+                 + js(self.COMMON_JS[self.COMMON_JS.index("const ISOTYPE_DEFS"):self.COMMON_JS.index("const ISOTYPE_MARK")])
+                 + js(l[l.index("/* ---- the animated O"):l.index("(async function init")])
+                 + js(l[l.index('/* The visuals of the "why"'):l.index("function renderVersions")])
+                 + len(h[h.index('<div class="orbit-layer'):h.index('<section class="hero"')].encode()))
+        self.assertLess(total, 12 * 1024, f"{total} bytes")
+
+
 if __name__ == "__main__":
     unittest.main()

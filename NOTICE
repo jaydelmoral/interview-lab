@@ -15,6 +15,9 @@ Reuse of the content must give credit as described in LICENSE-CONTENT.md.
 Logos and brand: the Collaboration name, logos and tagline (web/brand/) are NOT licensed under Apache-2.0 or CC BY 4.0;
 all rights reserved by their owner. Replace them when you fork (web/brand/brand.json).
 
+Third-party typeface: Outfit (web/fonts/), Copyright 2021 The Outfit Project Authors, licensed under the SIL Open Font
+License 1.1 (web/fonts/OFL.txt). The shipped file is a Latin, weight 400-600 subset; origin and SHA-256 in web/fonts/ORIGEN.md.
+
 Trademarks: Java and OpenJDK are trademarks or registered trademarks of Oracle and/or its affiliates.
 Spring is a trademark of Broadcom Inc. and/or its subsidiaries. All other names belong to their owners.
 They are used only to identify technologies. This project is independent and is not affiliated with,

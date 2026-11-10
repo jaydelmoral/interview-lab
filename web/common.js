@@ -16,8 +16,8 @@ function addStrings(o){ for (const l of ['es', 'en']) Object.assign(STR[l], o[l]
 const T = k => (STR[lang][k] !== undefined ? STR[lang][k] : (STR.es[k] !== undefined ? STR.es[k] : k));
 
 addStrings({
-  es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', navHistory: 'Historial', cta: 'Iniciar simulación', theme: 'Cambiar entre modo claro y oscuro',
-       foot: 'Interview Lab · código Apache-2.0 · ejercicios CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) con Claude (Anthropic). Logotipos: © Collaboration, todos los derechos reservados. Proyecto independiente, sin relación con Oracle, plataformas de pruebas ni empresas mencionadas. El código que escribes se ejecuta en tu equipo.',
+  es: {navHome: 'Inicio', navEval: 'Cómo se evalúa', navBuild: 'Crear simulacro', navPractice: 'Práctica libre', navHistory: 'Historial', cta: 'Iniciar simulación', footBrand: 'Interview Lab · un producto de {n}', theme: 'Cambiar entre modo claro y oscuro',
+       foot: 'Interview Lab · código Apache-2.0 · ejercicios CC BY 4.0 · Javier Morales Barrera (@jaydelmoral). Proyecto con IA. Logotipos: © Collaboration, todos los derechos reservados. El código que escribes se ejecuta en tu equipo.',
        translate: '🌐 Convertir al español para mayor ayuda', original: '🌐 Ver el original en inglés', hover: 'Traducir al pasar el cursor',
        noTr: 'Este problema no tiene traducción (falta problem.es.md)', err: 'Error',
        dSample: 'Ejemplo ilustrativo', dSampleNote: 'Datos de muestra: así se verá tu reporte al terminar el simulacro.', dOverall: 'Resultado global', dSectionsOk: 'Secciones aprobadas',
@@ -28,8 +28,8 @@ addStrings({
        tipTag: 'Repasa este tema: abajo están las preguntas que fallaste, con su explicación.', tipSection: 'Quedó bajo el umbral de 60 %. Practica sus ejercicios en «Práctica libre» y repite el simulacro.',
        tipPS: 'Descompón el problema y escribe los casos límite antes de codificar.', tipRel: 'Cubre entradas vacías, nulos y límites: ahí fallan las pruebas ocultas.', tipLang: 'Repasa la API y la semántica del lenguaje que usaste.',
        catPS: 'Resolución de problemas', catRel: 'Fiabilidad', catLang: 'Conocimiento del lenguaje'},
-  en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', navHistory: 'History', cta: 'Start simulation', theme: 'Switch between light and dark mode',
-       foot: 'Interview Lab · code Apache-2.0 · exercises CC BY 4.0 · Javier Morales Barrera (@jaydelmoral) with Claude (Anthropic). Logos: © Collaboration, all rights reserved. Independent project, not affiliated with Oracle, testing platforms or any company mentioned. The code you write runs on your machine.',
+  en: {navHome: 'Home', navEval: 'How you are scored', navBuild: 'Build a simulation', navPractice: 'Free practice', navHistory: 'History', cta: 'Start simulation', footBrand: 'Interview Lab · a {n} product', theme: 'Switch between light and dark mode',
+       foot: 'Interview Lab · code Apache-2.0 · exercises CC BY 4.0 · Javier Morales Barrera (@jaydelmoral). AI-assisted project. Logos: © Collaboration, all rights reserved. The code you write runs on your machine.',
        translate: '🌐 Show in Spanish for extra help', original: '🌐 Show the English original', hover: 'Translate on hover',
        noTr: 'This problem has no Spanish translation (problem.es.md is missing)', err: 'Error',
        dSample: 'Illustrative example', dSampleNote: 'Sample data: this is how your report will look when you finish the simulation.', dOverall: 'Overall result', dSectionsOk: 'Sections passed',
@@ -51,6 +51,25 @@ async function api(path, opt){
 }
 const post = (path, payload) => api(path, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
 
+/* ---- Collaboration isotype (ADR-0022): the three crescents, the glint and their gradients are defined ONCE here and reused with <use>
+        by the bar (every page), the animated layer and the step cards (landing). viewBox 0 0 480 480, ring centre (250, 240). ---- */
+const ISOTYPE_DEFS = '<svg class="iso-defs" aria-hidden="true" focusable="false"><defs>'
+  + '<linearGradient id="gA" gradientUnits="userSpaceOnUse" x1="10" y1="60" x2="300" y2="430"><stop class="s-a1" offset="0"/><stop class="s-a2" offset="1"/></linearGradient>'
+  + '<linearGradient id="gB" gradientUnits="userSpaceOnUse" x1="200" y1="80" x2="470" y2="380"><stop class="s-b2" offset="0"/><stop class="s-b1" offset="1"/></linearGradient>'
+  + '<linearGradient id="gC" gradientUnits="userSpaceOnUse" x1="120" y1="380" x2="380" y2="170"><stop class="s-c2" offset="0"/><stop class="s-c1" offset="1"/></linearGradient>'
+  + '<linearGradient id="gG" gradientUnits="userSpaceOnUse" x1="19" y1="310" x2="19" y2="170"><stop class="s-g0" offset="0"/><stop class="s-g2" offset=".3"/><stop class="s-g1" offset=".7"/><stop class="s-g0" offset="1"/></linearGradient>'
+  + '<path id="oA" d="M360.63 55.23A224 224 0 1 0 360.63 424.77A202 202 0 1 1 360.63 55.23Z"/>'
+  + '<path id="oB" d="M179.5 89.25A184 184 0 1 1 179.5 390.75A166 166 0 1 0 179.5 89.25Z"/>'
+  + '<path id="oC" d="M122.12 161.88A149 149 0 1 0 375.88 161.88A135 135 0 1 1 122.12 161.88Z"/></defs></svg>';
+const ISOTYPE_MARK = '<use href="#oA" fill="url(#gA)"/><use href="#oB" fill="url(#gB)"/><use href="#oC" fill="url(#gC)"/>';
+/* Only brands that declare "isotype": "collaboration-o" get the vector mark and the animated O; any other brand keeps its PNG logo. */
+function installIsotype(b){
+  if (!b || b.isotype !== 'collaboration-o') return false;
+  if (!document.querySelector('.iso-defs')) document.body.insertAdjacentHTML('afterbegin', ISOTYPE_DEFS);
+  document.documentElement.classList.add('has-iso');
+  return true;
+}
+
 /* ---- brand header / footer ---- */
 const SVG_SUN = '<svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
 const SVG_MOON = '<svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>';
@@ -58,14 +77,25 @@ function logoPair(set, h, name){
   if (!set) return esc(name);
   return `<img class="logo-d" src="/brand/${esc(set.dark)}" alt="${esc(name)}" style="height:${h}px"><img class="logo-l" src="/brand/${esc(set.light)}" alt="${esc(name)}" style="height:${h}px">`;
 }
+/* The product is Interview Lab; the company (Collaboration) signs it. With an isotype: vector mark (a link only if brand.link is set) + divider + product name.
+   Without one: the PNG logo, as before. brand.link stays empty until the owner confirms the domain is theirs. */
+const PRODUCT = 'Interview Lab';
+function brandBlock(b){
+  if (!document.documentElement.classList.contains('has-iso')) return `<a class="brand" href="/" aria-label="${esc(b.name)}">${logoPair(b.logo_mark, 30, b.name)}</a>`;
+  const mark = `<svg viewBox="0 0 480 480" focusable="false">${ISOTYPE_MARK}</svg>`;
+  const iso = b.link ? `<a class="brand-iso" href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(b.name)}">${mark}</a>`
+                     : `<span class="brand-iso" role="img" aria-label="${esc(b.name)}">${mark}</span>`;
+  return `<div class="brand">${iso}<i class="brand-sep" aria-hidden="true"></i><a class="brand-name" href="/">${esc(PRODUCT)}</a></div>`;
+}
 async function renderChrome(active, onLangChange){
   let b = {name: 'Interview Lab', logo_mark: null, logo_full: null};
   try { b = await api('/api/brand'); } catch (e) {}
   window.BRAND = b;
+  installIsotype(b);
   const bar = $('appbar');
   bar.className = 'appbar';
   const lk = (id, href, key, on) => `<a href="${href}" id="${id}" class="${active === on ? 'active' : ''}"></a>`;
-  bar.innerHTML = `<div class="appbar-in"><a class="brand" href="/" aria-label="${esc(b.name)}">${logoPair(b.logo_mark, 30, b.name)}</a>
+  bar.innerHTML = `<div class="appbar-in">${brandBlock(b)}
     <nav class="pill-nav" aria-label="Main">${lk('navHome', '/', 'navHome', 'home')}${lk('navEval', '/#evaluacion', 'navEval', 'eval')}${lk('navBuild', '/#crear', 'navBuild', 'build')}${lk('navPractice', '/practice', 'navPractice', 'practice')}${lk('navHistory', '/history', 'navHistory', 'history')}</nav>
     <div class="actions"><select id="langSel" aria-label="Language / Idioma"><option value="es">Español</option><option value="en">English</option></select>
     <button class="icon-btn" id="themeBtn" type="button">${SVG_SUN}${SVG_MOON}</button></div></div>`;
@@ -79,7 +109,13 @@ function chromeText(){
   document.documentElement.lang = lang;
   if ($('navHome')) { for (const k of ['navHome', 'navEval', 'navBuild', 'navPractice', 'navHistory']) $(k).textContent = T(k); }
   if ($('themeBtn')) { $('themeBtn').title = T('theme'); $('themeBtn').setAttribute('aria-label', T('theme')); }
-  if ($('foot')) { $('foot').className = 'foot'; $('foot').textContent = T('foot'); }
+  if ($('foot')) {
+    const b = window.BRAND || {}, name = b.name || 'Collaboration';
+    const who = b.link ? `<a href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener noreferrer">${esc(name)}</a>` : esc(name);
+    const line = esc(T('footBrand')).replace('{n}', who);
+    $('foot').className = 'foot';
+    $('foot').innerHTML = `<div class="foot-brand">${window.brandFull && b.logo_full ? window.brandFull(34) : ''}<span>${line}${b.tagline ? ' · ' + esc(b.tagline) : ''}</span></div><p>${esc(T('foot'))}</p>`;
+  }
 }
 
 /* ---- minimal markdown (blocks aligned between problem.md and problem.es.md) ---- */

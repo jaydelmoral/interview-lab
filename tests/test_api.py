@@ -18,8 +18,20 @@ class ApiTest(unittest.TestCase):
 
     # ---- pages, assets, headers
     def test_pages_and_assets(self):
-        for path in ("/", "/practice", "/exam", "/history", "/common.js", "/common.css", "/theme.js", "/editor.js", "/exam.js", "/history.js", "/index.js", "/landing.js", "/brand/logo-full-dark.png", "/api/brand"):
+        for path in ("/", "/practice", "/exam", "/history", "/common.js", "/common.css", "/theme.js", "/editor.js", "/exam.js", "/history.js", "/index.js", "/landing.js", "/brand/logo-full-dark.png", "/api/brand", "/fonts/Outfit-latin-400-600.woff2"):
             self.assertEqual(200, self.c.get(path)[0], path)
+
+    def test_heading_font_is_served_as_woff2_and_brand_declares_the_isotype(self):
+        import urllib.request
+        with urllib.request.urlopen(self.c.base + "/fonts/Outfit-latin-400-600.woff2") as r:
+            body = r.read()
+            self.assertEqual("font/woff2", r.headers["Content-Type"])
+        self.assertLess(len(body), 40 * 1024)
+        status, brand = self.c.get("/api/brand")
+        self.assertEqual(200, status)
+        self.assertEqual("collaboration-o", brand["isotype"])
+        self.assertEqual(404, self.c.get("/fonts/missing.woff2")[0])
+        self.assertEqual(404, self.c.get("/fonts/../common.js")[0])
 
     def test_security_headers_present(self):
         import urllib.request
