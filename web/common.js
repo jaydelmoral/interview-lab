@@ -51,6 +51,25 @@ async function api(path, opt){
 }
 const post = (path, payload) => api(path, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
 
+/* ---- Collaboration isotype (ADR-0022): the three crescents, the glint and their gradients are defined ONCE here and reused with <use>
+        by the bar (every page), the animated layer and the step cards (landing). viewBox 0 0 480 480, ring centre (250, 240). ---- */
+const ISOTYPE_DEFS = '<svg class="iso-defs" aria-hidden="true" focusable="false"><defs>'
+  + '<linearGradient id="gA" gradientUnits="userSpaceOnUse" x1="10" y1="60" x2="300" y2="430"><stop class="s-a1" offset="0"/><stop class="s-a2" offset="1"/></linearGradient>'
+  + '<linearGradient id="gB" gradientUnits="userSpaceOnUse" x1="200" y1="80" x2="470" y2="380"><stop class="s-b2" offset="0"/><stop class="s-b1" offset="1"/></linearGradient>'
+  + '<linearGradient id="gC" gradientUnits="userSpaceOnUse" x1="120" y1="380" x2="380" y2="170"><stop class="s-c2" offset="0"/><stop class="s-c1" offset="1"/></linearGradient>'
+  + '<linearGradient id="gG" gradientUnits="userSpaceOnUse" x1="19" y1="310" x2="19" y2="170"><stop class="s-g0" offset="0"/><stop class="s-g2" offset=".3"/><stop class="s-g1" offset=".7"/><stop class="s-g0" offset="1"/></linearGradient>'
+  + '<path id="oA" d="M360.63 55.23A224 224 0 1 0 360.63 424.77A202 202 0 1 1 360.63 55.23Z"/>'
+  + '<path id="oB" d="M179.5 89.25A184 184 0 1 1 179.5 390.75A166 166 0 1 0 179.5 89.25Z"/>'
+  + '<path id="oC" d="M122.12 161.88A149 149 0 1 0 375.88 161.88A135 135 0 1 1 122.12 161.88Z"/></defs></svg>';
+const ISOTYPE_MARK = '<use href="#oA" fill="url(#gA)"/><use href="#oB" fill="url(#gB)"/><use href="#oC" fill="url(#gC)"/>';
+/* Only brands that declare "isotype": "collaboration-o" get the vector mark and the animated O; any other brand keeps its PNG logo. */
+function installIsotype(b){
+  if (!b || b.isotype !== 'collaboration-o') return false;
+  if (!document.querySelector('.iso-defs')) document.body.insertAdjacentHTML('afterbegin', ISOTYPE_DEFS);
+  document.documentElement.classList.add('has-iso');
+  return true;
+}
+
 /* ---- brand header / footer ---- */
 const SVG_SUN = '<svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
 const SVG_MOON = '<svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg>';
@@ -62,6 +81,7 @@ async function renderChrome(active, onLangChange){
   let b = {name: 'Interview Lab', logo_mark: null, logo_full: null};
   try { b = await api('/api/brand'); } catch (e) {}
   window.BRAND = b;
+  installIsotype(b);
   const bar = $('appbar');
   bar.className = 'appbar';
   const lk = (id, href, key, on) => `<a href="${href}" id="${id}" class="${active === on ? 'active' : ''}"></a>`;

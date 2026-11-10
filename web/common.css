@@ -272,6 +272,68 @@ textarea.qans{min-height:56px;height:56px;font-size:13.5px}
 .toolbar button{font-size:13px;padding:6px 14px}
 .runbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 
+/* ---------- Collaboration isotype and the animated O (ADR-0022) ---------- */
+/* Only brands with "isotype" get these: common.js adds .has-iso to <html>; everything marked .iso-only is hidden otherwise. */
+.iso-defs{position:absolute;width:0;height:0;overflow:hidden}
+.iso-only{display:none}
+.has-iso .iso-only{display:block}
+.s-a1{stop-color:var(--o-a1)} .s-a2{stop-color:var(--o-a2)} .s-b1{stop-color:var(--o-b1)} .s-b2{stop-color:var(--o-b2)}
+.s-c1{stop-color:var(--o-c1)} .s-c2{stop-color:var(--o-c2)} .s-g0{stop-color:var(--glint-1);stop-opacity:0} .s-g1{stop-color:var(--glint-1)} .s-g2{stop-color:var(--glint-2)}
+body.landing{overflow-x:clip}                       /* the O leaves through the sides; never overflow:hidden, it would break sticky */
+.landing .wrap{position:relative;padding-top:0;padding-bottom:0}
+.landing .wrap>section{position:relative;z-index:1}
+.landing .cta-final{min-height:100vh;min-height:100svh}   /* the layer is released over exactly this screen */
+
+/* One layer, one screen tall, the first child of .wrap. Sticky, so it follows the whole page and is released with the end of .wrap, exactly over the closing section. */
+.orbit-layer{position:absolute;inset:0 0 auto 0;height:100vh;height:100svh;z-index:0;pointer-events:none}
+.orbit-stage{position:absolute;inset:0;display:grid;place-items:center;transform:translate(27%,-3%)}
+.orbit{width:min(clamp(220px,42%,480px),62svh);height:auto;overflow:visible;display:block}   /* capped by screen height so the closing text is never covered */
+.orbit-glow{position:absolute;width:clamp(320px,62%,720px);aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,var(--glow-1),transparent)}
+.arc,.glint{transform-box:view-box;transform-origin:250px 240px}
+.glint{transform-origin:234px 240px;transform:rotate(52deg)}   /* rest: top left, same as the first and last frame */
+
+/* With motion allowed (orbit-on) the layer is sticky and the keyframes are "rubbed" by the scroll; only transform and opacity move. */
+@media (prefers-reduced-motion:no-preference){
+  .orbit-on .orbit-layer{position:sticky;top:0;margin-bottom:-100vh;margin-bottom:-100svh}
+  .orbit-on .orbit-stage{animation:orbit-stage 1s linear both}
+  .orbit-on .arc-a{animation:orbit-a 1s linear both}
+  .orbit-on .arc-b{animation:orbit-b 1s linear both}
+  .orbit-on .arc-c{animation:orbit-c 1s linear both}
+  .orbit-on .glint{animation:orbit-glint 1s linear both}
+  .orbit-on .orbit-stage,.orbit-on .arc,.orbit-on .glint{will-change:transform}
+  /* Path 1 (no JS per frame): the browser ties the animation to the scroll position. */
+  @supports (animation-timeline:scroll()){
+    .orbit-on .orbit-stage,.orbit-on .arc,.orbit-on .glint{animation-timeline:scroll(root block);animation-duration:auto}
+  }
+  /* Path 2 (fallback): landing.js writes --p (0..1) once per frame; the paused animation is placed at that point. */
+  .orbit-js .orbit-stage,.orbit-js .arc,.orbit-js .glint{animation-play-state:paused;animation-delay:calc(var(--p,0) * -1s)}
+}
+/* Stage: where the O is and how visible. It starts CLOSED and clear, is a watermark in the middle (never above .18 behind text) and closes again over the final section. */
+@keyframes orbit-stage{
+  0%,4%{transform:translate(27%,-3%) scale(1);opacity:1}
+  10%{transform:translate(30%,-8%) scale(.96);opacity:.9}
+  16%{transform:translate(34%,-13%) scale(.9);opacity:.5}
+  24%{transform:translate(36%,-16%) scale(.86);opacity:.18}
+  82%{transform:translate(-36%,12%) scale(.86);opacity:.13}
+  92%,100%{transform:translate(0,-20%) scale(.62);opacity:1}
+}
+/* Arcs: closed until 3 %, open at 14 %, swap places at 50 %, come back at 80 %, snap together at 90 %. They turn all the way at different speeds and directions
+   (A one turn, B two the other way, C three); the last turn is a multiple of 360°, so the final frame equals the first. */
+@keyframes orbit-a{0%,3%{transform:translate(0,0) rotate(0deg)}14%{transform:translate(-56px,-28px) rotate(-46deg)}50%{transform:translate(64px,26px) rotate(-194deg)}80%{transform:translate(-26px,-12px) rotate(-319deg)}90%,100%{transform:translate(0,0) rotate(-360deg)}}
+@keyframes orbit-b{0%,3%{transform:translate(0,0) rotate(0deg)}14%{transform:translate(60px,22px) rotate(91deg)}50%{transform:translate(-62px,-24px) rotate(389deg)}80%{transform:translate(26px,10px) rotate(637deg)}90%,100%{transform:translate(0,0) rotate(720deg)}}
+@keyframes orbit-c{0%,3%{transform:translate(0,0) rotate(0deg) scale(1)}14%{transform:translate(6px,64px) rotate(-137deg) scale(.92)}50%{transform:translate(-4px,-58px) rotate(-583deg) scale(.9)}80%{transform:translate(2px,26px) rotate(-956deg) scale(.96)}90%,100%{transform:translate(0,0) rotate(-1080deg) scale(1)}}
+@keyframes orbit-glint{0%,3%{transform:rotate(52deg)}30%{transform:rotate(-50deg)}60%{transform:rotate(40deg)}90%,100%{transform:rotate(52deg)}}
+@media (max-width:860px){
+  .orbit-stage{transform:translate(0,-30%)}   /* on phones the O sits above the title, complete and clear */
+  @keyframes orbit-stage{
+    0%,5%{transform:translate(0,-30%) scale(1);opacity:1}
+    14%{transform:translate(8%,-30%) scale(.95);opacity:.4}
+    24%{transform:translate(18%,-24%) scale(.9);opacity:.12}
+    82%{transform:translate(-18%,14%) scale(.9);opacity:.10}
+    92%,100%{transform:translate(0,-22%) scale(.9);opacity:1}
+  }
+}
+
 @media print{
   html,body{background:#fff!important}
   body::before,.appbar,#foot,.noprint,.row button,.row .btn{display:none!important}

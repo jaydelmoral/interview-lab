@@ -257,9 +257,26 @@ async function loadExams(){
     <a href="/exam?id=${encodeURIComponent(e.id)}"><button>${esc(e.last ? T('retry') : T('open'))}</button></a></div>`).join('');
 }
 
+/* ---- the animated O (ADR-0022). Only runs for brands with an isotype and when motion is allowed.
+   Native path: CSS ties the keyframes to the scroll (animation-timeline), no JS per frame. Fallback: one passive scroll listener writes --p (0..1) per frame.
+   Without this function (reduced motion, no JS, error) the O stays closed and still in the header. ---- */
+function orbit(){
+  const wrap = document.querySelector('.wrap');
+  if (!wrap || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  wrap.classList.add('orbit-on');
+  if (window.CSS && CSS.supports('animation-timeline: scroll()') && !/[?&]fallback/.test(location.search)) return;
+  wrap.classList.add('orbit-js');
+  let queued = false;
+  const set = () => { queued = false; const max = document.documentElement.scrollHeight - innerHeight;
+    wrap.style.setProperty('--p', max > 0 ? Math.min(.9999, Math.max(0, scrollY / max)).toFixed(4) : '0'); };
+  const ask = () => { if (!queued) { queued = true; requestAnimationFrame(set); } };
+  addEventListener('scroll', ask, {passive: true}); addEventListener('resize', ask); set();
+}
+
 (async function init(){
   await renderChrome('home', async () => { try { const m = await api('/api/modules?lang=' + lang); MODS = m.modules; GEN = m.generator || 'offline'; } catch (e) {} applyI18n(); });
   try { const m = await api('/api/modules?lang=' + lang); MODS = m.modules; GEN = m.generator || 'offline'; if (!m.fetch) { $('links').disabled = true; $('links').placeholder = T('fetchOff'); } } catch (e) {}
   try { RUNTIMES = await api('/api/runtimes?lang=' + lang); } catch (e) {}
   applyI18n(); loadBanks();
+  if (document.documentElement.classList.contains('has-iso')) orbit();
 })();
