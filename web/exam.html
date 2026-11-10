@@ -40,7 +40,8 @@ addStrings({
     reportTitle: 'Reporte final', overall: 'Resultado global', perSection: 'Por sección', weak: 'Temas a reforzar', none: 'Sin temas débiles detectados.', review: 'Repasa', good: 'Bien',
     retake: 'Repetir este simulacro', another: 'Crear otro simulacro', notes: 'Avisos', notFound: 'No se encontró ese simulacro.', quizHint: 'Escribe exactamente lo que imprimirá el fragmento, o el nombre de la excepción.',
     multiHint: 'Elige todas las correctas', singleHint: 'Elige una', score: 'Puntaje',
-    draft: 'Borrador', draftHint: 'Pregunta escrita con IA, aún sin revisión humana: contrástala con las fuentes antes de fiarte.', sourcesLbl: 'Fuentes'
+    draft: 'Borrador', draftHint: 'Pregunta escrita con IA, aún sin revisión humana: contrástala con las fuentes antes de fiarte.', sourcesLbl: 'Fuentes',
+    saveFail: 'No se pudo guardar este simulacro en el historial. El reporte de abajo está completo; puedes reintentar el guardado.', saveRetry: 'Reintentar guardado', saveBusy: 'Guardando…', saveOk: 'Guardado en el historial.'
   },
   en: {
     sections: 'Sections', minutes: 'min', total: 'Total time', begin: 'Start', resume: 'Resume where I left off', fresh: 'Start over', config: 'Settings',
@@ -51,7 +52,8 @@ addStrings({
     reportTitle: 'Final report', overall: 'Overall result', perSection: 'By section', weak: 'Topics to reinforce', none: 'No weak topics detected.', review: 'Review', good: 'Good',
     retake: 'Retake this simulation', another: 'Create another simulation', notes: 'Notes', notFound: 'That simulation was not found.', quizHint: 'Write exactly what the snippet prints, or the exception name.',
     multiHint: 'Pick all correct answers', singleHint: 'Pick one', score: 'Score',
-    draft: 'Draft', draftHint: 'AI-written question not yet reviewed by a human: check it against the sources before relying on it.', sourcesLbl: 'Sources'
+    draft: 'Draft', draftHint: 'AI-written question not yet reviewed by a human: check it against the sources before relying on it.', sourcesLbl: 'Sources',
+    saveFail: 'This simulation could not be saved to the history. The report below is complete; you can retry saving.', saveRetry: 'Retry saving', saveBusy: 'Saving…', saveOk: 'Saved to the history.'
   }
 });
 
@@ -59,8 +61,16 @@ const params = new URLSearchParams(location.search);
 const EID = params.get('id');
 let secStart = 0;
 let EXAM = null, idx = -1, RESULTS = [], WEAK = {}, endAt = 0, tick = null, answers = {}, codeBest = {}, codeIdx = 0, problemCache = {}, stmtMode = store('stmtMode') === 'es' ? 'es' : 'en', hoverOn = !!store('hoverOn');
+let open = false;        // true while the current section is being answered; false once it is closed
+let runSaved = false;    // true once this attempt is stored in the history (persisted, so a reload cannot store it twice)
 const progKey = () => 'exam:' + EID;
-const saveProg = () => store(progKey(), {idx, RESULTS, WEAK, endAt});
+/* Progress survives a reload. A closed section is saved as "continue with the next one" (no deadline, no answers),
+   so reloading can neither redo it nor look at its answers again; idx === sections.length means "go to the report". */
+function saveProg(){
+  store(progKey(), open || idx < 0
+    ? {idx, RESULTS, WEAK, endAt, answers, codeBest, sent: runSaved}
+    : {idx: idx + 1, RESULTS, WEAK, endAt: 0, answers: {}, codeBest: {}, sent: runSaved});
+}
 
 function fatal(msg){ $('fatal').style.display = ''; $('fatal').textContent = msg; }
 
@@ -75,23 +85,30 @@ function modeLabel(c){ return `${c.seniority.toUpperCase()} · ${c.language}${c.
 function showStart(){
   $('runner').style.display = 'none'; $('report').style.display = 'none';
   const prog = store(progKey());
-  const canResume = prog && prog.idx >= 0 && prog.idx < EXAM.sections.length;
+  const canResume = !!prog && Number.isInteger(prog.idx) && prog.idx >= 0 && prog.idx <= EXAM.sections.length;
+  const complete = canResume && prog.idx === EXAM.sections.length;   // every section is closed: only the report is left
+  if (complete) { RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; saveRun(); }   // make sure the run reaches the history even if the report is never opened
   const rows = EXAM.sections.map((s, i) => `<div class="item"><div><b>${i + 1}. ${esc(s.title)}</b> <span class="muted">· ${s.items.length}</span></div><span class="muted">${s.minutes} ${esc(T('minutes'))}</span></div>`).join('');
   $('start').style.display = '';
   $('start').innerHTML = `<h2>${esc(T('config'))}</h2>${EXAM.title ? '<h3>' + esc(EXAM.title) + '</h3>' : ''}<p class="muted">${esc(modeLabel(EXAM.config))} · ${esc(T('total'))}: <b>${EXAM.total_minutes} ${esc(T('minutes'))}</b></p>
     <div class="list">${rows}</div>
     ${EXAM.notes.length ? `<div class="note"><b>${esc(T('notes'))}:</b> ${esc(EXAM.notes.map(n => n.text).join(' '))}</div>` : ''}
-    <div class="row"><button class="primary" id="beginBtn">${esc(canResume ? T('resume') : T('begin'))}</button>${canResume ? `<button id="freshBtn">${esc(T('fresh'))}</button>` : ''}</div>`;
-  $('beginBtn').onclick = () => { if (canResume) { RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; startSection(prog.idx, prog.endAt); } else { RESULTS = []; WEAK = {}; startSection(0); } };
-  if (canResume) $('freshBtn').onclick = () => { store(progKey(), null); RESULTS = []; WEAK = {}; startSection(0); };
+    <div class="row"><button class="primary" id="beginBtn">${esc(complete ? T('seeReport') : canResume ? T('resume') : T('begin'))}</button>${canResume ? `<button id="freshBtn">${esc(T('fresh'))}</button>` : ''}</div>`;
+  $('beginBtn').onclick = () => {
+    if (!canResume) { RESULTS = []; WEAK = {}; runSaved = false; return startSection(0); }
+    RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent;
+    if (complete) showReport(); else startSection(prog.idx, prog.endAt, prog);
+  };
+  if (canResume) $('freshBtn').onclick = () => { store(progKey(), null); RESULTS = []; WEAK = {}; runSaved = false; attempt++; saving = null; startSection(0); };
 }
 
 function drawSteps(){
   $('steps').innerHTML = EXAM.sections.map((s, i) => `<span class="${i === idx ? 'cur' : (RESULTS[i] ? 'done' : '')}">${i + 1}. ${esc(s.title)}</span>`).join('');
 }
 
-function startSection(i, resumeEnd){
-  idx = i; answers = {}; codeBest = {}; codeIdx = 0;
+function startSection(i, resumeEnd, saved){
+  idx = i; open = true; codeIdx = 0;
+  answers = (saved && saved.answers) || {}; codeBest = (saved && saved.codeBest) || {};   // restored when resuming this same section
   hideTip();
   const sec = EXAM.sections[idx];
   $('start').style.display = 'none'; $('report').style.display = 'none'; $('runner').style.display = '';
@@ -135,7 +152,13 @@ function renderQuestions(results){
     return h + '</div>';
   }).join('') + (results ? `<div class="row"><b>${esc(T('score'))}: ${results.score}/${results.max}</b></div>` : '') + '</div>';
   if (!results) {
-    $('body').querySelectorAll('.showA').forEach(btn => btn.onclick = () => { const q = btn.closest('.q'); q.querySelector('.faceA').style.display = 'block'; q.querySelector('.selfr').style.display = 'flex'; btn.disabled = true; });
+    const reveal = btn => { const q = btn.closest('.q'); q.querySelector('.faceA').style.display = 'block'; q.querySelector('.selfr').style.display = 'flex'; btn.disabled = true; };
+    $('body').querySelectorAll('.showA').forEach(btn => {
+      btn.onclick = () => reveal(btn);
+      // a self-assessment already chosen (restored after a reload) shows its card open with that choice marked
+      const q = btn.closest('.q'), pick = answers[q.dataset.key];
+      if (pick === 'know' || pick === 'dont') { reveal(btn); const r = q.querySelector(`input[value="${pick}"]`); if (r) r.checked = true; }
+    });
   }
 }
 function collectAnswers(){
@@ -196,6 +219,7 @@ function recordCode(key, r){
   const cats = {};
   r.tests.forEach(t => { const c = cats[t.category] || (cats[t.category] = {p: 0, n: 0}); c.n++; if (t.passed) c.p++; });
   codeBest[key] = {score: r.score, max: r.max, passed: r.tests.filter(t => t.passed).length, total: r.tests.length, cats};
+  if (open) saveProg();               // a grade that lands after the section was closed must not overwrite its saved state
 }
 function showCodeResult(r){
   const pct = Math.round(100 * r.score / r.max);
@@ -214,6 +238,7 @@ function timeUsed(sec, auto){
 async function finishSection(auto){
   if (!auto && !confirm(T('finishConfirm'))) return;
   clearInterval(tick); $('finishBtn').disabled = true; $('fatal').style.display = 'none';
+  open = false;
   const sec = EXAM.sections[idx];
   let rec;
   if (sec.items.length && sec.items[0].type === 'code') {
@@ -235,11 +260,12 @@ async function finishSection(auto){
         return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation, tags: r.tags || [], sources: r.sources || []}; });
       rec = {module: sec.module, title: sec.title, score: rep.score, max: Math.max(rep.max, 1), pct: rep.max ? rep.score / rep.max : 0, weak: rep.weak || [], done: rep.score, total: rep.max, cats: {}, missed, ...timeUsed(sec, auto)};
       RESULTS[idx] = rec; (rep.weak || []).forEach(w => { WEAK[w] = (WEAK[w] || 0) + 1; });
-    } catch (e) { $('finishBtn').disabled = false; return fatal(e.message); }   // the answers are still on screen: let the user retry
+    } catch (e) { open = true; $('finishBtn').disabled = false; return fatal(e.message); }   // the answers are still on screen: let the user retry
   }
   if (auto) $('secTitle').textContent = sec.title + ' — ' + T('timeUp');
-  drawSteps(); saveProg();
+  drawSteps(); saveProg();           // open is false: this stores "continue with the next section"
   const last = idx === EXAM.sections.length - 1;
+  if (last) saveRun();               // the run reaches the history now, whether or not the report is opened
   const nb = document.createElement('div'); nb.className = 'row'; nb.innerHTML = `<button class="primary" id="nextBtn">${esc(last ? T('seeReport') : T('next'))}</button>`;
   $('body').appendChild(nb);
   $('nextBtn').onclick = () => { window.scrollTo(0, 0); if (last) showReport(); else startSection(idx + 1); };
@@ -261,25 +287,49 @@ function dashFromResults(){
   return {sample: false, title: EXAM.title || modeLabel(EXAM.config), subtitle: '· ' + EXAM.total_minutes + ' ' + T('minutes'), overall, sections: secs,
     weak: weak.slice(0, 6), missed: done.flatMap(r => r.missed || [])};
 }
-let reportSent = false;
+/* Stores the finished attempt in the history exactly once: concurrent callers share one request, and a success is
+   remembered in the saved progress so a reload cannot send it again. Resolves to true when the run is stored. */
+let saving = null, attempt = 0;      // attempt changes on "start over", so a late answer for the old attempt is ignored
+function saveRun(){
+  if (runSaved) return Promise.resolve(true);
+  if (saving) return saving;
+  const mine = attempt, done = RESULTS.filter(Boolean);
+  saving = post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', {
+    sections: done.map(r => ({module: r.module, title: r.title, score: Math.round(r.pct * 100), max: 100, pct: Math.round(r.pct * 1000) / 10, correct: r.done, total: r.total, used: r.used, allotted: r.allotted})),
+    missed: done.flatMap(r => r.missed || [])})
+    .then(() => { if (mine !== attempt) return false; runSaved = true; if (store(progKey())) saveProg(); return true; })
+    .catch(() => false)
+    .finally(() => { saving = null; });
+  return saving;
+}
+function drawSaveNote(state){
+  const el = $('saveNote'); if (!el) return;
+  if (state === 'ok') { el.innerHTML = `<div class="note ok">${esc(T('saveOk'))}</div>`; return; }
+  if (state === 'busy') { el.querySelector('button').disabled = true; el.querySelector('button').textContent = T('saveBusy'); return; }
+  el.innerHTML = `<div class="note err"><b>${esc(T('saveFail'))}</b><div class="row"><button id="saveRetryBtn">${esc(T('saveRetry'))}</button></div></div>`;
+  $('saveRetryBtn').onclick = async () => {       // retries only the save: the report stays as painted
+    drawSaveNote('busy');
+    if (await saveRun()) { store(progKey(), null); drawSaveNote('ok'); } else drawSaveNote('fail');
+  };
+}
+let reportShown = false;
 async function showReport(){
-  if (reportSent) return;            // a double click must not store the same run twice
-  reportSent = true;
+  if (reportShown) return;           // a double click must not paint the report twice
+  reportShown = true;
   hideTip(); window.scrollTo(0, 0);
   clearInterval(tick); $('runner').style.display = 'none'; $('start').style.display = 'none'; $('report').style.display = '';
-  const done = RESULTS.filter(Boolean);
-  try {
-    await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', {
-      sections: done.map(r => ({module: r.module, title: r.title, score: Math.round(r.pct * 100), max: 100, pct: Math.round(r.pct * 1000) / 10, correct: r.done, total: r.total, used: r.used, allotted: r.allotted})),
-      missed: done.flatMap(r => r.missed || [])});
-  } catch (e) {}
-  $('report').innerHTML = `<div class="section-head" style="margin:8px auto 26px"><span class="eyebrow">${esc(T('reportTitle'))}</span></div>` + renderDashboard(dashFromResults()) +
+  $('report').innerHTML = `<div id="saveNote" class="noprint"></div><div class="section-head" style="margin:8px auto 26px"><span class="eyebrow">${esc(T('reportTitle'))}</span></div>` + renderDashboard(dashFromResults()) +
     `<div class="row noprint" style="justify-content:center;margin-top:24px"><button class="primary lg" id="retakeBtn">${esc(T('retake'))}</button><a class="btn lg" href="/">${esc(T('another'))}</a><button class="lg" id="printBtn">${esc(T('dPrint'))}</button></div>`;
-  store(progKey(), null);
-  $('retakeBtn').onclick = () => location.reload();
+  // retaking discards the saved progress, so it waits until the run is safely in the history
+  $('retakeBtn').onclick = async () => { if (!await saveRun()) return drawSaveNote('fail'); store(progKey(), null); location.reload(); };
   $('printBtn').onclick = () => window.print();
+  if (await saveRun()) store(progKey(), null); else drawSaveNote('fail');   // progress is kept on failure so a reload can retry
 }
 
+// Persist marked answers as they change, so a reload in the middle of a question section loses nothing
+const onAnswer = () => { if (open && !$('body').querySelector('#code')) { answers = collectAnswers(); saveProg(); } };
+$('body').addEventListener('change', onAnswer);
+$('body').addEventListener('input', onAnswer);
 $('finishBtn').onclick = () => finishSection(false);
 (async function init(){
   await renderChrome('home', () => { location.reload(); });
