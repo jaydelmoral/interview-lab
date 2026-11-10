@@ -228,7 +228,20 @@ flowchart LR
 
 The port is published **only on loopback**. Exposing it to a network is explicitly unsupported (see [SECURITY](../SECURITY-MODEL.md)).
 
-## 8. Repository map
+## 8. Front-end design layer (landing, brand, tokens)
+
+The browser side is still static files with no build step ([ADR-0013](adr/0013-no-build-step-frontend.md)); the "Pro" redesign adds a thin design layer on top, all of it declarative:
+
+| Piece | Where | Decision |
+|---|---|---|
+| Design tokens: blues, the three arc colours, gold, `--font-display` | `web/common.css` (both themes) | [ADR-0015](adr/0015-ui-design-system-and-results-dashboard.md), [ADR-0023](adr/0023-hosted-heading-typeface-and-gold-action-colour.md) |
+| Heading typeface (Outfit, OFL, 24 KB) | `web/fonts/` + `ORIGEN.md`, served by `ASSETS` in `interview_lab/web/handlers.py` | [ADR-0023](adr/0023-hosted-heading-typeface-and-gold-action-colour.md) |
+| Isotype definition (one `<defs>`, reused with `<use>`) and the brand-gated bar | `web/common.js` (`ISOTYPE_DEFS`, `installIsotype`, `brandBlock`), `isotype` key in `web/brand/brand.json` | [ADR-0022](adr/0022-scroll-driven-isotype-without-libraries.md) |
+| Scroll-driven "O" layer (CSS keyframes tied to `animation-timeline`, one passive-scroll fallback) | `web/landing.html` (layer), `web/common.css` (keyframes), `web/landing.js` (`orbit()`) | [ADR-0022](adr/0022-scroll-driven-isotype-without-libraries.md) |
+
+The landing page itself (`landing.html` + `landing.js`) is the profile → exam wizard plus marketing blocks whose figures are read from `/api/modules` and `/api/brand`, never typed by hand. `brand.json` declares the company name, tagline, PNG logos, the optional `isotype` and an optional `link` (empty until the owner confirms the domain).
+
+## 9. Repository map
 
 | Path | Layer / purpose |
 |---|---|
@@ -238,7 +251,7 @@ The port is published **only on loopback**. Exposing it to a network is explicit
 | `interview_lab/web/` | HTTP server, routes, security guard, composition root |
 | `grader/` | JVM grading runtime (CLI + Java `Runner`/`Check`) |
 | `problems/`, `bank/` | Built-in content (CC BY 4.0) |
-| `web/` | Static front end (HTML, JS, CSS, brand) |
+| `web/` | Static front end (HTML, JS, CSS, brand, hosted heading typeface in `fonts/`) |
 | `tools/` | `new_problem.py`, `validate.py`, `gen_quiz.py` |
 | `tests/` | Domain, adapter, API and JVM tests |
 | `docs/` | Architecture, ADRs, install, user guide, API, security model |

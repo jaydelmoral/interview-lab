@@ -26,6 +26,8 @@ Un ADR documenta una decisión significativa: contexto, decisión y consecuencia
 | 0019 | [Runtime registry, setup-time installer, optional local AI and PDF](0019-runtime-registry-installer-and-local-ai.md) | Accepted |
 | 0020 | [Optional Monaco editor, pinned and hash-verified](0020-optional-monaco-editor-pinned-install.md) | Accepted |
 | 0021 | [Server-side state per exam attempt](0021-server-side-exam-attempts.md) | Accepted |
+| 0022 | [Isotype animated with the scroll, without libraries](0022-scroll-driven-isotype-without-libraries.md) | Accepted |
+| 0023 | [Heading typeface hosted in the app; gold as the colour of action](0023-hosted-heading-typeface-and-gold-action-colour.md) | Accepted |
 
 ## Template
 
