@@ -106,7 +106,7 @@ class Handlers:
         return self.exams.save_answers(req.params["id"], req.body.get("section"), req.body.get("answers"), req.body.get("attempt"))
 
     def exam_finish(self, req: Request):
-        return self.exams.finish(req.params["id"], req.body.get("sections"), req.body.get("missed"), req.body.get("attempt"), req.lang)
+        return self.exams.finish(req.params["id"], req.body.get("sections"), req.body.get("attempt"), req.lang)
 
     # ---- memory banks
     def banks_list(self, req: Request):

@@ -68,11 +68,14 @@ class ApiTest(unittest.TestCase):
         s, again = self.c.get(f"/api/exams/{exam['id']}?lang=en")
         self.assertEqual((200, exam["sections"]), (s, again["sections"]))  # reproducible: same items and same option order
         # answering with the expected options yields a perfect score (grading honors the shuffled order)
-        s, wrong = self.c.post(f"/api/exams/{exam['id']}/section", {"section": 0, "answers": {i["key"]: 0 for i in exam["sections"][0]["items"]}, "lang": "en"})
+        probe, attempt = "c" * 32, "d" * 32                                # a section is graded once per attempt: a probe attempt reveals the answers
+        self.c.post(f"/api/exams/{exam['id']}/start", {"section": 0, "attempt": probe})
+        s, wrong = self.c.post(f"/api/exams/{exam['id']}/section", {"section": 0, "answers": {i["key"]: 0 for i in exam["sections"][0]["items"]}, "lang": "en", "attempt": probe})
         picks = {r["key"]: r["expected_index"][0] for r in wrong["items"]}
-        s, ok = self.c.post(f"/api/exams/{exam['id']}/section", {"section": 0, "answers": picks, "lang": "en"})
+        self.c.post(f"/api/exams/{exam['id']}/start", {"section": 0, "attempt": attempt})
+        s, ok = self.c.post(f"/api/exams/{exam['id']}/section", {"section": 0, "answers": picks, "lang": "en", "attempt": attempt})
         self.assertEqual((200, 5, 5), (s, ok["score"], ok["max"]))
-        s, fin = self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": [{"module": "sql", "score": 100, "max": 100}]})
+        s, fin = self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": [{"section": 0}], "attempt": attempt})
         self.assertEqual((200, 100), (s, fin["score"]))
         s, lst = self.c.get("/api/exams")
         self.assertEqual(100, next(e for e in lst if e["id"] == exam["id"])["last"]["score"])
@@ -86,7 +89,7 @@ class ApiTest(unittest.TestCase):
         self.assertIn("Java-only", d["notes"][0]["text"])
         s, exam = self._exam()
         self.assertEqual(400, self.c.post(f"/api/exams/{exam['id']}/section", {"section": 9, "answers": {}})[0])
-        self.assertEqual(400, self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": "x"})[0])
+        self.assertEqual(400, self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": "x", "attempt": "e" * 32})[0])
 
     # ---- memory banks
     def test_bank_lifecycle_and_exam_with_bank(self):

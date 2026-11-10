@@ -50,15 +50,15 @@ class RequestHandlingTest(unittest.TestCase):
         self.assertEqual(200, st, exam)
         self.assertEqual("java", exam["config"]["language"])
 
-    def test_finish_rejects_scores_that_are_not_a_real_percentage(self):
+    def test_finish_rejects_malformed_requests_and_never_trusts_client_scores(self):
         _, exam = self.c.post("/api/exams", {"modules": ["sql"]})
-        url = f"/api/exams/{exam['id']}/finish"
-        for bad in ([{"module": "sql", "score": 500, "max": 100}], [{"module": "sql", "score": -5, "max": 100}],
-                    [{"module": "sql", "score": True, "max": True}], [{"module": "sql", "score": 10 ** 30, "max": 10 ** 30}],
-                    [{"module": "sql", "score": 1.5, "max": 2}], [], [{"module": "sql", "score": 1, "max": 1}] * 31):
-            self.assertEqual(400, self.c.post(url, {"sections": bad})[0], bad)
+        url, att = f"/api/exams/{exam['id']}/finish", "9" * 32
+        self.assertEqual(400, self.c.post(url, {"sections": [{"section": 0}]})[0])                       # the attempt id is mandatory
+        for bad in ([], "x", [1], [{"section": 5}], [{"section": True}], [{"section": 0}, {"section": 0}], [{"section": 0}] * 31):
+            self.assertEqual(400, self.c.post(url, {"sections": bad, "attempt": att})[0], bad)
         self.assertEqual(0, self.c.get("/api/history")[1]["kpis"]["runs"])
-        self.assertEqual(200, self.c.post(url, {"sections": [{"module": "sql", "score": 0, "max": 0}]})[0])     # nothing gradable: 0 %
+        # scores sent by the client are ignored: a forged 100 % for a section nobody answered is stored as 0 %
+        self.assertEqual(200, self.c.post(url, {"sections": [{"section": 0, "score": 500, "max": 100, "pct": 100}], "attempt": att})[0])
         kpis = self.c.get("/api/history")[1]["kpis"]
         self.assertEqual((1, 0.0), (kpis["runs"], kpis["best_overall"]))
 

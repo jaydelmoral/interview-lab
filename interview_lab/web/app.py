@@ -49,7 +49,7 @@ def compose(settings: Settings, grader=None) -> Handlers:
     history.import_legacy(settings.home / "runs", settings.home / "exams")      # one-time, idempotent
     practice = PracticeService(problems, grader or JavaCodeGrader(settings.root, settings.home), JsonlLog(settings.home / "runs" / "results.jsonl"),
                                settings.home / "runs" / "attempts", settings.max_code_bytes, history)
-    return Handlers(settings, AnalysisService(PdftotextExtractor()), ExamService(catalog, FsExamRepository(settings.home), history, FsAttemptRepository(settings.home), problems),
+    return Handlers(settings, AnalysisService(PdftotextExtractor()), ExamService(catalog, FsExamRepository(settings.home), FsAttemptRepository(settings.home), history, problems),
                     BankService(FsBankRepository(settings.home), SafeUrlFetcher(), generator, offline, settings.allow_fetch),
                     practice, ai_enabled, generator.name, HistoryService(history), RuntimeCatalog(settings.root))
 

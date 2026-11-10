@@ -31,9 +31,9 @@ let secStart = 0;
 let EXAM = null, idx = -1, RESULTS = [], WEAK = {}, endAt = 0, tick = null, answers = {}, codeBest = {}, codeIdx = 0, problemCache = {}, stmtMode = store('stmtMode') === 'es' ? 'es' : 'en', hoverOn = !!store('hoverOn');
 let open = false;        // true while the current section is being answered; false once it is closed
 let runSaved = false;    // true once this attempt is stored in the history (persisted, so a reload cannot store it twice)
-let attemptId = null;    // random id of this attempt: the server keys what it grades by it (null = progress saved by an older version)
+let attemptId = null;    // random id of this attempt (mandatory): the server keeps the clock and what it grades under it
 const newAttemptId = () => [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2, '0')).join('');
-const withAttempt = o => (attemptId ? {...o, attempt: attemptId} : o);
+const withAttempt = o => ({...o, attempt: attemptId});
 const progKey = () => 'exam:' + EID;
 /* Progress survives a reload. A closed section is saved as "continue with the next one" (no deadline, no answers),
    so reloading can neither redo it nor look at its answers again; idx === sections.length means "go to the report". */
@@ -56,9 +56,9 @@ function modeLabel(c){ return `${c.seniority.toUpperCase()} · ${c.language}${c.
 function showStart(){
   $('runner').style.display = 'none'; $('report').style.display = 'none';
   const prog = store(progKey());
-  const canResume = !!prog && Number.isInteger(prog.idx) && prog.idx >= 0 && prog.idx <= EXAM.sections.length;
+  const canResume = !!prog && typeof prog.attempt === 'string' && Number.isInteger(prog.idx) && prog.idx >= 0 && prog.idx <= EXAM.sections.length;
   const complete = canResume && prog.idx === EXAM.sections.length;   // every section is closed: only the report is left
-  if (complete) { RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; attemptId = prog.attempt || null; saveRun(); }   // make sure the run reaches the history even if the report is never opened
+  if (complete) { RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; attemptId = prog.attempt; saveRun(); }   // make sure the run reaches the history even if the report is never opened
   const rows = EXAM.sections.map((s, i) => `<div class="item"><div><b>${i + 1}. ${esc(s.title)}</b> <span class="muted">· ${s.items.length}</span></div><span class="muted">${s.minutes} ${esc(T('minutes'))}</span></div>`).join('');
   $('start').style.display = '';
   $('start').innerHTML = `<h2>${esc(T('config'))}</h2>${EXAM.title ? '<h3>' + esc(EXAM.title) + '</h3>' : ''}<p class="muted">${esc(modeLabel(EXAM.config))} · ${esc(T('total'))}: <b>${EXAM.total_minutes} ${esc(T('minutes'))}</b></p>
@@ -67,8 +67,8 @@ function showStart(){
     <div class="row"><button class="primary" id="beginBtn">${esc(complete ? T('seeReport') : canResume ? T('resume') : T('begin'))}</button>${canResume ? `<button id="freshBtn">${esc(T('fresh'))}</button>` : ''}</div>`;
   $('beginBtn').onclick = () => {
     if (!canResume) { RESULTS = []; WEAK = {}; runSaved = false; attemptId = newAttemptId(); return startSection(0); }
-    RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; attemptId = prog.attempt || null;
-    if (complete) showReport(); else startSection(prog.idx, prog.endAt, prog);
+    RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; attemptId = prog.attempt;
+    if (complete) showReport(); else startSection(prog.idx, prog);
   };
   if (canResume) $('freshBtn').onclick = () => { store(progKey(), null); RESULTS = []; WEAK = {}; runSaved = false; attemptId = newAttemptId(); epoch++; saving = null; startSection(0); };
 }
@@ -77,14 +77,12 @@ function drawSteps(){
   $('steps').innerHTML = EXAM.sections.map((s, i) => `<span class="${i === idx ? 'cur' : (RESULTS[i] ? 'done' : '')}">${i + 1}. ${esc(s.title)}</span>`).join('');
 }
 
-async function startSection(i, resumeEnd, saved){
-  // With an attempt id the SERVER owns the clock: it fixes the deadline the first time a section starts and reports what is
-  // left, so reloading cannot buy more time. Without one (progress saved by an older version) the local deadline is used.
-  let left = resumeEnd && resumeEnd > Date.now() ? resumeEnd - Date.now() : EXAM.sections[i].minutes * 60000, over = false;
-  if (attemptId) {
-    try { const st = await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/start', {section: i, attempt: attemptId}); left = st.remaining_ms; over = st.expired; }
-    catch (e) { return fatal(e.message); }
-  }
+async function startSection(i, saved){
+  // The SERVER owns the clock: it fixes the deadline the first time a section starts and reports what is left, so reloading
+  // cannot buy more time.
+  let left, over;
+  try { const st = await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/start', {section: i, attempt: attemptId}); left = st.remaining_ms; over = st.expired; }
+  catch (e) { return fatal(e.message); }
   idx = i; open = true; codeIdx = 0;
   answers = (saved && saved.answers) || {}; codeBest = (saved && saved.codeBest) || {};   // restored when resuming this same section
   hideTip();
@@ -197,12 +195,12 @@ async function renderCode(){
 /* The server keeps the latest answers too (debounced), so a section whose time ran out is graded as it was left. */
 let draftTimer = null, draftQueue = Promise.resolve();
 function sendDraft(keepalive){
-  if (!attemptId || !open) return;
+  if (!open) return;
   const body = JSON.stringify({section: idx, answers, attempt: attemptId});
   // one request at a time and in order, so an older answer sheet can never overwrite a newer one on the server
   draftQueue = draftQueue.then(() => api('/api/exams/' + encodeURIComponent(EXAM.id) + '/answers', {method: 'POST', headers: {'Content-Type': 'application/json'}, body, keepalive})).catch(() => {});
 }
-function pushDraft(){ if (attemptId) { clearTimeout(draftTimer); draftTimer = setTimeout(() => { draftTimer = null; sendDraft(false); }, 500); } }
+function pushDraft(){ clearTimeout(draftTimer); draftTimer = setTimeout(() => { draftTimer = null; sendDraft(false); }, 500); }
 addEventListener('pagehide', () => { if (draftTimer) { clearTimeout(draftTimer); draftTimer = null; sendDraft(true); } });   // do not lose the last change when the tab closes
 function saveDraft(){ const c = $('code'); const it = EXAM.sections[idx].items[codeIdx]; if (c && it) store('draft:' + it.id, c.value); }
 function recordCode(key, r){
@@ -239,7 +237,7 @@ async function finishSection(auto){
     const bump = (c, p, n) => { const a = cats[c] || (cats[c] = {p: 0, n: 0}); a.p += p; a.n += n; };
     sec.items.forEach(it => { const b = codeBest[it.key]; if (!b) return; m += b.max; s += b.score; pass += b.passed; tot += b.total; Object.entries(b.cats).forEach(([c, v]) => bump(c, v.p, v.n)); });
     for (const it of sec.items) { if (!codeBest[it.key]) { try { const p = await problemFor(it.id); m += p.tests.reduce((a, t) => a + t.points, 0); tot += p.tests.length; p.tests.forEach(t => bump(t.category, 0, 1)); } catch (e) {} } }
-    if (attemptId) { try { await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/section', {section: idx, answers: {}, lang, attempt: attemptId}); } catch (e) {} }   // closes it on the server's clock
+    try { await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/section', {section: idx, answers: {}, lang, attempt: attemptId}); } catch (e) {}   // closes it on the server's clock
     rec = {module: sec.module, title: sec.title, score: s, max: Math.max(m, 1), pct: m ? s / m : 0, weak: [], done: pass, total: tot, cats, missed: [], ...timeUsed(sec, auto)};
     RESULTS[idx] = rec;
     $('body').innerHTML = `<div class="card"><h3>${esc(T('results'))}</h3><p style="font-size:24px;font-weight:800">${s}/${rec.max} · ${Math.round(100 * rec.pct)}%</p></div>`;
@@ -289,7 +287,7 @@ function saveRun(){
   const mine = epoch, done = RESULTS.map((r, i) => r && {...r, section: i}).filter(Boolean);   // the server needs to know WHICH sections were finished
   saving = post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', withAttempt({
     sections: done.map(r => ({section: r.section, module: r.module, title: r.title, score: Math.round(r.pct * 100), max: 100, pct: Math.round(r.pct * 1000) / 10, correct: r.done, total: r.total, used: r.used, allotted: r.allotted})),
-    missed: done.flatMap(r => r.missed || []), lang}))
+    lang}))
     .then(() => { if (mine !== epoch) return false; runSaved = true; if (store(progKey())) saveProg(); return true; })
     .catch(() => false)
     .finally(() => { saving = null; });

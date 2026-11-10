@@ -122,10 +122,17 @@ class ServerSideAttemptTest(unittest.TestCase):
         for sections in ([], "x", [{"module": "sql"}], [{"section": 99}], [{"section": True}], [{"section": 0}, {"section": 0}], [{"section": 0}] * 31):
             self.assertEqual(400, self.finish(sections)[0], sections)
 
-    def test_without_an_attempt_id_the_old_client_trusted_mode_still_works(self):
-        st, rec = self.c.post(f"/api/exams/{self.eid}/finish", {"sections": [{"module": "sql", "score": 70, "max": 100}]})
-        self.assertEqual((200, 70), (st, rec["sections"][0]["score"]))
-        self.assertEqual(200, self.c.post("/api/grade", {"problem": self.exam["sections"][self.coding]["items"][0]["id"], "code": "x"})[0])
+    def test_the_attempt_id_is_mandatory_for_every_exam_call(self):
+        pid = self.exam["sections"][self.coding]["items"][0]["id"]
+        base = f"/api/exams/{self.eid}"
+        for missing in (None, "", "short", "g" * 32, 5):                    # absent, empty, too short, not hex, not a string
+            body = {} if missing is None else {"attempt": missing}
+            for path, extra in (("/start", {"section": self.sql}), ("/answers", {"section": self.sql, "answers": {}}),
+                                ("/section", {"section": self.sql, "answers": {}, "lang": "en"}), ("/finish", {"sections": [{"section": self.sql}]})):
+                self.assertEqual(400, self.c.post(base + path, extra | body)[0], (path, missing))
+            self.assertEqual(400, self.c.post("/api/grade", {"problem": pid, "code": "x", "exam": self.eid} | body)[0], missing)
+        self.assertEqual(400, self.c.post("/api/grade", {"problem": pid, "code": "x", "attempt": ATTEMPT})[0])   # an attempt without its exam
+        self.assertEqual(200, self.c.post("/api/grade", {"problem": pid, "code": "x"})[0])                       # free practice is not an exam
 
 
 class ServerClockTest(unittest.TestCase):

@@ -103,24 +103,21 @@ class TestHistoryApi(unittest.TestCase):
     def test_finishing_an_exam_feeds_the_dashboard(self):
         st, exam = self.c.post("/api/exams", {"seniority": "sr", "language": "java", "version": 21, "pace": "standard", "modules": ["sql"], "banks": [], "lang": "es"})
         self.assertEqual(st, 200)
-        sections = [{"module": "sql", "title": "SQL", "score": 60, "max": 100, "pct": 60.0, "correct": 3, "total": 5, "used": 4.5, "allotted": 6},
-                    {"module": "unix", "title": "Unix", "score": 40, "max": 100, "pct": 40.0, "correct": 2, "total": 5, "used": 6, "allotted": 6}]
-        st, _ = self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": sections, "missed": [{"section": "SQL", "q": "What is a JOIN?", "expected": "x", "explanation": "e", "tags": ["join"]}]})
+        att = "1" * 32
+        self.c.post(f"/api/exams/{exam['id']}/start", {"section": 0, "attempt": att})
+        st, rep = self.c.post(f"/api/exams/{exam['id']}/section", {"section": 0, "answers": {}, "lang": "es", "attempt": att})   # nothing answered
+        self.assertEqual(st, 200)
+        st, _ = self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": [{"section": 0}], "attempt": att, "lang": "es"})
         self.assertEqual(st, 200)
         st, data = self.c.get("/api/history")
         self.assertEqual(st, 200)
         self.assertEqual(data["kpis"]["runs"], 1)
-        self.assertEqual(data["kpis"]["avg_overall"], 50.0)
-        self.assertEqual(data["weak_tags"][0]["tag"], "join")
+        self.assertEqual(data["kpis"]["avg_overall"], 0.0)
+        self.assertTrue(data["weak_tags"])                                  # the missed questions come from the server's own grading
         run_id = data["recent"][0]["id"]
         st, detail = self.c.get(f"/api/history/runs/{run_id}")
-        self.assertEqual((st, len(detail["sections"]), detail["missed"][0]["question"]), (200, 2, "What is a JOIN?"))
-
-    def test_legacy_client_payload_and_garbage_do_not_break_finish(self):
-        _, exam = self.c.post("/api/exams", {"seniority": "sr", "language": "java", "version": 21, "pace": "standard", "modules": ["sql"], "banks": [], "lang": "es"})
-        st, _ = self.c.post(f"/api/exams/{exam['id']}/finish", {"sections": [{"module": "sql", "score": 3, "max": 5}],
-                                                                  "missed": ["junk", {"q": 5, "tags": "no"}, {"q": "x" * 5000, "tags": ["a"] * 50}]})
-        self.assertEqual(st, 200)
+        self.assertEqual((st, len(detail["sections"])), (200, 1))
+        self.assertEqual(len(rep["items"]), len(detail["missed"]))
 
     def test_unknown_run_is_404_and_bad_id_is_not_routed(self):
         self.assertEqual(self.c.get("/api/history/runs/999999")[0], 404)

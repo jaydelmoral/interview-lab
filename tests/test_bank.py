@@ -99,7 +99,8 @@ class TestPacksAndLevels(unittest.TestCase):
             item = ex["sections"][0]["items"][0]
             self.assertEqual(item["review"], "draft")
             self.assertNotIn("answer", item)
-            st, rep = c.post(f"/api/exams/{ex['id']}/section", {"section": 0, "answers": {}, "lang": "en"})
+            c.post(f"/api/exams/{ex['id']}/start", {"section": 0, "attempt": "f" * 32})
+            st, rep = c.post(f"/api/exams/{ex['id']}/section", {"section": 0, "answers": {}, "lang": "en", "attempt": "f" * 32})
             self.assertEqual(st, 200)
             self.assertTrue(rep["items"][0]["sources"])
         finally:

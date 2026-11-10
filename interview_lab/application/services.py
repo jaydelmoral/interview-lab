@@ -30,18 +30,7 @@ def _txt(x, n: int) -> str:
 
 
 GRACE_SECONDS = 15.0       # network/auto-submit slack after a section's deadline, before it is closed "as it was left"
-MAX_POINTS = 1_000_000     # upper bound for a client-reported score; real sections are far below it
 MAX_SECTIONS = 30
-
-
-def _valid_score(x) -> bool:
-    """A finished section as reported by the client: whole points with 0 <= score <= max, so a percentage is always 0-100."""
-    if not isinstance(x, dict):
-        return False
-    score, top = x.get("score"), x.get("max")
-    if isinstance(score, bool) or isinstance(top, bool) or not isinstance(score, int) or not isinstance(top, int):
-        return False
-    return 0 <= score <= top <= MAX_POINTS
 
 
 def _clean_config(cfg: dict) -> dict:
@@ -57,9 +46,7 @@ def _clean_config(cfg: dict) -> dict:
 
 
 def _clean_section(x: dict) -> dict:
-    pct = _num(x.get("pct"), 0, 100)
-    if pct is None:                                          # legacy clients send score/max only
-        pct = max(0.0, min(100.0, 100.0 * x["score"] / x["max"])) if x.get("max") else 0.0
+    pct = _num(x.get("pct"), 0, 100, 0.0)
     return {"module": _txt(x.get("module"), 30), "title": _txt(x.get("title") or x.get("module"), 80), "pct": round(pct, 2),
             "correct": int(_num(x.get("correct"), 0, 100000, 0)), "total": int(_num(x.get("total"), 0, 100000, 0)),
             "used_min": _num(x.get("used"), 0, 10000), "allotted_min": _num(x.get("allotted"), 0, 10000)}
@@ -107,9 +94,9 @@ class AnalysisService:
 
 # ------------------------------------------------------------------ exams
 class ExamService:
-    def __init__(self, catalog, exams, history=None, attempts=None, problems=None, clock=time.time):
+    def __init__(self, catalog, exams, attempts, history=None, problems=None, clock=time.time):
         self.catalog, self.exams, self.history = catalog, exams, history
-        self.attempts, self.problems = attempts, problems     # optional: without them every attempt is the old, client-trusted kind
+        self.attempts, self.problems = attempts, problems     # attempt state lives on the server: every exam call needs an attempt id
         self.clock = clock                                    # the server's clock is the only one that counts; injectable for tests
         self._lock = threading.Lock()                         # serializes read-modify-write of attempt state
 
@@ -138,12 +125,11 @@ class ExamService:
         return rules.public_exam(self._load(exam_id), self.catalog.resolve, lang)
 
     # ---- attempts: the server keeps what it graded, so the final result never depends on client-reported scores
-    def _attempt(self, attempt):
-        """Validated attempt id, or None when the client sent none (the old mode: results are taken from the client, clamped)."""
-        if attempt is None or self.attempts is None:
-            return None
+    @staticmethod
+    def _attempt(attempt) -> str:
+        """The attempt id of an exam call. It is mandatory: without it the server could not keep the clock or grade anything itself."""
         if not rules.valid_attempt(attempt):
-            raise InvalidRequest("invalid attempt")
+            raise InvalidRequest("a valid attempt id is required")
         return attempt
 
     def _state(self, exam_id: str, attempt: str) -> dict:
@@ -174,7 +160,7 @@ class ExamService:
         `expired` means time is up (or the section was already closed): the caller must close it with /section."""
         exam = self._load(exam_id)
         attempt = self._attempt(attempt)
-        if attempt is None or not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]):
+        if not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]):
             raise InvalidRequest("invalid request")
         with self._lock:
             state = self._state(exam["id"], attempt)
@@ -193,7 +179,7 @@ class ExamService:
         """Keeps the latest answers of a running section on the server: if the time runs out, the section is graded with them."""
         exam = self._load(exam_id)
         attempt = self._attempt(attempt)
-        if attempt is None or not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
+        if not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
             raise InvalidRequest("invalid request")
         with self._lock:
             state = self._state(exam["id"], attempt)
@@ -209,13 +195,11 @@ class ExamService:
         report["weak"] = rules.weak_tags(report["items"])
         return report
 
-    def grade_section(self, exam_id: str, idx, answers, lang: str, attempt=None) -> dict:
+    def grade_section(self, exam_id: str, idx, answers, lang: str, attempt) -> dict:
         exam = self._load(exam_id)
         if not isinstance(idx, int) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
             raise InvalidRequest("invalid request")
         attempt = self._attempt(attempt)
-        if attempt is None:
-            return self._grade(exam, idx, answers, lang)
         with self._lock:
             state = self._state(exam["id"], attempt)
             key = str(idx)
@@ -236,12 +220,12 @@ class ExamService:
 
     def code_target(self, exam_id, attempt, problem):
         """Checks a code submission that claims to belong to an exam attempt. Returns (exam id, attempt, item key, section index),
-        or None when it is plain free practice (no exam, or the old client-trusted mode)."""
+        or None when it is plain free practice (neither an exam nor an attempt is named). Naming only one of them is an error."""
         if exam_id is None and attempt is None:
             return None
         attempt = self._attempt(attempt)
-        if attempt is None:
-            return None
+        if not isinstance(exam_id, str):
+            raise InvalidRequest("an attempt belongs to an exam")
         exam = self._load(exam_id)
         found = [(i, r) for i, s in enumerate(exam["sections"]) for r in s["items"] if r["t"] == "code" and r.get("id") == problem]
         if not found:
@@ -275,18 +259,11 @@ class ExamService:
             out[ref.get("id")] = (sum(t.get("points", 0) for t in tests), len(tests))
         return out
 
-    def finish(self, exam_id: str, sections, missed=None, attempt=None, lang: str = "es") -> dict:
+    def finish(self, exam_id: str, sections, attempt, lang: str = "es") -> dict:
+        """The client only says WHICH sections it finished; scores, totals, missed questions and the time used
+        come from what the server graded and timed. Finishing twice returns the stored result, so a retry is harmless."""
         exam = self._load(exam_id)
         attempt = self._attempt(attempt)
-        if attempt is not None:
-            return self._finish_attempt(exam, attempt, sections, lang)
-        if not isinstance(sections, list) or not 0 < len(sections) <= MAX_SECTIONS or not all(_valid_score(x) for x in sections):
-            raise InvalidRequest("invalid request")
-        return self._store_run(exam, sections, missed)
-
-    def _finish_attempt(self, exam: dict, attempt: str, sections, lang: str) -> dict:
-        """The client only says WHICH sections it finished (and how long each took); scores, totals and the missed
-        questions come from what the server graded. Finishing twice returns the stored result, so a retry is harmless."""
         n = len(exam["sections"])
         if (not isinstance(sections, list) or not 0 < len(sections) <= MAX_SECTIONS
                 or not all(isinstance(x, dict) and isinstance(x.get("section"), int) and not isinstance(x["section"], bool) and 0 <= x["section"] < n for x in sections)

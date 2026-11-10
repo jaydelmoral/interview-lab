@@ -30,7 +30,7 @@ Notes: coding exercises and "predict the output" are **Java-only** for now (Pyth
 - **Question sections:** answer everything and press **Finish section** (or wait for the timer). You get the right answer and an explanation for every item.
 - **Flashcards** (from your bank): reveal the answer, then rate yourself *I knew it / I did not*.
 - If the time ends, the section is submitted automatically. The clock is kept by the server: reloading or reopening the page does not give extra time, and if time ran out while the page was closed the section is closed as you left it and you go on to the next one.
-- You can close or reload the page and **resume** where you were: the timer, your marked answers and your coding scores are kept. A section you already finished stays closed (you continue with the next one, you cannot redo it), and the run is stored in your history as soon as the last section is finished, even if you never open the final report. If saving to the history fails, the report shows a notice with a **Retry saving** button.
+- You can close or reload the page and **resume** where you were: the timer, your marked answers and your coding scores are kept. A section you already finished stays closed (you continue with the next one, you cannot redo it), and the run is stored in your history as soon as the last section is finished, even if you never open the final report. If saving to the history fails, the report shows a notice with a **Retry saving** button. An exam left half-done by a version older than 2026-11-10 cannot be resumed: it starts over.
 
 ![Exam with hover translation](img/exam-hover-translation.jpg)
 
@@ -73,4 +73,4 @@ python3 tools/validate.py my-exercise
 Your exercise appears in the selectors under *My problems*. Read the [content guidelines](CONTENT-GUIDELINES.md) first: write your own wording and use a business **sector** instead of real company names. You are responsible for the rights of what you add.
 
 ## 6. Your data / Tus datos
-Everything lives in `workspace/` (git-ignored): `problems/`, `banks/`, `exams/` and `runs/` (attempts and scores). Delete the folder to delete your history.
+Everything lives in `workspace/` (git-ignored): `problems/`, `banks/`, `exams/`, `exam-attempts/` (what the server grades and times during an exam) and `runs/` (attempts and scores). Delete the folder to delete your history.
