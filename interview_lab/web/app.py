@@ -10,7 +10,7 @@ from urllib.parse import parse_qs, urlsplit
 from ..adapters.anthropic_generator import AnthropicQuestionGenerator
 from ..adapters.fs_catalog import FsCatalog
 from ..adapters.fs_problems import FsProblems
-from ..adapters.fs_repositories import FsBankRepository, FsExamRepository, JsonlLog
+from ..adapters.fs_repositories import FsAttemptRepository, FsBankRepository, FsExamRepository, JsonlLog
 from ..adapters.java_grader import JavaCodeGrader
 from ..adapters.offline_generator import OfflineQuestionGenerator
 from ..adapters.ollama_generator import OllamaQuestionGenerator
@@ -49,7 +49,7 @@ def compose(settings: Settings, grader=None) -> Handlers:
     history.import_legacy(settings.home / "runs", settings.home / "exams")      # one-time, idempotent
     practice = PracticeService(problems, grader or JavaCodeGrader(settings.root, settings.home), JsonlLog(settings.home / "runs" / "results.jsonl"),
                                settings.home / "runs" / "attempts", settings.max_code_bytes, history)
-    return Handlers(settings, AnalysisService(PdftotextExtractor()), ExamService(catalog, FsExamRepository(settings.home), history),
+    return Handlers(settings, AnalysisService(PdftotextExtractor()), ExamService(catalog, FsExamRepository(settings.home), history, FsAttemptRepository(settings.home), problems),
                     BankService(FsBankRepository(settings.home), SafeUrlFetcher(), generator, offline, settings.allow_fetch),
                     practice, ai_enabled, generator.name, HistoryService(history), RuntimeCatalog(settings.root))
 

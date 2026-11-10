@@ -8,6 +8,7 @@ from typing import Optional
 
 EXAM_ID = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{4}$")
 BANK_ID = re.compile(r"^b-[0-9a-f]{8}$")
+ATTEMPT_ID = re.compile(r"^[0-9a-f]{32}$")
 
 
 class FsExamRepository:
@@ -46,6 +47,29 @@ class FsExamRepository:
                 except Exception:
                     continue
         return out
+
+
+class FsAttemptRepository:
+    """One small JSON file per attempt (exam-attempts/<exam id>-<attempt id>.json), replaced atomically on every save."""
+
+    def __init__(self, home: Path):
+        self.dir = Path(home) / "exam-attempts"
+
+    def _file(self, exam_id: str, attempt_id: str) -> Path:
+        if not (EXAM_ID.match(str(exam_id)) and ATTEMPT_ID.match(str(attempt_id))):
+            raise ValueError("invalid attempt reference")
+        return self.dir / f"{exam_id}-{attempt_id}.json"
+
+    def load(self, exam_id: str, attempt_id: str) -> Optional[dict]:
+        f = self._file(exam_id, attempt_id)
+        return json.loads(f.read_text()) if f.exists() else None
+
+    def save(self, exam_id: str, attempt_id: str, state: dict) -> None:
+        f = self._file(exam_id, attempt_id)
+        f.parent.mkdir(parents=True, exist_ok=True)
+        tmp = f.with_suffix(".tmp")
+        tmp.write_text(json.dumps(state, ensure_ascii=False))
+        tmp.replace(f)
 
 
 class FsBankRepository:

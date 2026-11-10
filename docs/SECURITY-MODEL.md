@@ -31,7 +31,7 @@ Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional 
 ## Not defended (by design)
 - Hostile code that wants the network or the user's files **outside Docker**.
 - Tampering with client-side timers (practice tool, not a proctored test).
-- Cheating yourself: the browser reports each section's score when an exam is finished (the server only checks that it is a valid 0-100 % value), a section can be graded more than once, and code under test shares the JVM with the hidden harness, so it could print a fake result line. A hosted or proctored edition must keep attempt state and verdicts on the server.
+- Cheating yourself: with an attempt id the server grades each section once and computes the final result itself ([ADR-0021](architecture/adr/0021-server-side-exam-attempts.md)); only the time used is still reported by the browser, and a request without an attempt id keeps the old client-trusted (clamped) behaviour. Code under test shares the JVM with the hidden harness, so it could print a fake result line. A hosted or proctored edition must keep attempt state and verdicts on the server.
 - Exposing the port beyond loopback, or serving several users.
 
 ## Operational guidance
@@ -55,5 +55,6 @@ Fixed (regression tests in `tests/test_hardening.py`):
 - A negative `Content-Length` blocked a server thread; wrong types in exam preferences returned a 500; a finished exam accepted any score (history could show 1e32 %). All validated now.
 - Two submissions of the same problem within one second shared a file name; schema migrations were not atomic; a page with an unknown charset failed the whole bank; question-source links accept only `http(s)`.
 - The server prints a warning when it listens beyond loopback.
+- P4 (local step): the exam result is computed from what the server graded, per attempt, and finishing twice never stores two runs (ADR-0021; tests in `tests/test_attempts.py`).
 
 Se corrigieron los puntos anteriores (pruebas en `tests/test_hardening.py`). Lo que queda abierto está en "Not defended" y en el plan de trabajo.

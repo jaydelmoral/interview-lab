@@ -106,8 +106,10 @@ class AnalysisService:
 
 # ------------------------------------------------------------------ exams
 class ExamService:
-    def __init__(self, catalog, exams, history=None):
+    def __init__(self, catalog, exams, history=None, attempts=None, problems=None):
         self.catalog, self.exams, self.history = catalog, exams, history
+        self.attempts, self.problems = attempts, problems     # optional: without them every attempt is the old, client-trusted kind
+        self._lock = threading.Lock()                         # serializes read-modify-write of attempt state
 
     def modules(self, lang: str, fetch_enabled: bool, ai_enabled: bool) -> dict:
         counts = self.catalog.counts()
@@ -133,18 +135,118 @@ class ExamService:
     def get_public(self, exam_id: str, lang: str) -> dict:
         return rules.public_exam(self._load(exam_id), self.catalog.resolve, lang)
 
-    def grade_section(self, exam_id: str, idx, answers, lang: str) -> dict:
-        exam = self._load(exam_id)
-        if not isinstance(idx, int) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
-            raise InvalidRequest("invalid request")
+    # ---- attempts: the server keeps what it graded, so the final result never depends on client-reported scores
+    def _attempt(self, attempt):
+        """Validated attempt id, or None when the client sent none (the old mode: results are taken from the client, clamped)."""
+        if attempt is None or self.attempts is None:
+            return None
+        if not rules.valid_attempt(attempt):
+            raise InvalidRequest("invalid attempt")
+        return attempt
+
+    def _state(self, exam_id: str, attempt: str) -> dict:
+        return self.attempts.load(exam_id, attempt) or {"sections": {}, "code": {}, "finished": None}
+
+    def _grade(self, exam: dict, idx: int, answers: dict, lang: str) -> dict:
         report = rules.grade_section(exam, idx, answers, self.catalog.resolve, lang)
         report["weak"] = rules.weak_tags(report["items"])
         return report
 
-    def finish(self, exam_id: str, sections, missed=None) -> dict:
+    def grade_section(self, exam_id: str, idx, answers, lang: str, attempt=None) -> dict:
         exam = self._load(exam_id)
+        if not isinstance(idx, int) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
+            raise InvalidRequest("invalid request")
+        attempt = self._attempt(attempt)
+        if attempt is None:
+            return self._grade(exam, idx, answers, lang)
+        with self._lock:
+            state = self._state(exam["id"], attempt)
+            if state["finished"]:
+                raise InvalidRequest("this attempt is already finished")
+            if str(idx) in state["sections"]:                # graded once per section and attempt: asking again returns the first report
+                return state["sections"][str(idx)]
+            report = state["sections"][str(idx)] = self._grade(exam, idx, answers, lang)
+            self.attempts.save(exam["id"], attempt, state)
+            return report
+
+    def code_target(self, exam_id, attempt, problem):
+        """Checks a code submission that claims to belong to an exam attempt. Returns (exam id, attempt, item key),
+        or None when it is plain free practice (no exam, or the old client-trusted mode)."""
+        if exam_id is None and attempt is None:
+            return None
+        attempt = self._attempt(attempt)
+        if attempt is None:
+            return None
+        exam = self._load(exam_id)
+        refs = [r for s in exam["sections"] for r in s["items"] if r["t"] == "code" and r.get("id") == problem]
+        if not refs:
+            raise InvalidRequest("that exercise is not part of this exam")
+        if self._state(exam["id"], attempt)["finished"]:
+            raise InvalidRequest("this attempt is already finished")
+        return exam["id"], attempt, rules.item_key(refs[0])
+
+    def record_code(self, target: tuple, report: dict) -> None:
+        """Keeps the best graded score of each exercise of the attempt."""
+        exam_id, attempt, key = target
+        tests = report.get("tests") or []
+        with self._lock:
+            state = self._state(exam_id, attempt)
+            prev = state["code"].get(key)
+            if state["finished"] or (prev and report["score"] <= prev["score"]):
+                return
+            state["code"][key] = {"score": int(report["score"]), "max": int(report["max"]),
+                                  "passed": sum(1 for t in tests if t.get("passed")), "total": len(tests)}
+            self.attempts.save(exam_id, attempt, state)
+
+    def _points(self, section: dict) -> dict:
+        """problem id -> (max points, number of tests), from the problem definitions."""
+        out = {}
+        for ref in section["items"]:
+            meta = self.problems.meta(ref.get("id")) if self.problems else None
+            tests = (meta or {}).get("tests") or []
+            out[ref.get("id")] = (sum(t.get("points", 0) for t in tests), len(tests))
+        return out
+
+    def finish(self, exam_id: str, sections, missed=None, attempt=None, lang: str = "es") -> dict:
+        exam = self._load(exam_id)
+        attempt = self._attempt(attempt)
+        if attempt is not None:
+            return self._finish_attempt(exam, attempt, sections, lang)
         if not isinstance(sections, list) or not 0 < len(sections) <= MAX_SECTIONS or not all(_valid_score(x) for x in sections):
             raise InvalidRequest("invalid request")
+        return self._store_run(exam, sections, missed)
+
+    def _finish_attempt(self, exam: dict, attempt: str, sections, lang: str) -> dict:
+        """The client only says WHICH sections it finished (and how long each took); scores, totals and the missed
+        questions come from what the server graded. Finishing twice returns the stored result, so a retry is harmless."""
+        n = len(exam["sections"])
+        if (not isinstance(sections, list) or not 0 < len(sections) <= MAX_SECTIONS
+                or not all(isinstance(x, dict) and isinstance(x.get("section"), int) and not isinstance(x["section"], bool) and 0 <= x["section"] < n for x in sections)
+                or len({x["section"] for x in sections}) != len(sections)):
+            raise InvalidRequest("invalid request")
+        with self._lock:
+            state = self._state(exam["id"], attempt)
+            if state["finished"]:
+                return state["finished"]
+            secs, missed = [], []
+            for x in sorted(sections, key=lambda x: x["section"]):
+                section = exam["sections"][x["section"]]
+                title = _txt(x.get("title"), 80) or rules.pick(section["title"], lang)
+                if rules.is_code_section(section):
+                    res = rules.code_result(section, state["code"], self._points(section))
+                else:                                        # never graded = nothing answered
+                    report = state["sections"].get(str(x["section"])) or rules.grade_section(exam, x["section"], {}, self.catalog.resolve, lang)
+                    res = {"score": report["score"], "max": report["max"], "correct": report["score"], "total": report["max"]}
+                    missed += rules.missed_items(exam, x["section"], report, self.catalog.resolve, title, lang)
+                pct = 100.0 * res["score"] / res["max"] if res["max"] else 0.0
+                secs.append({"module": section["module"], "title": title, "score": round(pct), "max": 100, "pct": round(pct, 1),
+                             "correct": res["correct"], "total": res["total"], "allotted": section["minutes"],
+                             "used": _num(x.get("used"), 0, section["minutes"], 0)})
+            state["finished"] = self._store_run(exam, secs, missed)
+            self.attempts.save(exam["id"], attempt, state)
+            return state["finished"]
+
+    def _store_run(self, exam: dict, sections: list, missed) -> dict:
         now = time.strftime("%Y-%m-%d %H:%M:%S")
         rec = {"exam": exam["id"], "when": now, "score": sum(x["score"] for x in sections),
                "max": sum(x["max"] for x in sections),

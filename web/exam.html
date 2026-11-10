@@ -63,13 +63,16 @@ let secStart = 0;
 let EXAM = null, idx = -1, RESULTS = [], WEAK = {}, endAt = 0, tick = null, answers = {}, codeBest = {}, codeIdx = 0, problemCache = {}, stmtMode = store('stmtMode') === 'es' ? 'es' : 'en', hoverOn = !!store('hoverOn');
 let open = false;        // true while the current section is being answered; false once it is closed
 let runSaved = false;    // true once this attempt is stored in the history (persisted, so a reload cannot store it twice)
+let attemptId = null;    // random id of this attempt: the server keys what it grades by it (null = progress saved by an older version)
+const newAttemptId = () => [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2, '0')).join('');
+const withAttempt = o => (attemptId ? {...o, attempt: attemptId} : o);
 const progKey = () => 'exam:' + EID;
 /* Progress survives a reload. A closed section is saved as "continue with the next one" (no deadline, no answers),
    so reloading can neither redo it nor look at its answers again; idx === sections.length means "go to the report". */
 function saveProg(){
   store(progKey(), open || idx < 0
-    ? {idx, RESULTS, WEAK, endAt, answers, codeBest, sent: runSaved}
-    : {idx: idx + 1, RESULTS, WEAK, endAt: 0, answers: {}, codeBest: {}, sent: runSaved});
+    ? {idx, RESULTS, WEAK, endAt, answers, codeBest, sent: runSaved, attempt: attemptId}
+    : {idx: idx + 1, RESULTS, WEAK, endAt: 0, answers: {}, codeBest: {}, sent: runSaved, attempt: attemptId});
 }
 
 function fatal(msg){ $('fatal').style.display = ''; $('fatal').textContent = msg; }
@@ -87,7 +90,7 @@ function showStart(){
   const prog = store(progKey());
   const canResume = !!prog && Number.isInteger(prog.idx) && prog.idx >= 0 && prog.idx <= EXAM.sections.length;
   const complete = canResume && prog.idx === EXAM.sections.length;   // every section is closed: only the report is left
-  if (complete) { RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; saveRun(); }   // make sure the run reaches the history even if the report is never opened
+  if (complete) { RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; attemptId = prog.attempt || null; saveRun(); }   // make sure the run reaches the history even if the report is never opened
   const rows = EXAM.sections.map((s, i) => `<div class="item"><div><b>${i + 1}. ${esc(s.title)}</b> <span class="muted">· ${s.items.length}</span></div><span class="muted">${s.minutes} ${esc(T('minutes'))}</span></div>`).join('');
   $('start').style.display = '';
   $('start').innerHTML = `<h2>${esc(T('config'))}</h2>${EXAM.title ? '<h3>' + esc(EXAM.title) + '</h3>' : ''}<p class="muted">${esc(modeLabel(EXAM.config))} · ${esc(T('total'))}: <b>${EXAM.total_minutes} ${esc(T('minutes'))}</b></p>
@@ -95,11 +98,11 @@ function showStart(){
     ${EXAM.notes.length ? `<div class="note"><b>${esc(T('notes'))}:</b> ${esc(EXAM.notes.map(n => n.text).join(' '))}</div>` : ''}
     <div class="row"><button class="primary" id="beginBtn">${esc(complete ? T('seeReport') : canResume ? T('resume') : T('begin'))}</button>${canResume ? `<button id="freshBtn">${esc(T('fresh'))}</button>` : ''}</div>`;
   $('beginBtn').onclick = () => {
-    if (!canResume) { RESULTS = []; WEAK = {}; runSaved = false; return startSection(0); }
-    RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent;
+    if (!canResume) { RESULTS = []; WEAK = {}; runSaved = false; attemptId = newAttemptId(); return startSection(0); }
+    RESULTS = prog.RESULTS || []; WEAK = prog.WEAK || {}; runSaved = !!prog.sent; attemptId = prog.attempt || null;
     if (complete) showReport(); else startSection(prog.idx, prog.endAt, prog);
   };
-  if (canResume) $('freshBtn').onclick = () => { store(progKey(), null); RESULTS = []; WEAK = {}; runSaved = false; attempt++; saving = null; startSection(0); };
+  if (canResume) $('freshBtn').onclick = () => { store(progKey(), null); RESULTS = []; WEAK = {}; runSaved = false; attemptId = newAttemptId(); epoch++; saving = null; startSection(0); };
 }
 
 function drawSteps(){
@@ -207,7 +210,7 @@ async function renderCode(){
   $('resetBtn').onclick = () => { if (confirm(T('resetConfirm'))) $('code').value = p.starter; };
   $('submitBtn').onclick = async () => {
     saveDraft(); $('submitBtn').disabled = true; $('status').textContent = T('running');
-    try { const r = await post('/api/grade', {problem: p.id, code: $('code').value, lang}); recordCode(it.key, r); showCodeResult(r); $('status').textContent = ''; drawSteps(); const tb = $('body').querySelector('[data-i="' + codeIdx + '"]'); if (tb) tb.textContent = T('problem') + ' ' + (codeIdx + 1) + ' · ' + Math.round(100 * codeBest[it.key].score / codeBest[it.key].max) + '%'; }
+    try { const r = await post('/api/grade', withAttempt({problem: p.id, code: $('code').value, lang, exam: EXAM.id})); recordCode(it.key, r); showCodeResult(r); $('status').textContent = ''; drawSteps(); const tb = $('body').querySelector('[data-i="' + codeIdx + '"]'); if (tb) tb.textContent = T('problem') + ' ' + (codeIdx + 1) + ' · ' + Math.round(100 * codeBest[it.key].score / codeBest[it.key].max) + '%'; }
     catch (e) { $('status').textContent = T('err') + ': ' + e.message; }
     $('submitBtn').disabled = false;
   };
@@ -253,7 +256,7 @@ async function finishSection(auto){
   } else {
     const ans = collectAnswers();
     try {
-      const rep = await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/section', {section: idx, answers: ans, lang});
+      const rep = await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/section', withAttempt({section: idx, answers: ans, lang}));
       answers = ans; renderQuestions(rep);
       const byKey = {}; sec.items.forEach(i => { byKey[i.key] = i; });
       const missed = rep.items.filter(r => !r.correct).map(r => { const it = byKey[r.key] || {};
@@ -289,15 +292,15 @@ function dashFromResults(){
 }
 /* Stores the finished attempt in the history exactly once: concurrent callers share one request, and a success is
    remembered in the saved progress so a reload cannot send it again. Resolves to true when the run is stored. */
-let saving = null, attempt = 0;      // attempt changes on "start over", so a late answer for the old attempt is ignored
+let saving = null, epoch = 0;        // epoch changes on "start over", so a late answer for the old attempt is ignored
 function saveRun(){
   if (runSaved) return Promise.resolve(true);
   if (saving) return saving;
-  const mine = attempt, done = RESULTS.filter(Boolean);
-  saving = post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', {
-    sections: done.map(r => ({module: r.module, title: r.title, score: Math.round(r.pct * 100), max: 100, pct: Math.round(r.pct * 1000) / 10, correct: r.done, total: r.total, used: r.used, allotted: r.allotted})),
-    missed: done.flatMap(r => r.missed || [])})
-    .then(() => { if (mine !== attempt) return false; runSaved = true; if (store(progKey())) saveProg(); return true; })
+  const mine = epoch, done = RESULTS.map((r, i) => r && {...r, section: i}).filter(Boolean);   // the server needs to know WHICH sections were finished
+  saving = post('/api/exams/' + encodeURIComponent(EXAM.id) + '/finish', withAttempt({
+    sections: done.map(r => ({section: r.section, module: r.module, title: r.title, score: Math.round(r.pct * 100), max: 100, pct: Math.round(r.pct * 1000) / 10, correct: r.done, total: r.total, used: r.used, allotted: r.allotted})),
+    missed: done.flatMap(r => r.missed || []), lang}))
+    .then(() => { if (mine !== epoch) return false; runSaved = true; if (store(progKey())) saveProg(); return true; })
     .catch(() => false)
     .finally(() => { saving = null; });
   return saving;

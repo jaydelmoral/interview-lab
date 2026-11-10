@@ -173,6 +173,46 @@ def grade_section(exam: dict, idx: int, answers: dict, resolve: Resolver, lang: 
     return {"module": section["module"], "score": right, "max": len(results), "items": results}
 
 
+ATTEMPT_ID = re.compile(r"^[0-9a-f]{32}$")       # random id the browser mints when an attempt starts
+
+
+def valid_attempt(attempt) -> bool:
+    return isinstance(attempt, str) and bool(ATTEMPT_ID.match(attempt))
+
+
+def is_code_section(section: dict) -> bool:
+    return bool(section["items"]) and section["items"][0]["t"] == "code"
+
+
+def code_result(section: dict, best: dict, points: dict) -> dict:
+    """Result of a code section from the best graded submission per exercise.
+
+    `best` maps item key -> {"score", "passed"}; `points` maps problem id -> (max points, number of tests).
+    Exercises never submitted count as 0, so the section maximum never depends on what the client reports.
+    """
+    score = top = passed = total = 0
+    for ref in section["items"]:
+        pts, n = points.get(ref.get("id"), (0, 0))
+        top, total = top + pts, total + n
+        b = best.get(item_key(ref))
+        if b:
+            score, passed = score + min(b["score"], pts), passed + min(b["passed"], n)
+    return {"score": score, "max": top, "correct": passed, "total": total}
+
+
+def missed_items(exam: dict, idx: int, report: dict, resolve: Resolver, title: str, lang: str) -> list:
+    """Questions answered wrong in a graded section, in the shape the history stores (text, expected answer, tags)."""
+    by_key = {item_key(r): r for r in exam["sections"][idx]["items"]}
+    out = []
+    for r in report["items"]:
+        ref = by_key.get(r["key"])
+        pub = public_item(exam["id"], ref, resolve(ref), lang) if ref and not r["correct"] else None
+        if pub:
+            text = pub.get("q") or ((pub["topic"] + ": " if pub.get("topic") else "") + str(pub.get("code", "")).split("\n")[0])
+            out.append({"section": title, "q": text, "expected": r["expected"], "explanation": r["explanation"], "tags": r.get("tags", [])})
+    return out
+
+
 def weak_tags(results: list) -> list:
     counts: dict = {}
     for r in results:

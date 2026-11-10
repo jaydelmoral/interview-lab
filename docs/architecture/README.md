@@ -51,7 +51,7 @@ flowchart TB
     end
     subgraph disk["Files"]
         builtin[("problems/ · bank/<br/>built-in content, CC BY 4.0")]
-        workspace[("workspace/ (your data)<br/>problems · banks · exams · runs")]
+        workspace[("workspace/ (your data)<br/>problems · banks · exams · exam-attempts · runs")]
     end
     browser -->|"JSON over HTTP"| server
     server --> javac

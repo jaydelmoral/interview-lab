@@ -97,10 +97,10 @@ class Handlers:
         return self.exams.get_public(req.params["id"], req.lang)
 
     def exam_section(self, req: Request):
-        return self.exams.grade_section(req.params["id"], req.body.get("section"), req.body.get("answers"), req.lang)
+        return self.exams.grade_section(req.params["id"], req.body.get("section"), req.body.get("answers"), req.lang, req.body.get("attempt"))
 
     def exam_finish(self, req: Request):
-        return self.exams.finish(req.params["id"], req.body.get("sections"), req.body.get("missed"))
+        return self.exams.finish(req.params["id"], req.body.get("sections"), req.body.get("missed"), req.body.get("attempt"), req.lang)
 
     # ---- memory banks
     def banks_list(self, req: Request):
@@ -135,7 +135,12 @@ class Handlers:
         return self.practice.get(req.params["id"], req.lang)
 
     def grade_code(self, req: Request):
-        return self.practice.grade_code(req.body.get("problem"), req.body.get("code"), req.lang)
+        b = req.body
+        target = self.exams.code_target(b.get("exam"), b.get("attempt"), b.get("problem"))    # None: plain free practice
+        report = self.practice.grade_code(b.get("problem"), b.get("code"), req.lang)
+        if target:
+            self.exams.record_code(target, report)
+        return report
 
     def grade_quiz(self, req: Request):
         return self.practice.grade_quiz(req.body.get("problem"), req.body.get("answers"), req.lang)
