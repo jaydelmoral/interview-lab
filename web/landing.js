@@ -124,6 +124,10 @@ function renderMarketing(){
   /* figures strip: counted from /api/modules, never typed by hand */
   $('factMods').textContent = MODS.length ? MODS.length : '–';
   $('factItems').textContent = MODS.length ? MODS.reduce((a, m) => a + (m.count || 0), 0).toLocaleString(lang) : '–';
+  renderPanels(sample);
+}
+/* The visuals of the "why" panels. Real data or real strings only. */
+function renderPanels(sample){
   /* panel 1: tailored to the job */
   $('detectChips').innerHTML = [['Senior', 1], ['Java 21', 1]].concat(MODS.filter(m => m.id !== 'mybank').map(m => [m.title, DETECTED_DEMO.has(m.id) ? 1 : 0]))
     .map(([t, hit]) => `<span class="chip${hit ? ' hit' : ''}">${esc(t)}</span>`).join('');
