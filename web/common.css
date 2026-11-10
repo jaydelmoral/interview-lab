@@ -142,10 +142,15 @@ pre,code{font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,Consolas
 .landing .section-head{text-align:left;margin:0 0 44px;max-width:720px}
 .landing .section-head h2{font-weight:400;margin-top:16px}
 .landing .section-head p{margin:14px 0 0}
-.landing .card{background:var(--surface-solid);border-radius:20px;backdrop-filter:none;-webkit-backdrop-filter:none}   /* solid: nothing blurs the O that moves behind */
+/* Glass: translucent surfaces so the moving O shows through. No backdrop-filter: nothing has to blur a layer that animates behind. */
+.landing{--glass:color-mix(in srgb,var(--surface-solid) 52%,transparent)}
+.landing .card,.landing .dash,.landing .mini,.landing .how-grid article{background:var(--glass);border-radius:20px;backdrop-filter:none;-webkit-backdrop-filter:none}
+.landing .how-grid article{border-radius:18px}
+.landing .dash .panel{background:color-mix(in srgb,var(--surface-solid) 60%,transparent)}   /* a bit denser than the frame: the figures and labels sit on the panels */
 .anchor-alias{display:block;height:0}   /* keeps the old #pilares and #como links working */
 
-.hero{min-height:calc(100svh - 62px);display:grid;grid-template-columns:7fr 5fr;align-items:center;text-align:left;padding:40px 0}
+.hero{min-height:var(--hero-h);display:grid;grid-template-columns:7fr 5fr;align-items:center;text-align:left;padding:32px 0 0}
+.hero + .section{padding-top:56px}
 .hero h1{font-size:clamp(38px,5.4vw,68px);line-height:1.04;font-weight:400;margin:24px 0 0}
 .hero h1 em{font-style:normal;color:var(--accent-text)}
 .hero p.lead{max-width:560px;margin:22px 0 0;color:var(--muted);font-size:clamp(16px,1.5vw,19px)}
@@ -163,7 +168,7 @@ pre,code{font-family:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,Consolas
 .reasons-panels{display:grid;gap:96px}
 .reasons-panels h3{font-size:22px;font-weight:400;margin-top:22px}
 .reasons-panels article>p{color:var(--muted);margin:8px 0 0;max-width:520px}
-.mini{border:1px solid var(--line);border-radius:20px;background:var(--surface-solid);min-height:300px;padding:28px;display:grid;align-content:center;gap:12px;overflow:hidden}
+.mini{border:1px solid var(--line);border-radius:20px;min-height:300px;padding:28px;display:grid;align-content:center;gap:12px;overflow:hidden}
 .mini .eyebrow{justify-self:start}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips .chip{margin:0;padding:6px 14px;font-size:13.5px;background:var(--surface)}
@@ -337,13 +342,14 @@ textarea.qans{min-height:56px;height:56px;font-size:13.5px}
 .has-iso .iso-only{display:block}
 .s-a1{stop-color:var(--o-a1)} .s-a2{stop-color:var(--o-a2)} .s-b1{stop-color:var(--o-b1)} .s-b2{stop-color:var(--o-b2)}
 .s-c1{stop-color:var(--o-c1)} .s-c2{stop-color:var(--o-c2)} .s-g0{stop-color:var(--glint-1);stop-opacity:0} .s-g1{stop-color:var(--glint-1)} .s-g2{stop-color:var(--glint-2)}
-body.landing{overflow-x:clip}                       /* the O leaves through the sides; never overflow:hidden, it would break sticky */
-.landing .wrap{position:relative;padding-top:0;padding-bottom:0}
+body.landing{overflow-x:clip}
+:root:has(body.landing){overflow-anchor:none}       /* the bar and texts are filled in by JS after load; scroll anchoring made every refresh land lower than the last */                       /* the O leaves through the sides; never overflow:hidden, it would break sticky */
+.landing .wrap{position:relative;padding-top:0;padding-bottom:0;--hero-h:min(100svh - 62px,700px);--sh:calc(var(--hero-h) / 2 - 47svh)}   /* --sh: how far the closed O sits above/below the original centre so it stays level with the header text */
 .landing .wrap>section{position:relative;z-index:1}
 
 /* One layer, one screen tall, the first child of .wrap. Sticky, so it follows the whole page and is released with the end of .wrap, exactly over the closing section. */
 .orbit-layer{position:absolute;inset:0 0 auto 0;height:100vh;height:100svh;z-index:0;pointer-events:none}
-.orbit-stage{position:absolute;inset:0;display:grid;place-items:center;transform:translate(27%,-3%)}
+.orbit-stage{position:absolute;inset:0;display:grid;place-items:center;transform:translate(27%,calc(-3% + var(--sh)))}
 .orbit{width:min(clamp(220px,42%,480px),62svh);height:auto;overflow:visible;display:block}   /* capped by screen height so the closing text is never covered */
 .orbit-glow{position:absolute;width:clamp(320px,62%,720px);aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,var(--glow-1),transparent)}
 .arc,.glint{transform-box:view-box;transform-origin:250px 240px}
@@ -367,9 +373,9 @@ body.landing{overflow-x:clip}                       /* the O leaves through the 
 }
 /* Stage: where the O is and how visible. It starts CLOSED and clear, is a watermark in the middle (never above .18 behind text) and closes again over the final section. */
 @keyframes orbit-stage{
-  0%,4%{transform:translate(27%,-3%) scale(1);opacity:1}
-  10%{transform:translate(30%,-8%) scale(.96);opacity:.9}
-  16%{transform:translate(34%,-13%) scale(.9);opacity:.5}
+  0%,4%{transform:translate(27%,calc(-3% + var(--sh))) scale(1);opacity:1}
+  10%{transform:translate(30%,calc(-8% + var(--sh) * .6)) scale(.96);opacity:.7}
+  16%{transform:translate(34%,calc(-13% + var(--sh) * .3)) scale(.9);opacity:.38}
   24%{transform:translate(36%,-16%) scale(.86);opacity:.18}
   82%{transform:translate(-36%,12%) scale(.86);opacity:.13}
   92%,100%{transform:translate(0,-20%) scale(.62);opacity:1}
