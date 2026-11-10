@@ -47,8 +47,8 @@ def lang_of(value) -> str:
 class Handlers:
     """Holds the services (injected by the composition root) and exposes one method per endpoint."""
 
-    def __init__(self, settings, analysis, exams, banks, practice, ai_enabled: bool, generator_name: str, history=None):
-        self.s, self.analysis, self.exams, self.banks, self.practice, self.history = settings, analysis, exams, banks, practice, history
+    def __init__(self, settings, analysis, exams, banks, practice, ai_enabled: bool, generator_name: str, history=None, runtimes=None):
+        self.s, self.analysis, self.exams, self.banks, self.practice, self.history, self.runtimes = settings, analysis, exams, banks, practice, history, runtimes
         self.ai_enabled, self.generator_name = ai_enabled, generator_name
         self.web = settings.root / "web"
 
@@ -107,6 +107,10 @@ class Handlers:
         self.banks.delete(req.params["id"])
         return {"deleted": req.params["id"]}
 
+    # ---- installed runtimes (read-only: the app never installs anything, see ADR-0019)
+    def runtimes_list(self, req: Request):
+        return self.runtimes.list(req.lang)
+
     # ---- history and analytics
     def history_overview(self, req: Request):
         return self.history.overview()
@@ -143,6 +147,7 @@ def build_routes(h: Handlers) -> list:
         r("GET", "/api/exams", h.exams_list),
         r("GET", r"/api/exams/(?P<id>[^/]+)", h.exam_get),
         r("GET", "/api/banks", h.banks_list),
+    r("GET", "/api/runtimes", h.runtimes_list),
     r("GET", "/api/history", h.history_overview),
     r("GET", r"/api/history/runs/(?P<id>\d{1,12})", h.history_run),
         r("POST", "/api/analyze", h.analyze, big),

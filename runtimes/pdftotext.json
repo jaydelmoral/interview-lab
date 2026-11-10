@@ -1,0 +1,29 @@
+{
+ "id": "pdftotext",
+ "kind": "tool",
+ "name": "pdftotext (poppler)",
+ "grader": false,
+ "description": {
+  "en": "Lets the CV/job analysis read PDF files locally. Optional.",
+  "es": "Permite que el análisis de CV o vacante lea archivos PDF localmente. Opcional."
+ },
+ "detect": {
+  "commands": [
+   "pdftotext"
+  ],
+  "version_cmd": [
+   "pdftotext",
+   "-v"
+  ],
+  "version_regex": "pdftotext version (\\d+(?:\\.\\d+)*)"
+ },
+ "install": {
+  "apt": [
+   "poppler-utils"
+  ],
+  "brew": [
+   "poppler"
+  ],
+  "docs": "https://poppler.freedesktop.org/"
+ }
+}

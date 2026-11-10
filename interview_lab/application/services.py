@@ -48,6 +48,9 @@ def _clean_missed(m: dict) -> dict:
 class AnalysisService:
     """Use case: understand a CV or a job description. Nothing is stored."""
 
+    def __init__(self, pdf=None):
+        self.pdf = pdf                                       # optional PdfExtractor port (text from PDF files)
+
     def analyze(self, text=None, filename: str = "", data_b64=None) -> dict:
         try:
             if data_b64 is not None:
@@ -57,8 +60,15 @@ class AnalysisService:
                     text = profile.docx_text(raw)
                 elif name.endswith((".txt", ".md")):
                     text = raw.decode("utf-8", "replace")
+                elif name.endswith(".pdf"):
+                    if not self.pdf:
+                        raise InvalidRequest("PDF support is not enabled; paste the text instead")
+                    try:
+                        text = self.pdf.extract(raw)
+                    except FetchError as e:
+                        raise InvalidRequest(str(e)) from e
                 else:
-                    raise InvalidRequest("unsupported file: use .txt, .md or .docx, or paste the text (PDF is not supported)")
+                    raise InvalidRequest("unsupported file: use .txt, .md, .docx or .pdf (PDF needs pdftotext), or paste the text")
         except InvalidRequest:
             raise
         except Exception as e:

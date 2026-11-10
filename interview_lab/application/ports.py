@@ -68,3 +68,8 @@ class HistoryRepository(Protocol):
     def runs(self, profile_id: str, with_details: bool = True) -> list: ...          # oldest first
     def run(self, profile_id: str, run_id: int) -> Optional[dict]: ...
     def attempts(self, profile_id: str) -> list: ...                                  # oldest first
+
+
+class PdfExtractor(Protocol):
+    def available(self) -> bool: ...
+    def extract(self, raw: bytes) -> str: ...                 # raises FetchError with a user-facing message

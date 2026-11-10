@@ -57,7 +57,7 @@
       </div>
       <textarea id="src" data-tp="srcPh" spellcheck="false" style="margin-top:12px"></textarea>
       <div class="row">
-        <input type="file" id="file" accept=".txt,.md,.docx">
+        <input type="file" id="file" accept=".txt,.md,.docx,.pdf">
         <button class="primary" id="analyzeBtn" data-t="analyze"></button>
         <span class="muted" id="analyzeMsg"></span>
       </div>
@@ -78,6 +78,7 @@
         <div class="field"><label data-t="fTitle"></label><input id="title" data-tp="titlePh" maxlength="80"></div>
       </div>
       <div class="note" id="langNote" style="display:none"></div>
+      <p class="muted" id="runtimeNote"></p>
       <h2 style="margin-top:22px" data-t="fModules"></h2>
       <div class="grid" id="modules"></div>
       <p class="muted" data-t="timers"></p>
@@ -143,9 +144,9 @@ addStrings({
     p4t: 'Con reloj y reporte', p4p: 'Cada sección tiene su cronómetro, con ritmo exigente, estándar o relajado. Al final, un tablero te dice qué temas reforzar. Disponible en español e inglés.',
     buildEyebrow: 'Empieza ahora', ctaFinalTitle: 'Prepárate para la vacante que sí quieres', ctaFinalSub: 'Gratis, abierto y en tu equipo. Instálalo en minutos con Python o Docker.',
     title: 'Crea tu simulacro de entrevista', sub: 'Sube tu CV o pega la vacante: analizamos el contenido en tu equipo y armamos un examen con temporizador por sección, a la medida del puesto que buscas.',
-    h1: '1. Tu perfil o la vacante', kindJd: 'Es una vacante (Job Description)', kindCv: 'Es mi CV', srcPh: 'Pega aquí el texto… o sube un archivo (.txt, .md, .docx). Para PDF, copia y pega el texto.',
+    h1: '1. Tu perfil o la vacante', kindJd: 'Es una vacante (Job Description)', kindCv: 'Es mi CV', srcPh: 'Pega aquí el texto… o sube un archivo (.txt, .md, .docx, .pdf). El PDF requiere la herramienta pdftotext; si no la tienes, copia y pega el texto.',
     analyze: 'Analizar', privacy: 'El análisis es local, sin IA ni internet: busca tecnologías, años de experiencia y nivel. No se guarda tu CV ni se envía a ningún lado.',
-    analyzing: 'Analizando…', foundTitle: 'Esto detectamos (puedes corregirlo abajo):', empty: 'Escribe o sube algo primero.', badFile: 'Formato no admitido. Usa .txt, .md o .docx, o pega el texto.',
+    analyzing: 'Analizando…', foundTitle: 'Esto detectamos (puedes corregirlo abajo):', empty: 'Escribe o sube algo primero.', badFile: 'Formato no admitido. Usa .txt, .md, .docx o .pdf, o pega el texto.',
     h2: '2. Configura tu simulacro', fSeniority: 'Seniority', fLanguage: 'Lenguaje', fVersion: 'Versión', fPace: 'Ritmo del temporizador', fTitle: 'Nombre (opcional)', titlePh: 'Ej. Entrevista Senior Java — Banco X',
     optOther: 'Otro (solo preguntas conceptuales)', paceTight: 'Exigente (−20 %)', paceStd: 'Estándar', paceRelax: 'Relajado (+25 %)', fModules: 'Módulos',
     timers: 'Cada sección tiene su propio temporizador: código = el tiempo de cada ejercicio; preguntas = 1.5 min cada una (1 min las de «predice la salida»).',
@@ -159,7 +160,8 @@ addStrings({
     bankItems: n => `${n} preguntas`, bankDel: 'Borrar', bankDelConfirm: '¿Borrar este banco?', bankUse: 'incluir', noBanks: 'Aún no tienes bancos.', fetchOff: 'La lectura de enlaces está desactivada en este equipo; pega tus apuntes.',
     create: 'Crear simulacro', creating: 'Armando tu simulacro…', pickModule: 'Elige al menos un módulo.', h4: 'Mis simulacros', open: 'Abrir', retry: 'Repetir', last: 'Último', never: 'sin intentos',
     min: 'min', secs: 'secciones',
-    genOffline: 'Generador activo: local (sin IA). Tu texto no sale de tu equipo.', genAi: 'Generador activo: IA (proveedor externo con tu propia llave). El texto que agregues se envía al proveedor y el costo es de tu cuenta.'
+    rtTitle: 'Instalado en este equipo', rtMissing: 'sin instalar', rtHow: 'Para instalar otro lenguaje, usa en una terminal:', rtGrader: 'con calificador', rtNoGrader: 'sin calificador aún',
+    genLocalAi: 'Generador activo: IA local (Ollama). Tu texto no sale de tu equipo; la calidad depende del modelo que tengas instalado y las preguntas salen como borrador.', genOffline: 'Generador activo: local (sin IA). Tu texto no sale de tu equipo.', genAi: 'Generador activo: IA (proveedor externo con tu propia llave). El texto que agregues se envía al proveedor y el costo es de tu cuenta.'
   },
   en: {
     heroBadge: 'Open source · Apache-2.0 · 100% local', heroTitle: 'Interview simulations tailored to the job, running on your own machine',
@@ -180,9 +182,9 @@ addStrings({
     p4t: 'With a clock and a report', p4p: 'Each section has its own timer, at a tight, standard or relaxed pace. At the end, a dashboard tells you which topics to reinforce. Available in Spanish and English.',
     buildEyebrow: 'Start now', ctaFinalTitle: 'Get ready for the job you really want', ctaFinalSub: 'Free, open and on your machine. Install it in minutes with Python or Docker.',
     title: 'Build your interview simulation', sub: 'Upload your CV or paste the job description: we analyze it on your machine and build an exam with a timer per section, tailored to the role you want.',
-    h1: '1. Your profile or the job post', kindJd: 'It is a job description', kindCv: 'It is my CV', srcPh: 'Paste the text here… or upload a file (.txt, .md, .docx). For PDF, copy and paste the text.',
+    h1: '1. Your profile or the job post', kindJd: 'It is a job description', kindCv: 'It is my CV', srcPh: 'Paste the text here… or upload a file (.txt, .md, .docx, .pdf). PDF needs the pdftotext tool; without it, copy and paste the text.',
     analyze: 'Analyze', privacy: 'The analysis is local, with no AI or internet: it looks for technologies, years of experience and level. Your CV is not stored or sent anywhere.',
-    analyzing: 'Analyzing…', foundTitle: 'We detected this (you can correct it below):', empty: 'Write or upload something first.', badFile: 'Unsupported format. Use .txt, .md or .docx, or paste the text.',
+    analyzing: 'Analyzing…', foundTitle: 'We detected this (you can correct it below):', empty: 'Write or upload something first.', badFile: 'Unsupported format. Use .txt, .md, .docx or .pdf, or paste the text.',
     h2: '2. Configure your simulation', fSeniority: 'Seniority', fLanguage: 'Language', fVersion: 'Version', fPace: 'Timer pace', fTitle: 'Name (optional)', titlePh: 'E.g. Senior Java interview — Bank X',
     optOther: 'Other (concept questions only)', paceTight: 'Tight (−20%)', paceStd: 'Standard', paceRelax: 'Relaxed (+25%)', fModules: 'Modules',
     timers: 'Each section has its own timer: coding = each exercise\'s own limit; questions = 1.5 min each (1 min for “predict the output”).',
@@ -196,20 +198,21 @@ addStrings({
     bankItems: n => `${n} questions`, bankDel: 'Delete', bankDelConfirm: 'Delete this bank?', bankUse: 'include', noBanks: 'You have no banks yet.', fetchOff: 'Fetching links is disabled on this machine; paste your notes.',
     create: 'Create simulation', creating: 'Building your simulation…', pickModule: 'Pick at least one module.', h4: 'My simulations', open: 'Open', retry: 'Retake', last: 'Last', never: 'no attempts',
     min: 'min', secs: 'sections',
-    genOffline: 'Active generator: local (no AI). Your text never leaves your machine.', genAi: 'Active generator: AI (external provider with your own key). The text you add is sent to the provider and billed to your account.'
+    rtTitle: 'Installed on this machine', rtMissing: 'not installed', rtHow: 'To install another language, run in a terminal:', rtGrader: 'with grader', rtNoGrader: 'no grader yet',
+    genLocalAi: 'Active generator: local AI (Ollama). Your text stays on your machine; quality depends on the model you installed and questions are drafts.', genOffline: 'Active generator: local (no AI). Your text never leaves your machine.', genAi: 'Active generator: AI (external provider with your own key). The text you add is sent to the provider and billed to your account.'
   }
 });
 
-let MODS = [], DETECT = {}, BANKS = [], pendingFile = null, ANALYSIS = null, GEN = 'offline';
+let RUNTIMES = [], MODS = [], DETECT = {}, BANKS = [], pendingFile = null, ANALYSIS = null, GEN = 'offline';
 const VERSIONS = {java: [8, 11, 17, 21], python: [9, 10, 11, 12, 13], other: []};
 
 function applyI18n(){
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = T(el.dataset.t); });
   document.querySelectorAll('[data-tp]').forEach(el => { el.placeholder = T(el.dataset.tp); });
   if ($('links').disabled) $('links').placeholder = T('fetchOff');
-  $('genNote').textContent = T(GEN === 'offline' ? 'genOffline' : 'genAi');
+  $('genNote').textContent = T(GEN === 'offline' ? 'genOffline' : GEN === 'ollama' ? 'genLocalAi' : 'genAi');
   renderMarketing();
-  renderVersions(); renderModules(); renderBanks(); renderFound(); langNote(); loadExams();
+  renderVersions(); renderModules(); renderBanks(); renderFound(); langNote(); renderRuntimes(); loadExams();
 }
 
 /* ---- marketing blocks: sample dashboard, criteria, terminal, module tags ---- */
@@ -250,6 +253,10 @@ function renderVersions(){
   $('version').innerHTML = opts.map(v => `<option value="${v}">${l === 'java' ? 'Java ' + v : 'Python 3.' + v}</option>`).join('') || '<option value="">—</option>';
   $('version').disabled = !opts.length;
   if (opts.map(String).includes(cur)) $('version').value = cur; else if (opts.length) $('version').value = String(opts[opts.length - 1]);
+}
+function renderRuntimes(){
+  const rows = RUNTIMES.filter(r => r.kind === 'language').map(r => `${esc(r.name)}: ${r.installed ? '<b>' + esc(r.version || 'ok') + '</b> · ' + esc(T(r.grader ? 'rtGrader' : 'rtNoGrader')) : esc(T('rtMissing'))}`);
+  $('runtimeNote').innerHTML = rows.length ? `${esc(T('rtTitle'))} — ${rows.join(' · ')}. ${esc(T('rtHow'))} <code>python3 install.py list</code>` : '';
 }
 function langNote(){
   const l = $('language').value, n = $('langNote');
@@ -308,7 +315,7 @@ $('file').onchange = () => {
   const f = $('file').files[0]; pendingFile = null;
   if (!f) return;
   const name = f.name.toLowerCase();
-  if (name.endsWith('.docx')) {
+  if (name.endsWith('.docx') || name.endsWith('.pdf')) {
     const r = new FileReader();
     r.onload = () => { const bytes = new Uint8Array(r.result); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
       pendingFile = {name: f.name, b64: btoa(bin)}; $('src').value = ''; $('analyzeMsg').textContent = f.name; };
@@ -379,6 +386,7 @@ async function loadExams(){
 (async function init(){
   await renderChrome('home', async () => { try { const m = await api('/api/modules?lang=' + lang); MODS = m.modules; GEN = m.generator || 'offline'; } catch (e) {} applyI18n(); });
   try { const m = await api('/api/modules?lang=' + lang); MODS = m.modules; GEN = m.generator || 'offline'; if (!m.fetch) { $('links').disabled = true; $('links').placeholder = T('fetchOff'); } } catch (e) {}
+  try { RUNTIMES = await api('/api/runtimes?lang=' + lang); } catch (e) {}
   applyI18n(); loadBanks();
 })();
 </script>

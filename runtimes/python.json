@@ -1,0 +1,29 @@
+{
+ "id": "python",
+ "kind": "language",
+ "name": "Python 3",
+ "grader": false,
+ "description": {
+  "en": "Python 3 runtime. The conceptual modules work without it; a Python code grader is on the roadmap.",
+  "es": "Entorno de Python 3. Los módulos conceptuales funcionan sin él; el calificador de código Python está en la hoja de ruta."
+ },
+ "detect": {
+  "commands": [
+   "python3"
+  ],
+  "version_cmd": [
+   "python3",
+   "--version"
+  ],
+  "version_regex": "Python (\\d+(?:\\.\\d+)*)"
+ },
+ "install": {
+  "apt": [
+   "python3"
+  ],
+  "brew": [
+   "python"
+  ],
+  "docs": "https://www.python.org/downloads/"
+ }
+}

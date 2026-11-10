@@ -1,0 +1,30 @@
+{
+ "id": "java",
+ "kind": "language",
+ "name": "Java (JDK)",
+ "grader": true,
+ "description": {
+  "en": "Needed to compile and grade Java exercises. JDK 21 recommended (8, 11, 17 and 21 syntax levels are supported by the exercises).",
+  "es": "Necesario para compilar y calificar ejercicios de Java. Se recomienda JDK 21 (los ejercicios admiten niveles de sintaxis 8, 11, 17 y 21)."
+ },
+ "detect": {
+  "commands": [
+   "javac",
+   "java"
+  ],
+  "version_cmd": [
+   "java",
+   "-version"
+  ],
+  "version_regex": "version \"?(\\d+(?:\\.\\d+)*)"
+ },
+ "install": {
+  "apt": [
+   "openjdk-21-jdk"
+  ],
+  "brew": [
+   "openjdk@21"
+  ],
+  "docs": "https://adoptium.net/"
+ }
+}

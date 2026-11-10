@@ -4,6 +4,7 @@ Done in 1.0 / Hecho en 1.0: tailored exam builder, section timers, 9 modules (co
 
 Next, in rough priority order / Siguiente, en orden aproximado:
 - [ ] More content per module (today 5 questions each) and Python/JavaScript coding exercises with their own graders (the grader is behind a port). / Más contenido por módulo y ejercicios de código en Python/JavaScript.
+- [x] Local AI question generator through Ollama (loopback-only, optional) — done, tested with qwen3.5:9b. / IA local con Ollama — hecho.
 - [ ] AI / LLM module (prompting, RAG, evaluation questions). / Módulo de IA y LLMs.
 - [ ] SQL exercises with a real local engine; PostgreSQL / MySQL / Oracle dialect differences. / Ejercicios de SQL con motor local.
 - [ ] JUnit 5 + Mockito: write tests for a class, graded with mutants. Needs Maven. / JUnit con mutación.
@@ -13,7 +14,7 @@ Next, in rough priority order / Siguiente, en orden aproximado:
 - [ ] Weakness dashboard across attempts (`workspace/runs`). / Panel de debilidades.
 - [ ] Import / export an exercise or bank as a `.zip` from the UI. / Importar y exportar como `.zip`.
 - [ ] Network-isolated grading inside Docker. / Calificación sin red.
-- [ ] PDF support for CV analysis (optional adapter). / PDF para el análisis de CV.
+- [x] PDF support for CV analysis through the system `pdftotext` (optional) — done. / PDF — hecho.
 - [ ] Spaced repetition for personal-bank flashcards. / Repaso espaciado.
 
 ## Decisions and backlog added 2026-11-10 / Decisiones y pendientes (2026-11-10)
@@ -28,7 +29,7 @@ Next, in rough priority order / Siguiente, en orden aproximado:
 - [x] Question bank: sources + review status mandatory (validator, ADR-0018); 276 senior/staff/principal questions written into a separate private pack (all `draft`, awaiting human review). / Banco con fuentes — hecho; falta la revisión humana.
 - [ ] Human review pass of the draft questions (`tools/mark_reviewed.py`).
 - [ ] In-browser editor: **Monaco** (MIT, vendored locally, no CDN), HackerRank-style layout (statement | editor | console), *Run* (sample cases) vs *Submit* (hidden tests), language picker, autocomplete off in interview mode. Not full VS Code (code-server) because of its attack surface. / Editor Monaco estilo HackerRank.
-- [ ] Language packs installed **at repo install time** (`./install --lang python`), never from the web UI; the app only offers languages it detects as installed; the installer asks for confirmation, uses official sources and never runs silently as root. The user owns what they install. / Lenguajes instalados en la fase de instalación, nunca desde la web.
+- [x] Runtime registry + `python3 install.py` (confirmation, no shell, never from the web UI) and read-only detection in the app — done, ADR-0019. Next: a Python code grader that uses it. / Instalador — hecho; falta el calificador de Python.
 - [ ] Document "desktop-first": no mobile work (real interviews use a laptop). / Diseñado para escritorio.
 - [ ] Privacy notice in README: nothing leaves your machine; you are responsible for the CV and links you load. / Aviso de privacidad local.
 

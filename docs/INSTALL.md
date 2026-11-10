@@ -51,8 +51,19 @@ All settings are environment variables (none are required).
 | `ILAB_HOME` | `./workspace` | Your data folder (own problems, banks, exams, results). |
 | `ILAB_ALLOWED_HOSTS` | *(empty)* | Extra `Host` names to accept (comma-separated). Changing this is your responsibility. |
 | `ILAB_ALLOW_FETCH` | `1` | `0` disables downloading links for "My bank". |
-| `ILAB_AI_PROVIDER` | *(off)* | `anthropic` enables the optional AI question generator (see below). |
-| `ILAB_AI_MODEL` | `claude-haiku-5-5` | Model used by the AI generator. |
+| `ILAB_AI_PROVIDER` | *(off)* | `ollama` (local daemon, nothing leaves your machine) or `anthropic` (cloud, your own key) enables the optional AI question generator (see below). |
+| `ILAB_AI_MODEL` | *(auto for `ollama`: first installed model)* / `claude-haiku-5-5` for `anthropic` | Model used by the AI generator. |
+| `ILAB_OLLAMA_URL` | `http://127.0.0.1:11434` | Local Ollama daemon. Non-loopback hosts are refused unless `ILAB_OLLAMA_ALLOW_REMOTE=1`. |
+| `ILAB_PACKS_DIR` | `./packs` | Folder with optional content packs (separate repositories, for example a private question bank). |
+
+### Optional: local AI with Ollama (nothing leaves your machine)
+```bash
+ollama pull qwen3.5:9b                # or any model you prefer; larger models write better questions
+export ILAB_AI_PROVIDER=ollama
+# export ILAB_AI_MODEL=qwen3.5:9b     # optional: otherwise the first installed model is used
+python3 server.py
+```
+The adapter talks to `http://127.0.0.1:11434/api/chat` with the standard library only. It refuses non-loopback hosts unless you set `ILAB_OLLAMA_ALLOW_REMOTE=1`. Small local models make mistakes: everything the model writes is validated structurally and stays in *your* bank as a draft for you to check. On CPU-only machines a 9B model can need minutes per request.
 
 ### Optional: AI question generator with **your own** key
 Off by default. When on, the text you add to "My bank" is **sent to the provider** and **billed to your account**.

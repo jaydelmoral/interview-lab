@@ -23,6 +23,7 @@ Un ADR documenta una decisión significativa: contexto, decisión y consecuencia
 | 0016 | [No external contributions until a CLA; premium content in separate private repos](0016-contribution-policy-and-premium-content-separation.md) | Accepted |
 | 0017 | [SQLite history and analytics, per profile](0017-sqlite-history-and-analytics.md) | Accepted |
 | 0018 | [Content packs; mandatory sources and review status per question](0018-content-packs-and-question-provenance.md) | Accepted |
+| 0019 | [Runtime registry, setup-time installer, optional local AI and PDF](0019-runtime-registry-installer-and-local-ai.md) | Accepted |
 
 ## Template
 

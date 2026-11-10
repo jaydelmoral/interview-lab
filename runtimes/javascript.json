@@ -1,0 +1,29 @@
+{
+ "id": "javascript",
+ "kind": "language",
+ "name": "JavaScript (Node.js)",
+ "grader": false,
+ "description": {
+  "en": "Node.js runtime. Planned: a JavaScript/TypeScript code grader.",
+  "es": "Entorno Node.js. Planeado: calificador de código JavaScript/TypeScript."
+ },
+ "detect": {
+  "commands": [
+   "node"
+  ],
+  "version_cmd": [
+   "node",
+   "--version"
+  ],
+  "version_regex": "v?(\\d+(?:\\.\\d+)*)"
+ },
+ "install": {
+  "apt": [
+   "nodejs"
+  ],
+  "brew": [
+   "node"
+  ],
+  "docs": "https://nodejs.org/en/download"
+ }
+}

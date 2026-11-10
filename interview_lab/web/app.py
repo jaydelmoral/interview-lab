@@ -13,6 +13,9 @@ from ..adapters.fs_problems import FsProblems
 from ..adapters.fs_repositories import FsBankRepository, FsExamRepository, JsonlLog
 from ..adapters.java_grader import JavaCodeGrader
 from ..adapters.offline_generator import OfflineQuestionGenerator
+from ..adapters.ollama_generator import OllamaQuestionGenerator
+from ..adapters.pdf_text import PdftotextExtractor
+from ..adapters.runtimes import RuntimeCatalog
 from ..adapters.sqlite_history import SqliteHistory
 from ..adapters.web_fetcher import SafeUrlFetcher
 from ..application.errors import AppError, Forbidden, InvalidRequest, NotFound, Unprocessable
@@ -32,18 +35,23 @@ def compose(settings: Settings, grader=None) -> Handlers:
     catalog = FsCatalog(settings.root, settings.home, problems, settings.packs_dir)
     offline = OfflineQuestionGenerator()
     generator, ai_enabled = offline, False
-    if settings.ai_provider == "anthropic":
+    if settings.ai_provider in ("anthropic", "ollama"):
         try:
-            generator, ai_enabled = AnthropicQuestionGenerator(settings.ai_model), True
+            if settings.ai_provider == "ollama":
+                generator = OllamaQuestionGenerator(settings.ollama_url, settings.ai_model, settings.ollama_allow_remote)
+                log.info("local AI generator: ollama model %s", generator.model)
+            else:
+                generator = AnthropicQuestionGenerator(settings.ai_model)
+            ai_enabled = True
         except GenerationError as e:
             log.warning("AI generator disabled: %s", e)
     history = SqliteHistory(settings.home / "ilab.db")
     history.import_legacy(settings.home / "runs", settings.home / "exams")      # one-time, idempotent
     practice = PracticeService(problems, grader or JavaCodeGrader(settings.root, settings.home), JsonlLog(settings.home / "runs" / "results.jsonl"),
                                settings.home / "runs" / "attempts", settings.max_code_bytes, history)
-    return Handlers(settings, AnalysisService(), ExamService(catalog, FsExamRepository(settings.home), history),
+    return Handlers(settings, AnalysisService(PdftotextExtractor()), ExamService(catalog, FsExamRepository(settings.home), history),
                     BankService(FsBankRepository(settings.home), SafeUrlFetcher(), generator, offline, settings.allow_fetch),
-                    practice, ai_enabled, generator.name, HistoryService(history))
+                    practice, ai_enabled, generator.name, HistoryService(history), RuntimeCatalog(settings.root))
 
 
 def make_server(settings: Settings, handlers: Handlers = None) -> ThreadingHTTPServer:
