@@ -28,7 +28,8 @@ Next, in rough priority order / Siguiente, en orden aproximado:
 - [x] Analytics dashboard (`/history`): trend, per module, weak topics, time used vs allotted, per-exercise progress — done. / Tablero de analítica — hecho.
 - [x] Question bank: sources + review status mandatory (validator, ADR-0018); 276 senior/staff/principal questions written into a separate private pack (all `draft`, awaiting human review). / Banco con fuentes — hecho; falta la revisión humana.
 - [ ] Human review pass of the draft questions (`tools/mark_reviewed.py`).
-- [ ] In-browser editor: **Monaco** (MIT, vendored locally, no CDN), HackerRank-style layout (statement | editor | console), *Run* (sample cases) vs *Submit* (hidden tests), language picker, autocomplete off in interview mode. Not full VS Code (code-server) because of its attack surface. / Editor Monaco estilo HackerRank.
+- [x] In-browser editor: **Monaco** (optional, pinned + hash-verified install, autocomplete off) — done, ADR-0020. / Editor Monaco — hecho.
+- [ ] HackerRank-style *Run* (sample cases) vs *Submit* (hidden tests) and a language picker.
 - [x] Runtime registry + `python3 install.py` (confirmation, no shell, never from the web UI) and read-only detection in the app — done, ADR-0019. Next: a Python code grader that uses it. / Instalador — hecho; falta el calificador de Python.
 - [ ] Document "desktop-first": no mobile work (real interviews use a laptop). / Diseñado para escritorio.
 - [ ] Privacy notice in README: nothing leaves your machine; you are responsible for the CV and links you load. / Aviso de privacidad local.

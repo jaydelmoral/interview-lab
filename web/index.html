@@ -53,6 +53,7 @@
 <footer id="foot"></footer>
 
 <script src="/common.js"></script>
+<script src="/editor.js"></script>
 <script>
 const I18N = {
   es: {
@@ -261,7 +262,7 @@ $('hoverChk').onchange = () => { hoverOn = $('hoverChk').checked; store('hoverOn
 
 stmtMode = store('stmtMode') === 'es' ? 'es' : 'en';
 hoverOn = !!store('hoverOn'); $('hoverChk').checked = hoverOn;
-renderChrome('practice', () => { applyLang(); loadList(problem && problem.id); }).then(() => { applyLang(); loadList(); });
+renderChrome('practice', () => { applyLang(); loadList(problem && problem.id); }).then(() => { applyLang(); loadList(); EditorKit.attach($('code'), 'java'); });
 </script>
 </body>
 </html>

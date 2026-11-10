@@ -28,6 +28,7 @@
 <div id="tip"></div>
 <footer id="foot"></footer>
 <script src="/common.js"></script>
+<script src="/editor.js"></script>
 <script>
 addStrings({
   es: {
@@ -179,6 +180,7 @@ async function renderCode(){
   $('code').value = store('draft:' + p.id) || p.starter;
   $('code').addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); const t = e.target, s = t.selectionStart; t.value = t.value.slice(0, s) + '    ' + t.value.slice(t.selectionEnd); t.selectionStart = t.selectionEnd = s + 4; } });
   $('code').addEventListener('input', saveDraft);
+  EditorKit.attach($('code'), 'java');          // optional Monaco; silently stays a textarea if not installed
   $('resetBtn').onclick = () => { if (confirm(T('resetConfirm'))) $('code').value = p.starter; };
   $('submitBtn').onclick = async () => {
     saveDraft(); $('submitBtn').disabled = true; $('status').textContent = T('running');

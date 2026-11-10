@@ -241,6 +241,8 @@ details.miss .why-txt{color:var(--muted);font-size:13.5px;margin:8px 0 2px}
 .codegrid,main.practice{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
 @media (max-width:900px){.codegrid,main.practice{grid-template-columns:1fr}}
 .codegrid textarea,main.practice textarea#code{min-height:360px;background:var(--code-bg);color:var(--code-fg);white-space:pre;tab-size:4;border-radius:16px}
+/* optional Monaco editor (see editor.js) */
+.monaco-host{height:360px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
 textarea.qans{min-height:56px;height:56px;font-size:13.5px}
 .tests{list-style:none;padding:0;margin:0}
 .tests li{padding:11px 14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--surface)}

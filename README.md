@@ -23,6 +23,7 @@ Las entrevistas técnicas fallan por razones previsibles: no tener IDE, la presi
 - **Mi banco:** pega enlaces (con lectura segura) o apuntes y conviértelos en preguntas y tarjetas. Generación local; **IA local opcional con Ollama** (tu texto no sale de tu equipo) o con tu propia llave en la nube.
 - **Banco con fuentes:** cada pregunta cita documentación oficial y lleva estado de revisión (borrador/revisada); niveles Senior, Staff y Principal; bancos grandes como *paquetes* privados aparte (`packs/`).
 - **Historial:** tus simulacros y envíos quedan en SQLite local, con tendencias y temas débiles.
+- **Editor tipo VS Code opcional** (Monaco): `python3 tools/fetch_monaco.py` descarga una versión fijada y verifica su hash; sin autocompletado, como una entrevista real.
 - **Instalador de lenguajes** (`python3 install.py`): tú decides qué instalar; la app nunca instala nada. PDF opcional con `pdftotext`.
 - **Tus propios ejercicios:** plantilla + validador; los datos quedan en `workspace/`, fuera de git.
 - **Tablero de resultados:** antes de empezar ves cómo se evalúa (ejemplo etiquetado); al terminar, tu reporte real con KPIs, resultado por sección, tiempo, perfil por módulo, **áreas de oportunidad** priorizadas y las preguntas a repasar. Se guarda como PDF.

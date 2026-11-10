@@ -9,7 +9,7 @@ Errors: `{"error": "message", ...details}` with status `400` invalid request, `4
 | Method | Path | Notes |
 |---|---|---|
 | GET | `/`, `/practice`, `/exam?id=…` | HTML pages |
-| GET | `/common.js`, `/common.css`, `/theme.js`, `/brand/<file>` | static assets |
+| GET | `/common.js`, `/common.css`, `/theme.js`, `/editor.js`, `/brand/<file>`, `/vendor/monaco/vs/...` (only if installed) | static assets |
 | GET | `/api/brand` | name, tagline, logo files (replaceable white-label) |
 
 ## Catalog and analysis
@@ -43,6 +43,11 @@ Public item shapes: `code {key,type,id,title,minutes}`, `output {key,type,topic,
 | GET | `/api/problems/{id}` | → statement (EN and ES), starter code, test names; or quiz questions |
 | POST | `/api/grade` | `{problem, code (≤ 50 KB)}` → report `{score, max, compile, tests[{id,title,passed,ms,detail,fail_why,fail_how}]}` |
 | POST | `/api/quiz` | `{problem, answers{id: text}}` → `{score, max, results[]}` |
+
+## Runtimes / Entornos instalados
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/runtimes` | Read-only list of languages/tools detected on this machine (`id`, `installed`, `version`, `grader`, `install_hint`). The web app cannot install anything; use `python3 install.py` at setup time (ADR-0019). |
 
 ## History and analytics / Historial
 | Method | Path | Description |

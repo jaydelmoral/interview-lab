@@ -9,9 +9,9 @@ from typing import Callable, Optional
 
 from ..application.errors import NotFound
 
-STATIC_TYPES = {".png": "image/png", ".json": "application/json; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
+STATIC_TYPES = {".png": "image/png", ".json": "application/json; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".ttf": "font/ttf", ".woff2": "font/woff2", ".svg": "image/svg+xml", ".map": "application/json"}
 PAGES = {"/": "landing.html", "/index.html": "landing.html", "/practice": "index.html", "/exam": "exam.html", "/history": "history.html"}
-ASSETS = {"/common.js", "/common.css", "/theme.js"}
+ASSETS = {"/common.js", "/common.css", "/theme.js", "/editor.js"}
 BRAND_FILE = re.compile(r"^/brand/([a-z0-9._-]+\.(?:png|json))$")
 
 
@@ -58,6 +58,15 @@ class Handlers:
 
     def asset(self, req: Request) -> Response:
         return Response(200, (self.web / req.path[1:]).read_bytes(), STATIC_TYPES[Path(req.path).suffix])
+
+    def vendor_file(self, req: Request) -> Response:
+        """Optional vendored Monaco editor (installed by tools/fetch_monaco.py, git-ignored). Read-only, confined to its folder."""
+        base = (self.web / "vendor" / "monaco").resolve()
+        rel = req.params["path"]
+        f = (base / rel).resolve()
+        if ".." in rel.split("/") or base not in f.parents or not f.is_file() or f.suffix not in STATIC_TYPES:
+            raise NotFound("not found")
+        return Response(200, f.read_bytes(), STATIC_TYPES[f.suffix])
 
     def brand_file(self, req: Request) -> Response:
         f = self.web / "brand" / req.params["file"]
@@ -140,6 +149,7 @@ def build_routes(h: Handlers) -> list:
         *[r("GET", re.escape(p), h.page) for p in PAGES],
         *[r("GET", re.escape(p), h.asset) for p in ASSETS],
         r("GET", r"/brand/(?P<file>[a-z0-9._-]+\.(?:png|json))", h.brand_file),
+    r("GET", r"/vendor/monaco/(?P<path>vs(?:/[A-Za-z0-9_.@-]+)+)", h.vendor_file),
         r("GET", "/api/brand", h.brand),
         r("GET", "/api/modules", h.modules),
         r("GET", "/api/problems", h.problems_list),

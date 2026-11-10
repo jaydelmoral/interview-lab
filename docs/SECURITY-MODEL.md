@@ -40,3 +40,9 @@ Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional 
 
 ## Resumen (ES)
 La herramienta asume un usuario local. Se defiende de CSRF y DNS rebinding (Host/Origin/JSON), de SSRF al leer enlaces, de XSS y de peticiones enormes. El código del usuario corre con entorno limpio y límites; **sin Docker se ejecuta con tus permisos**, y con Docker aún puede usar la red del contenedor. No está pensada para exponerse a internet.
+
+## Update 2026-11-10 / Actualización
+- CSP now also allows `font-src 'self' data:` and `worker-src 'self' blob:` for the optional Monaco editor (ADR-0020); still no external origins.
+- Optional runtimes are installed only by the user at setup time (`install.py`, `tools/fetch_monaco.py`); the web app has no install endpoint (ADR-0019).
+- A local Ollama daemon is contacted only on loopback unless `ILAB_OLLAMA_ALLOW_REMOTE=1` is set deliberately.
+- Content packs and premium material are blocked from the public repository by `tools/preflight.py` (ADR-0016).

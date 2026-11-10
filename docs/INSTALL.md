@@ -56,6 +56,12 @@ All settings are environment variables (none are required).
 | `ILAB_OLLAMA_URL` | `http://127.0.0.1:11434` | Local Ollama daemon. Non-loopback hosts are refused unless `ILAB_OLLAMA_ALLOW_REMOTE=1`. |
 | `ILAB_PACKS_DIR` | `./packs` | Folder with optional content packs (separate repositories, for example a private question bank). |
 
+### Optional: Monaco code editor (HackerRank-style)
+```bash
+python3 tools/fetch_monaco.py        # shows what it will download, asks for 'yes', verifies the pinned SHA-512
+```
+Downloads Monaco 0.57.0 (MIT, about 18 MB) from the official npm registry into `web/vendor/monaco` (git-ignored) and the editor appears automatically in the exam and free-practice pages (no autocompletion: interview mode). Without it the app keeps its plain text editor. `python3 tools/fetch_monaco.py --check` tells you if it is installed.
+
 ### Optional: local AI with Ollama (nothing leaves your machine)
 ```bash
 ollama pull qwen3.5:9b                # or any model you prefer; larger models write better questions
