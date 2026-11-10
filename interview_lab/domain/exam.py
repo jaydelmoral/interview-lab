@@ -180,6 +180,23 @@ def valid_attempt(attempt) -> bool:
     return isinstance(attempt, str) and bool(ATTEMPT_ID.match(attempt))
 
 
+def clean_answers(section: dict, answers: dict) -> dict:
+    """Autosaved answers reduced to what grading understands: known item keys; ints, short int lists or short text."""
+    keys = {item_key(r) for r in section["items"]}
+    out = {}
+    for k, v in answers.items():
+        if k not in keys:
+            continue
+        if isinstance(v, list):
+            v = [x for x in v[:20] if isinstance(x, int) and not isinstance(x, bool)]
+        elif isinstance(v, str):
+            v = v[:2000]
+        elif isinstance(v, bool) or not isinstance(v, int):
+            continue
+        out[k] = v
+    return out
+
+
 def is_code_section(section: dict) -> bool:
     return bool(section["items"]) and section["items"][0]["t"] == "code"
 

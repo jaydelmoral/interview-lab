@@ -29,7 +29,7 @@ Notes: coding exercises and "predict the output" are **Java-only** for now (Pyth
 - **Coding sections:** read the statement, write code (no autocomplete, `Tab` inserts spaces), press **Submit and grade**. You see which hidden tests failed, why, and how to improve; you can resubmit. The best score per exercise counts.
 - **Question sections:** answer everything and press **Finish section** (or wait for the timer). You get the right answer and an explanation for every item.
 - **Flashcards** (from your bank): reveal the answer, then rate yourself *I knew it / I did not*.
-- If the time ends, the section is submitted automatically.
+- If the time ends, the section is submitted automatically. The clock is kept by the server: reloading or reopening the page does not give extra time, and if time ran out while the page was closed the section is closed as you left it and you go on to the next one.
 - You can close or reload the page and **resume** where you were: the timer, your marked answers and your coding scores are kept. A section you already finished stays closed (you continue with the next one, you cannot redo it), and the run is stored in your history as soon as the last section is finished, even if you never open the final report. If saving to the history fails, the report shows a notice with a **Retry saving** button.
 
 ![Exam with hover translation](img/exam-hover-translation.jpg)

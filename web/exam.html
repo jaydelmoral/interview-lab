@@ -109,26 +109,37 @@ function drawSteps(){
   $('steps').innerHTML = EXAM.sections.map((s, i) => `<span class="${i === idx ? 'cur' : (RESULTS[i] ? 'done' : '')}">${i + 1}. ${esc(s.title)}</span>`).join('');
 }
 
-function startSection(i, resumeEnd, saved){
+async function startSection(i, resumeEnd, saved){
+  // With an attempt id the SERVER owns the clock: it fixes the deadline the first time a section starts and reports what is
+  // left, so reloading cannot buy more time. Without one (progress saved by an older version) the local deadline is used.
+  let left = resumeEnd && resumeEnd > Date.now() ? resumeEnd - Date.now() : EXAM.sections[i].minutes * 60000, over = false;
+  if (attemptId) {
+    try { const st = await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/start', {section: i, attempt: attemptId}); left = st.remaining_ms; over = st.expired; }
+    catch (e) { return fatal(e.message); }
+  }
   idx = i; open = true; codeIdx = 0;
   answers = (saved && saved.answers) || {}; codeBest = (saved && saved.codeBest) || {};   // restored when resuming this same section
   hideTip();
-  const sec = EXAM.sections[idx];
+  const sec = EXAM.sections[idx], isCode = sec.items.length && sec.items[0].type === 'code';
   $('start').style.display = 'none'; $('report').style.display = 'none'; $('runner').style.display = '';
   $('finishBtn').textContent = T('finishSec'); $('finishBtn').disabled = false;
   $('secTitle').textContent = sec.title;
   drawSteps();
-  endAt = resumeEnd && resumeEnd > Date.now() ? resumeEnd : Date.now() + sec.minutes * 60000;
+  endAt = Date.now() + left;
   secStart = endAt - sec.minutes * 60000;   // reconstructed from the deadline, so it survives a page reload
   saveProg();
   clearInterval(tick);
+  $('timer').textContent = fmtTime(left);
+  if (over) {                               // time ran out while the page was closed: close the section as it was left and carry on
+    if (!isCode) renderQuestions();
+    return finishSection(true);
+  }
   tick = setInterval(() => {
-    const left = endAt - Date.now();
-    $('timer').textContent = fmtTime(left); $('timer').classList.toggle('low', left < 120000);
-    if (left <= 0) { clearInterval(tick); finishSection(true); }
+    const remaining = endAt - Date.now();
+    $('timer').textContent = fmtTime(remaining); $('timer').classList.toggle('low', remaining < 120000);
+    if (remaining <= 0) { clearInterval(tick); finishSection(true); }
   }, 500);
-  $('timer').textContent = fmtTime(endAt - Date.now());
-  if (sec.items.length && sec.items[0].type === 'code') renderCode(); else renderQuestions();
+  if (isCode) renderCode(); else { renderQuestions(); pushDraft(); }
 }
 
 /* ---------------- question sections ---------------- */
@@ -215,6 +226,16 @@ async function renderCode(){
     $('submitBtn').disabled = false;
   };
 }
+/* The server keeps the latest answers too (debounced), so a section whose time ran out is graded as it was left. */
+let draftTimer = null, draftQueue = Promise.resolve();
+function sendDraft(keepalive){
+  if (!attemptId || !open) return;
+  const body = JSON.stringify({section: idx, answers, attempt: attemptId});
+  // one request at a time and in order, so an older answer sheet can never overwrite a newer one on the server
+  draftQueue = draftQueue.then(() => api('/api/exams/' + encodeURIComponent(EXAM.id) + '/answers', {method: 'POST', headers: {'Content-Type': 'application/json'}, body, keepalive})).catch(() => {});
+}
+function pushDraft(){ if (attemptId) { clearTimeout(draftTimer); draftTimer = setTimeout(() => { draftTimer = null; sendDraft(false); }, 500); } }
+addEventListener('pagehide', () => { if (draftTimer) { clearTimeout(draftTimer); draftTimer = null; sendDraft(true); } });   // do not lose the last change when the tab closes
 function saveDraft(){ const c = $('code'); const it = EXAM.sections[idx].items[codeIdx]; if (c && it) store('draft:' + it.id, c.value); }
 function recordCode(key, r){
   const prev = codeBest[key];
@@ -250,6 +271,7 @@ async function finishSection(auto){
     const bump = (c, p, n) => { const a = cats[c] || (cats[c] = {p: 0, n: 0}); a.p += p; a.n += n; };
     sec.items.forEach(it => { const b = codeBest[it.key]; if (!b) return; m += b.max; s += b.score; pass += b.passed; tot += b.total; Object.entries(b.cats).forEach(([c, v]) => bump(c, v.p, v.n)); });
     for (const it of sec.items) { if (!codeBest[it.key]) { try { const p = await problemFor(it.id); m += p.tests.reduce((a, t) => a + t.points, 0); tot += p.tests.length; p.tests.forEach(t => bump(t.category, 0, 1)); } catch (e) {} } }
+    if (attemptId) { try { await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/section', {section: idx, answers: {}, lang, attempt: attemptId}); } catch (e) {} }   // closes it on the server's clock
     rec = {module: sec.module, title: sec.title, score: s, max: Math.max(m, 1), pct: m ? s / m : 0, weak: [], done: pass, total: tot, cats, missed: [], ...timeUsed(sec, auto)};
     RESULTS[idx] = rec;
     $('body').innerHTML = `<div class="card"><h3>${esc(T('results'))}</h3><p style="font-size:24px;font-weight:800">${s}/${rec.max} · ${Math.round(100 * rec.pct)}%</p></div>`;
@@ -257,7 +279,7 @@ async function finishSection(auto){
     const ans = collectAnswers();
     try {
       const rep = await post('/api/exams/' + encodeURIComponent(EXAM.id) + '/section', withAttempt({section: idx, answers: ans, lang}));
-      answers = ans; renderQuestions(rep);
+      answers = rep.answers || ans; renderQuestions(rep);    // show what the server graded (it may have used the saved answers if time was up)
       const byKey = {}; sec.items.forEach(i => { byKey[i.key] = i; });
       const missed = rep.items.filter(r => !r.correct).map(r => { const it = byKey[r.key] || {};
         return {section: sec.title, q: it.q || ((it.topic ? it.topic + ': ' : '') + String(it.code || '').split('\n')[0]), expected: r.expected, explanation: r.explanation, tags: r.tags || [], sources: r.sources || []}; });
@@ -330,7 +352,7 @@ async function showReport(){
 }
 
 // Persist marked answers as they change, so a reload in the middle of a question section loses nothing
-const onAnswer = () => { if (open && !$('body').querySelector('#code')) { answers = collectAnswers(); saveProg(); } };
+const onAnswer = () => { if (open && !$('body').querySelector('#code')) { answers = collectAnswers(); saveProg(); pushDraft(); } };
 $('body').addEventListener('change', onAnswer);
 $('body').addEventListener('input', onAnswer);
 $('finishBtn').onclick = () => finishSection(false);

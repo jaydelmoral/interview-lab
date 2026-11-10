@@ -29,6 +29,7 @@ def _txt(x, n: int) -> str:
     return str(x if x is not None else "")[:n]
 
 
+GRACE_SECONDS = 15.0       # network/auto-submit slack after a section's deadline, before it is closed "as it was left"
 MAX_POINTS = 1_000_000     # upper bound for a client-reported score; real sections are far below it
 MAX_SECTIONS = 30
 
@@ -106,9 +107,10 @@ class AnalysisService:
 
 # ------------------------------------------------------------------ exams
 class ExamService:
-    def __init__(self, catalog, exams, history=None, attempts=None, problems=None):
+    def __init__(self, catalog, exams, history=None, attempts=None, problems=None, clock=time.time):
         self.catalog, self.exams, self.history = catalog, exams, history
         self.attempts, self.problems = attempts, problems     # optional: without them every attempt is the old, client-trusted kind
+        self.clock = clock                                    # the server's clock is the only one that counts; injectable for tests
         self._lock = threading.Lock()                         # serializes read-modify-write of attempt state
 
     def modules(self, lang: str, fetch_enabled: bool, ai_enabled: bool) -> dict:
@@ -145,7 +147,62 @@ class ExamService:
         return attempt
 
     def _state(self, exam_id: str, attempt: str) -> dict:
-        return self.attempts.load(exam_id, attempt) or {"sections": {}, "code": {}, "finished": None}
+        state = self.attempts.load(exam_id, attempt) or {}
+        for k, empty in (("sections", {}), ("code", {}), ("finished", None), ("started", {}), ("closed", {}), ("draft", {})):
+            state.setdefault(k, empty)                       # section number -> value; older files may lack the timing parts
+        return state
+
+    @staticmethod
+    def _deadline(exam: dict, state: dict, idx: int):
+        """Server time at which the section ends, or None if it was never started."""
+        start = state["started"].get(str(idx))
+        return None if start is None else start + exam["sections"][idx]["minutes"] * 60
+
+    def _open_section(self, exam: dict, state: dict, idx: int) -> float:
+        """Deadline of a section that must be running (started, not closed, within the grace period); else InvalidRequest."""
+        deadline = self._deadline(exam, state, idx)
+        if str(idx) in state["closed"]:
+            raise InvalidRequest("this section is already closed")
+        if deadline is None:
+            raise InvalidRequest("section not started")
+        if self.clock() > deadline + GRACE_SECONDS:
+            raise InvalidRequest("the time for this section is over")
+        return deadline
+
+    def start_section(self, exam_id: str, idx, attempt) -> dict:
+        """Starts the clock of a section (once: asking again after a reload returns the same deadline) and says how much time is left.
+        `expired` means time is up (or the section was already closed): the caller must close it with /section."""
+        exam = self._load(exam_id)
+        attempt = self._attempt(attempt)
+        if attempt is None or not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]):
+            raise InvalidRequest("invalid request")
+        with self._lock:
+            state = self._state(exam["id"], attempt)
+            if state["finished"]:
+                raise InvalidRequest("this attempt is already finished")
+            now = self.clock()
+            if str(idx) not in state["started"]:
+                state["started"][str(idx)] = now
+                self.attempts.save(exam["id"], attempt, state)
+            deadline = self._deadline(exam, state, idx)
+            closed = str(idx) in state["closed"]
+            return {"section": idx, "minutes": exam["sections"][idx]["minutes"], "remaining_ms": max(0, int((deadline - now) * 1000)),
+                    "expired": closed or now >= deadline, "closed": closed}
+
+    def save_answers(self, exam_id: str, idx, answers, attempt) -> dict:
+        """Keeps the latest answers of a running section on the server: if the time runs out, the section is graded with them."""
+        exam = self._load(exam_id)
+        attempt = self._attempt(attempt)
+        if attempt is None or not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
+            raise InvalidRequest("invalid request")
+        with self._lock:
+            state = self._state(exam["id"], attempt)
+            if state["finished"]:
+                raise InvalidRequest("this attempt is already finished")
+            self._open_section(exam, state, idx)
+            state["draft"][str(idx)] = rules.clean_answers(exam["sections"][idx], answers)
+            self.attempts.save(exam["id"], attempt, state)
+        return {"saved": True}
 
     def _grade(self, exam: dict, idx: int, answers: dict, lang: str) -> dict:
         report = rules.grade_section(exam, idx, answers, self.catalog.resolve, lang)
@@ -161,16 +218,24 @@ class ExamService:
             return self._grade(exam, idx, answers, lang)
         with self._lock:
             state = self._state(exam["id"], attempt)
+            key = str(idx)
             if state["finished"]:
                 raise InvalidRequest("this attempt is already finished")
-            if str(idx) in state["sections"]:                # graded once per section and attempt: asking again returns the first report
-                return state["sections"][str(idx)]
-            report = state["sections"][str(idx)] = self._grade(exam, idx, answers, lang)
+            if key in state["sections"]:                     # graded once per section and attempt: asking again returns the first report
+                return state["sections"][key]
+            deadline = self._deadline(exam, state, idx)
+            if deadline is None:
+                raise InvalidRequest("section not started")
+            now = self.clock()
+            if now > deadline + GRACE_SECONDS:               # too late to trust what the browser says now: close the section as it was left
+                answers = state["draft"].get(key, {})
+            report = state["sections"][key] = self._grade(exam, idx, answers, lang) | {"answers": answers}   # the page shows exactly what was graded
+            state["closed"][key] = min(now, deadline)
             self.attempts.save(exam["id"], attempt, state)
             return report
 
     def code_target(self, exam_id, attempt, problem):
-        """Checks a code submission that claims to belong to an exam attempt. Returns (exam id, attempt, item key),
+        """Checks a code submission that claims to belong to an exam attempt. Returns (exam id, attempt, item key, section index),
         or None when it is plain free practice (no exam, or the old client-trusted mode)."""
         if exam_id is None and attempt is None:
             return None
@@ -178,22 +243,25 @@ class ExamService:
         if attempt is None:
             return None
         exam = self._load(exam_id)
-        refs = [r for s in exam["sections"] for r in s["items"] if r["t"] == "code" and r.get("id") == problem]
-        if not refs:
+        found = [(i, r) for i, s in enumerate(exam["sections"]) for r in s["items"] if r["t"] == "code" and r.get("id") == problem]
+        if not found:
             raise InvalidRequest("that exercise is not part of this exam")
-        if self._state(exam["id"], attempt)["finished"]:
-            raise InvalidRequest("this attempt is already finished")
-        return exam["id"], attempt, rules.item_key(refs[0])
+        with self._lock:
+            state = self._state(exam["id"], attempt)
+            if state["finished"]:
+                raise InvalidRequest("this attempt is already finished")
+            self._open_section(exam, state, found[0][0])      # the exercise's section must be running: no grading after time is up
+        return exam["id"], attempt, rules.item_key(found[0][1]), found[0][0]
 
     def record_code(self, target: tuple, report: dict) -> None:
         """Keeps the best graded score of each exercise of the attempt."""
-        exam_id, attempt, key = target
+        exam_id, attempt, key, idx = target
         tests = report.get("tests") or []
         with self._lock:
             state = self._state(exam_id, attempt)
             prev = state["code"].get(key)
-            if state["finished"] or (prev and report["score"] <= prev["score"]):
-                return
+            if state["finished"] or str(idx) in state["closed"] or (prev and report["score"] <= prev["score"]):
+                return                                        # a grade that lands after its section was closed is not counted
             state["code"][key] = {"score": int(report["score"]), "max": int(report["max"]),
                                   "passed": sum(1 for t in tests if t.get("passed")), "total": len(tests)}
             self.attempts.save(exam_id, attempt, state)
@@ -231,20 +299,32 @@ class ExamService:
             secs, missed = [], []
             for x in sorted(sections, key=lambda x: x["section"]):
                 section = exam["sections"][x["section"]]
+                key, deadline = str(x["section"]), self._deadline(exam, state, x["section"])
+                if deadline is not None and key not in state["closed"]:
+                    state["closed"][key] = min(self.clock(), deadline)       # finishing closes any section still open (e.g. a code section)
                 title = _txt(x.get("title"), 80) or rules.pick(section["title"], lang)
                 if rules.is_code_section(section):
                     res = rules.code_result(section, state["code"], self._points(section))
                 else:                                        # never graded = nothing answered
-                    report = state["sections"].get(str(x["section"])) or rules.grade_section(exam, x["section"], {}, self.catalog.resolve, lang)
+                    report = state["sections"].get(str(x["section"])) or rules.grade_section(      # never closed: grade what the server holds
+                        exam, x["section"], state["draft"].get(str(x["section"]), {}), self.catalog.resolve, lang)
                     res = {"score": report["score"], "max": report["max"], "correct": report["score"], "total": report["max"]}
                     missed += rules.missed_items(exam, x["section"], report, self.catalog.resolve, title, lang)
                 pct = 100.0 * res["score"] / res["max"] if res["max"] else 0.0
                 secs.append({"module": section["module"], "title": title, "score": round(pct), "max": 100, "pct": round(pct, 1),
                              "correct": res["correct"], "total": res["total"], "allotted": section["minutes"],
-                             "used": _num(x.get("used"), 0, section["minutes"], 0)})
+                             "used": self._used_minutes(exam, state, x["section"])})
             state["finished"] = self._store_run(exam, secs, missed)
             self.attempts.save(exam["id"], attempt, state)
             return state["finished"]
+
+    def _used_minutes(self, exam: dict, state: dict, idx: int) -> float:
+        """Time spent in a section by the server's clock: from its start to its close (or to now/the deadline if never closed)."""
+        start = state["started"].get(str(idx))
+        if start is None:
+            return 0.0
+        end = state["closed"].get(str(idx)) or min(self.clock(), start + exam["sections"][idx]["minutes"] * 60)
+        return round(max(0.0, end - start) / 60, 1)
 
     def _store_run(self, exam: dict, sections: list, missed) -> dict:
         now = time.strftime("%Y-%m-%d %H:%M:%S")

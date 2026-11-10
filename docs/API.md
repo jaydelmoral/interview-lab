@@ -24,8 +24,10 @@ Errors: `{"error": "message", ...details}` with status `400` invalid request, `4
 | POST | `/api/exams` | `{seniority: jr\|mid\|sr, language, version, modules[], pace: tight\|standard\|relaxed, banks[], counts{module:n}, title}` → public exam (no answers). `400` no modules; `422` nothing to build (with `notes`). |
 | GET | `/api/exams` | → list with config, total minutes and last result |
 | GET | `/api/exams/{id}` | → public exam |
-| POST | `/api/exams/{id}/section` | `{section: index, answers{key: value}, attempt?}` → `{score, max, items[{key, correct, expected, explanation, expected_index?, tags}], weak[]}`. With `attempt` (32 hex chars) each section is graded once per attempt: asking again returns the first report; `400` after the attempt is finished. Values: MCQ = displayed option index (or list), output = text, flashcard = `"know"`/`"dont"`. |
-| POST | `/api/exams/{id}/finish` | `{sections[{module, score, max}]}` → stored result. With `attempt`: `{attempt, sections[{section: index, title?, used?}], lang?}`; scores, totals and missed questions are computed from what the server graded (client values are ignored), and finishing twice returns the stored result without recording another run ([ADR-0021](architecture/adr/0021-server-side-exam-attempts.md)). |
+| POST | `/api/exams/{id}/section` | `{section: index, answers{key: value}, attempt?}` → `{score, max, items[{key, correct, expected, explanation, expected_index?, tags}], weak[]}`. With `attempt` (32 hex chars) each section is graded once per attempt: asking again returns the first report; `400` after the attempt is finished or if the section was not started. Late (after deadline + 15 s) it is graded with the last autosaved answers instead of the ones sent. Values: MCQ = displayed option index (or list), output = text, flashcard = `"know"`/`"dont"`. |
+| POST | `/api/exams/{id}/start` | `{section: index, attempt}` → `{section, minutes, remaining_ms, expired, closed}`. Starts the section's server clock once (asking again returns the same deadline). `expired: true` means time is up or the section is already closed: close it with `/section`. `400` without a valid attempt. |
+| POST | `/api/exams/{id}/answers` | `{section: index, answers, attempt}` → `{saved: true}`. Autosave of a running section; `400` if it was not started, is closed, or its time is over (deadline + 15 s). If time runs out, the section is graded with the last saved answers. |
+| POST | `/api/exams/{id}/finish` | `{sections[{module, score, max}]}` → stored result. With `attempt`: `{attempt, sections[{section: index, title?, used?}], lang?}`; scores, totals, missed questions and time used are computed from what the server graded and timed (client values are ignored), and finishing twice returns the stored result without recording another run ([ADR-0021](architecture/adr/0021-server-side-exam-attempts.md)). |
 
 Public item shapes: `code {key,type,id,title,minutes}`, `output {key,type,topic,code}`, `mcq {key,type,q,options[],multi}`, `flash {key,type,q,a}`.
 
@@ -41,7 +43,7 @@ Public item shapes: `code {key,type,id,title,minutes}`, `output {key,type,topic,
 |---|---|---|
 | GET | `/api/problems` | → list of problems and the quiz |
 | GET | `/api/problems/{id}` | → statement (EN and ES), starter code, test names; or quiz questions |
-| POST | `/api/grade` | `{problem, code (≤ 50 KB), exam?, attempt?}` (with both, the best score of the exercise is kept for that exam attempt; `400` if the exercise is not in the exam) → report `{score, max, compile, tests[{id,title,passed,ms,detail,fail_why,fail_how}]}` |
+| POST | `/api/grade` | `{problem, code (≤ 50 KB), exam?, attempt?}` (with both, the best score of the exercise is kept for that exam attempt; `400` if the exercise is not in the exam, its section is not running, or its time is over) → report `{score, max, compile, tests[{id,title,passed,ms,detail,fail_why,fail_how}]}` |
 | POST | `/api/quiz` | `{problem, answers{id: text}}` → `{score, max, results[]}` |
 
 ## Runtimes / Entornos instalados

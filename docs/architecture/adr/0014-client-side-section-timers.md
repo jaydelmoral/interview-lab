@@ -1,6 +1,6 @@
 # ADR-0014: Section timers run in the browser
 
-- **Status:** Accepted
+- **Status:** Partly superseded by [ADR-0021](0021-server-side-exam-attempts.md) (for exams with an attempt id the server owns the clock; the browser timer is only a display)
 - **Date:** 2026-11-09
 - **Deciders:** Javier Morales Barrera, Claude
 

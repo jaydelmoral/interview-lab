@@ -30,8 +30,8 @@ Browser ⇄ local server (loopback) ⇄ JVM child processes ⇄ files. Optional 
 
 ## Not defended (by design)
 - Hostile code that wants the network or the user's files **outside Docker**.
-- Tampering with client-side timers (practice tool, not a proctored test).
-- Cheating yourself: with an attempt id the server grades each section once and computes the final result itself ([ADR-0021](architecture/adr/0021-server-side-exam-attempts.md)); only the time used is still reported by the browser, and a request without an attempt id keeps the old client-trusted (clamped) behaviour. Code under test shares the JVM with the hidden harness, so it could print a fake result line. A hosted or proctored edition must keep attempt state and verdicts on the server.
+- Tampering with the browser's timer *display* has no effect on exams with an attempt id (the server enforces the deadline); the rest time between sections is not limited, and free practice has no clock.
+- Cheating yourself: with an attempt id the server grades each section once and computes the final result itself ([ADR-0021](architecture/adr/0021-server-side-exam-attempts.md)); the server also owns each section's clock and closes it as it was left when time is up; a request without an attempt id keeps the old client-trusted (clamped) behaviour. Code under test shares the JVM with the hidden harness, so it could print a fake result line. A hosted or proctored edition must keep attempt state and verdicts on the server.
 - Exposing the port beyond loopback, or serving several users.
 
 ## Operational guidance

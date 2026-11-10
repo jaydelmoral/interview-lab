@@ -99,6 +99,12 @@ class Handlers:
     def exam_section(self, req: Request):
         return self.exams.grade_section(req.params["id"], req.body.get("section"), req.body.get("answers"), req.lang, req.body.get("attempt"))
 
+    def exam_start(self, req: Request):
+        return self.exams.start_section(req.params["id"], req.body.get("section"), req.body.get("attempt"))
+
+    def exam_answers(self, req: Request):
+        return self.exams.save_answers(req.params["id"], req.body.get("section"), req.body.get("answers"), req.body.get("attempt"))
+
     def exam_finish(self, req: Request):
         return self.exams.finish(req.params["id"], req.body.get("sections"), req.body.get("missed"), req.body.get("attempt"), req.lang)
 
@@ -168,6 +174,8 @@ def build_routes(h: Handlers) -> list:
         r("POST", "/api/analyze", h.analyze, big),
         r("POST", "/api/exams", h.exam_create),
         r("POST", r"/api/exams/(?P<id>[^/]+)/section", h.exam_section),
+        r("POST", r"/api/exams/(?P<id>[^/]+)/start", h.exam_start),
+        r("POST", r"/api/exams/(?P<id>[^/]+)/answers", h.exam_answers),
         r("POST", r"/api/exams/(?P<id>[^/]+)/finish", h.exam_finish),
         r("POST", "/api/banks", h.bank_create),
         r("POST", "/api/grade", h.grade_code),
