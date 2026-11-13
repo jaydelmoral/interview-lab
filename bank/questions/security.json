@@ -18,16 +18,16 @@
     "es": "Consultas parametrizadas (prepared statements)"
    },
    {
-    "en": "Hiding the table names",
-    "es": "Ocultar los nombres de las tablas"
+    "en": "Escaping the quotes in the input before concatenating it",
+    "es": "Escapar las comillas de la entrada antes de concatenarla"
    },
    {
-    "en": "Using longer passwords",
-    "es": "Usar contraseñas más largas"
+    "en": "Validating the input against a list of forbidden words",
+    "es": "Validar la entrada contra una lista de palabras prohibidas"
    },
    {
-    "en": "Disabling the firewall",
-    "es": "Desactivar el firewall"
+    "en": "Hiding the database errors from the responses to the client",
+    "es": "Ocultar los errores de la base de datos en las respuestas al cliente"
    }
   ],
   "answer": [
@@ -48,7 +48,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -66,20 +66,20 @@
   },
   "options": [
    {
-    "en": "Injecting script that runs in another user's browser; mitigated with output encoding and a Content Security Policy",
+    "en": "Injecting a script that runs in another user's browser; mitigated with output encoding and a Content Security Policy",
     "es": "Inyectar un script que se ejecuta en el navegador de otro usuario; se mitiga con codificación de salida y una Content Security Policy"
    },
    {
-    "en": "Copying a website's CSS",
-    "es": "Copiar el CSS de un sitio"
+    "en": "Making a logged-in user's browser send a request the user did not intend; mitigated with anti-CSRF tokens and SameSite cookies",
+    "es": "Hacer que el navegador de un usuario con sesión envíe una petición que no quería; se mitiga con tokens anti-CSRF y cookies SameSite"
    },
    {
-    "en": "A database backup method",
-    "es": "Un método de respaldo de bases de datos"
+    "en": "Injecting commands into a query that the server runs on its database; mitigated with parameterized queries and least privilege",
+    "es": "Inyectar comandos en una consulta que el servidor ejecuta en su base de datos; se mitiga con consultas parametrizadas y mínimo privilegio"
    },
    {
-    "en": "A Java compiler error",
-    "es": "Un error del compilador de Java"
+    "en": "Loading the site in a hidden frame to capture the user's clicks; mitigated with frame-ancestors or the X-Frame-Options header",
+    "es": "Cargar el sitio en un marco oculto para capturar los clics del usuario; se mitiga con frame-ancestors o la cabecera X-Frame-Options"
    }
   ],
   "answer": [
@@ -100,7 +100,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -118,20 +118,20 @@
   },
   "options": [
    {
-    "en": "Readable by anyone who has the token (signed, not encrypted), so never put secrets in it",
-    "es": "Legible por cualquiera que tenga el token (firmado, no cifrado), por lo que nunca debes poner secretos en él"
+    "en": "Readable by anyone who holds the token (signed, not encrypted), so it must never carry secrets",
+    "es": "Legible por cualquiera que tenga el token (firmado, no cifrado), por lo que nunca debe llevar secretos"
    },
    {
-    "en": "Encrypted with AES by default",
-    "es": "Cifrado con AES por defecto"
+    "en": "Encrypted with the signing key, so only the server that issued the token can read its claims",
+    "es": "Cifrado con la llave de firma, por lo que solo el servidor que emitió el token puede leer sus claims"
    },
    {
-    "en": "Always stored on the server",
-    "es": "Siempre guardado en el servidor"
+    "en": "Hashed with SHA-256, so the claims cannot be recovered but the server can compare them",
+    "es": "Convertido en hash con SHA-256, por lo que los claims no se recuperan pero el servidor los compara"
    },
    {
-    "en": "Impossible to modify, so signatures are unnecessary",
-    "es": "Imposible de modificar, por lo que la firma sobra"
+    "en": "Readable only after the signature is verified, because verifying it decrypts the payload",
+    "es": "Legible solo después de verificar la firma, porque verificarla descifra el payload"
    }
   ],
   "answer": [
@@ -152,7 +152,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -174,16 +174,16 @@
     "es": "Código de autorización con PKCE"
    },
    {
-    "en": "Implicit flow",
-    "es": "Flujo implícito"
+    "en": "Implicit flow with a short-lived token",
+    "es": "Flujo implícito con un token de corta duración"
    },
    {
-    "en": "Password (resource owner) grant",
-    "es": "Concesión por contraseña"
+    "en": "Resource owner password credentials",
+    "es": "Credenciales de contraseña del propietario del recurso"
    },
    {
-    "en": "Client credentials",
-    "es": "Credenciales de cliente"
+    "en": "Client credentials with a client secret",
+    "es": "Credenciales de cliente con un secreto de cliente"
    }
   ],
   "answer": [
@@ -208,7 +208,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -230,16 +230,16 @@
     "es": "Con hash usando un algoritmo lento y con sal, como bcrypt, scrypt o Argon2"
    },
    {
-    "en": "Encrypted with a key kept next to the database",
-    "es": "Cifradas con una llave guardada junto a la base de datos"
+    "en": "Hashed with SHA-256 and a random salt stored next to each password hash",
+    "es": "Con hash SHA-256 y una sal aleatoria guardada junto a cada hash de contraseña"
    },
    {
-    "en": "With plain SHA-256 and no salt",
-    "es": "Con SHA-256 simple y sin sal"
+    "en": "Encrypted with AES-256 using a key that is kept in a separate secrets manager",
+    "es": "Cifradas con AES-256 usando una llave guardada en un gestor de secretos aparte"
    },
    {
-    "en": "In plain text, protected by the firewall",
-    "es": "En texto plano, protegidas por el firewall"
+    "en": "Hashed with SHA-512 several times, plus one secret pepper shared by all users",
+    "es": "Con hash SHA-512 varias veces, más un pepper secreto compartido por todos los usuarios"
    }
   ],
   "answer": [
@@ -260,7 +260,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]

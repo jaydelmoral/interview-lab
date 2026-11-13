@@ -14,20 +14,20 @@
   },
   "options": [
    {
-    "en": "Owner read+write, group read, others none",
+    "en": "Owner read and write, group read, others nothing",
     "es": "Propietario lectura y escritura, grupo lectura, otros nada"
    },
    {
-    "en": "Owner read, group write, others execute",
-    "es": "Propietario lectura, grupo escritura, otros ejecución"
+    "en": "Owner read and write, group write, others nothing",
+    "es": "Propietario lectura y escritura, grupo escritura, otros nada"
    },
    {
-    "en": "Everyone can read and write",
-    "es": "Todos pueden leer y escribir"
+    "en": "Owner read and execute, group read, others nothing",
+    "es": "Propietario lectura y ejecución, grupo lectura, otros nada"
    },
    {
-    "en": "Owner execute only",
-    "es": "Solo ejecución para el propietario"
+    "en": "Owner read and write, group read, others read",
+    "es": "Propietario lectura y escritura, grupo lectura, otros lectura"
    }
   ],
   "answer": [
@@ -48,7 +48,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -70,16 +70,16 @@
     "es": "grep ERROR app.log"
    },
    {
-    "en": "cat ERROR app.log",
-    "es": "cat ERROR app.log"
+    "en": "find app.log -name ERROR",
+    "es": "find app.log -name ERROR"
    },
    {
-    "en": "find ERROR app.log",
-    "es": "find ERROR app.log"
+    "en": "cut -d ERROR app.log",
+    "es": "cut -d ERROR app.log"
    },
    {
-    "en": "ls ERROR app.log",
-    "es": "ls ERROR app.log"
+    "en": "ls -l app.log | grep ERROR",
+    "es": "ls -l app.log | grep ERROR"
    }
   ],
   "answer": [
@@ -100,7 +100,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -118,20 +118,20 @@
   },
   "options": [
    {
-    "en": "Sends standard error to the same place as standard output",
+    "en": "It sends standard error to the same place as standard output",
     "es": "Envía el error estándar al mismo lugar que la salida estándar"
    },
    {
-    "en": "Runs the command twice",
-    "es": "Ejecuta el comando dos veces"
+    "en": "It sends standard output to the same place as standard error",
+    "es": "Envía la salida estándar al mismo lugar que el error estándar"
    },
    {
-    "en": "Discards standard error",
-    "es": "Descarta el error estándar"
+    "en": "It sends standard error to a file that is literally named &1",
+    "es": "Envía el error estándar a un archivo llamado literalmente &1"
    },
    {
-    "en": "Sends standard input to a file",
-    "es": "Envía la entrada estándar a un archivo"
+    "en": "It runs the command in the background and discards its errors",
+    "es": "Ejecuta el comando en segundo plano y descarta sus errores"
    }
   ],
   "answer": [
@@ -152,7 +152,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -174,16 +174,16 @@
     "es": "awk '{print $1}' access.log | sort | uniq -c"
    },
    {
-    "en": "awk '{print $1}' access.log | uniq -c",
-    "es": "awk '{print $1}' access.log | uniq -c"
+    "en": "awk '{print $1}' access.log | uniq -c | sort",
+    "es": "awk '{print $1}' access.log | uniq -c | sort"
    },
    {
-    "en": "cut access.log | count",
-    "es": "cut access.log | count"
+    "en": "cut -d' ' -f1 access.log | sort -u | wc -l",
+    "es": "cut -d' ' -f1 access.log | sort -u | wc -l"
    },
    {
-    "en": "sort access.log | head -1",
-    "es": "sort access.log | head -1"
+    "en": "awk '{print $1}' access.log | sort | wc -l",
+    "es": "awk '{print $1}' access.log | sort | wc -l"
    }
   ],
   "answer": [
@@ -204,7 +204,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -226,16 +226,16 @@
     "es": "SIGTERM permite que el proceso limpie y termine; SIGKILL no se puede capturar ni manejar"
    },
    {
-    "en": "SIGKILL is slower",
-    "es": "SIGKILL es más lento"
+    "en": "SIGKILL also stops the parent process; SIGTERM only affects the target process",
+    "es": "SIGKILL también detiene al proceso padre; SIGTERM solo afecta al proceso indicado"
    },
    {
-    "en": "SIGTERM needs root",
-    "es": "SIGTERM requiere root"
+    "en": "SIGTERM is delivered immediately; SIGKILL waits until the process becomes idle",
+    "es": "SIGTERM se entrega de inmediato; SIGKILL espera a que el proceso quede inactivo"
    },
    {
-    "en": "They are identical",
-    "es": "Son idénticos"
+    "en": "SIGKILL needs root privileges; SIGTERM can be sent by any user to any process",
+    "es": "SIGKILL requiere privilegios de root; SIGTERM lo puede enviar cualquier usuario a cualquier proceso"
    }
   ],
   "answer": [
@@ -256,7 +256,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]

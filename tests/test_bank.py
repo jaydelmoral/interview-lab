@@ -56,6 +56,40 @@ class TestBankValidator(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stdout)
 
 
+class TestAnswersCannotBeGuessedByLength(unittest.TestCase):
+    """Audit of 2026-11-13: when the right option is much longer than the wrong ones, the score measures nothing."""
+
+    @staticmethod
+    def question(qid, right, wrong, answer=0):
+        opts = [{"en": wrong + str(i), "es": wrong + str(i)} for i in range(4)]
+        opts[answer] = {"en": right, "es": right}
+        return good_question(qid, options=opts, answer=[answer])
+
+    def test_length_bias_of_one_question(self):
+        longest, ratio = VB.length_bias(self.question("q1", "a long and detailed right answer that explains everything", "short"))
+        self.assertTrue(longest)
+        self.assertGreater(ratio, VB.LENGTH_RATIO)
+        longest, ratio = VB.length_bias(self.question("q2", "same size 9", "same size "))
+        self.assertFalse(longest)
+        self.assertAlmostEqual(1.0, ratio)
+        self.assertIsNone(VB.length_bias(good_question(answer=[0, 2])))                      # several right options: no single length to compare
+
+    def test_a_guessable_file_is_reported_and_a_balanced_one_is_not(self):
+        guessable = [self.question(f"g{i}", "the right option is clearly the longest one here", "wrong") for i in range(5)]
+        balanced = [self.question(f"b{i}", "right opt", "wrong option ") for i in range(5)]
+        lines, over, standout = VB.quality_report({"guessable.json": guessable, "balanced.json": balanced})
+        self.assertEqual(2, len(lines))
+        self.assertEqual(1, len(over))
+        self.assertIn("guessable.json", over[0])
+        self.assertEqual(5, len(standout))
+
+    def test_the_builtin_bank_passes_the_strict_quality_check(self):
+        r = subprocess.run([sys.executable, str(ROOT / "tools" / "validate_bank.py"), "--path", str(ROOT / "bank" / "questions"), "--strict-quality"],
+                           capture_output=True, text=True)
+        self.assertEqual(0, r.returncode, r.stdout)
+        self.assertNotIn("guessable by length", r.stdout)
+
+
 class TestPacksAndLevels(unittest.TestCase):
     def make_pack(self, root: Path, name="demo", count=2):
         pack = root / name

@@ -14,28 +14,28 @@
   },
   "options": [
    {
-    "en": "An image is a read-only template; a container is a running instance of it",
-    "es": "La imagen es una plantilla de solo lectura; el contenedor es una instancia en ejecución de ella"
+    "en": "An image is a read-only template; a container is a running instance created from it",
+    "es": "La imagen es una plantilla de solo lectura; el contenedor es una instancia en ejecución creada de ella"
    },
    {
-    "en": "They are the same thing",
-    "es": "Son lo mismo"
+    "en": "An image is a stopped container; starting it turns that same object into a container",
+    "es": "La imagen es un contenedor detenido; al iniciarla, ese mismo objeto se vuelve un contenedor"
    },
    {
-    "en": "A container is a file and an image is a process",
-    "es": "El contenedor es un archivo y la imagen es un proceso"
+    "en": "A container is the build recipe; the image is what you get when you run that recipe",
+    "es": "El contenedor es la receta de construcción; la imagen es lo que se obtiene al ejecutarla"
    },
    {
-    "en": "An image only exists in the cloud",
-    "es": "La imagen solo existe en la nube"
+    "en": "An image holds the application; a container holds only its configuration and its data",
+    "es": "La imagen guarda la aplicación; el contenedor guarda solo su configuración y sus datos"
    }
   ],
   "answer": [
    0
   ],
   "explain": {
-   "en": "You can start many containers from one image. Data written inside a container is lost unless you use volumes.",
-   "es": "Puedes iniciar muchos contenedores desde una imagen. Lo que se escribe dentro del contenedor se pierde si no usas volúmenes."
+   "en": "You can start many containers from one image. What a container writes lives in its own writable layer and is lost when the container is removed, unless you use volumes.",
+   "es": "Puedes iniciar muchos contenedores desde una imagen. Lo que un contenedor escribe vive en su propia capa de escritura y se pierde al eliminar el contenedor, salvo que uses volúmenes."
   },
   "author": "Javier Morales Barrera (@jaydelmoral), with Claude (Anthropic)",
   "license": "CC-BY-4.0",
@@ -52,7 +52,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -70,20 +70,20 @@
   },
   "options": [
    {
-    "en": "Every change is merged often and automatically built and tested",
+    "en": "Every change is integrated often and is built and tested automatically",
     "es": "Cada cambio se integra con frecuencia y se compila y prueba automáticamente"
    },
    {
-    "en": "Every change is deployed to production without review",
-    "es": "Cada cambio se despliega a producción sin revisión"
+    "en": "Every change that passes the tests is deployed to production automatically",
+    "es": "Cada cambio que pasa las pruebas se despliega a producción automáticamente"
    },
    {
-    "en": "Servers never fail",
-    "es": "Los servidores nunca fallan"
+    "en": "Every change is approved by two reviewers before it reaches the main branch",
+    "es": "Cada cambio lo aprueban dos revisores antes de llegar a la rama principal"
    },
    {
-    "en": "Code is written by one person",
-    "es": "El código lo escribe una sola persona"
+    "en": "Every release is built once per sprint from a long-lived integration branch",
+    "es": "Cada versión se construye una vez por sprint desde una rama de integración duradera"
    }
   ],
   "answer": [
@@ -104,7 +104,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -126,16 +126,16 @@
     "es": "ReplicaSet"
    },
    {
-    "en": "Service",
-    "es": "Service"
+    "en": "StatefulSet",
+    "es": "StatefulSet"
    },
    {
-    "en": "Ingress",
-    "es": "Ingress"
+    "en": "DaemonSet",
+    "es": "DaemonSet"
    },
    {
-    "en": "ConfigMap",
-    "es": "ConfigMap"
+    "en": "HorizontalPodAutoscaler",
+    "es": "HorizontalPodAutoscaler"
    }
   ],
   "answer": [
@@ -156,7 +156,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -175,20 +175,20 @@
   },
   "options": [
    {
-    "en": "Liveness decides whether to restart the container; readiness decides whether it receives traffic",
+    "en": "Liveness decides whether the container is restarted; readiness decides whether it receives traffic",
     "es": "Liveness decide si se reinicia el contenedor; readiness decide si recibe tráfico"
    },
    {
-    "en": "They are the same",
-    "es": "Son lo mismo"
+    "en": "Liveness decides whether the container receives traffic; readiness decides whether it is restarted",
+    "es": "Liveness decide si el contenedor recibe tráfico; readiness decide si se reinicia"
    },
    {
-    "en": "Readiness restarts the pod",
-    "es": "Readiness reinicia el pod"
+    "en": "Liveness runs only while the container starts; readiness runs for the rest of its life",
+    "es": "Liveness corre solo mientras arranca el contenedor; readiness corre el resto de su vida"
    },
    {
-    "en": "Liveness controls the CPU",
-    "es": "Liveness controla la CPU"
+    "en": "Liveness checks the health of the node; readiness checks the containers running on it",
+    "es": "Liveness revisa la salud del nodo; readiness revisa los contenedores que corren en él"
    }
   ],
   "answer": [
@@ -209,7 +209,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -227,20 +227,20 @@
   },
   "options": [
    {
-    "en": "Near-instant switch and rollback by changing which environment receives traffic",
+    "en": "Near-instant switch and rollback by changing which environment receives the traffic",
     "es": "Cambio y reversión casi instantáneos al cambiar qué ambiente recibe el tráfico"
    },
    {
-    "en": "It uses half the servers",
-    "es": "Usa la mitad de los servidores"
+    "en": "Showing the new version to a small share of the users before everyone gets it",
+    "es": "Mostrar la versión nueva a una pequeña parte de los usuarios antes que a todos"
    },
    {
-    "en": "It needs no testing",
-    "es": "No requiere pruebas"
+    "en": "Replacing the instances a few at a time, so no second environment is ever needed",
+    "es": "Reemplazar las instancias de pocas en pocas, sin necesitar un segundo ambiente"
    },
    {
-    "en": "It avoids database migrations",
-    "es": "Evita las migraciones de base de datos"
+    "en": "Running schema migrations safely, because each environment owns its own database",
+    "es": "Hacer migraciones de esquema seguras, porque cada ambiente tiene su propia base de datos"
    }
   ],
   "answer": [
@@ -261,7 +261,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]

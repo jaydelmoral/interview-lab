@@ -14,20 +14,20 @@
   },
   "options": [
    {
-    "en": "Single Responsibility Principle",
-    "es": "Principio de responsabilidad única"
+    "en": "Single Responsibility: a class should have one reason to change",
+    "es": "Responsabilidad única: una clase debe tener una sola razón para cambiar"
    },
    {
-    "en": "Simple Syntax",
-    "es": "Sintaxis simple"
+    "en": "Separation of Concerns: each layer handles one technical aspect",
+    "es": "Separación de intereses: cada capa atiende un solo aspecto técnico"
    },
    {
-    "en": "Secure Socket",
-    "es": "Socket seguro"
+    "en": "Substitution: subtypes must be usable in place of their base type",
+    "es": "Sustitución: los subtipos deben poder usarse en lugar de su tipo base"
    },
    {
-    "en": "Stateless Service",
-    "es": "Servicio sin estado"
+    "en": "Segregation: clients should not depend on methods they do not use",
+    "es": "Segregación: los clientes no deben depender de métodos que no usan"
    }
   ],
   "answer": [
@@ -48,7 +48,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -70,16 +70,16 @@
     "es": "Código que conecta una tecnología externa (HTTP, base de datos, cola) con un puerto del dominio"
    },
    {
-    "en": "The domain model",
-    "es": "El modelo de dominio"
+    "en": "An interface declared by the domain that states what it needs from the outside world",
+    "es": "Una interfaz declarada por el dominio que dice lo que necesita del mundo exterior"
    },
    {
-    "en": "A design pattern for UIs only",
-    "es": "Un patrón de diseño solo para interfaces"
+    "en": "A domain service that coordinates several entities inside a single use case",
+    "es": "Un servicio de dominio que coordina varias entidades dentro de un caso de uso"
    },
    {
-    "en": "A kind of exception",
-    "es": "Un tipo de excepción"
+    "en": "A mapper that copies data between the domain entities and the data transfer objects of the API",
+    "es": "Un mapeador que copia datos entre las entidades del dominio y los objetos de transferencia de la API"
    }
   ],
   "answer": [
@@ -100,7 +100,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -118,20 +118,20 @@
   },
   "options": [
    {
-    "en": "Separate models for commands (writes) and queries (reads)",
-    "es": "Modelos separados para comandos (escrituras) y consultas (lecturas)"
+    "en": "Separate models for commands (writes) and for queries (reads)",
+    "es": "Modelos separados para los comandos (escrituras) y para las consultas (lecturas)"
    },
    {
-    "en": "Use only one table",
-    "es": "Usar una sola tabla"
+    "en": "Storing every change as an event and rebuilding the state by replaying them",
+    "es": "Guardar cada cambio como un evento y reconstruir el estado al reproducirlos"
    },
    {
-    "en": "Query the database from the UI",
-    "es": "Consultar la base de datos desde la interfaz"
+    "en": "One database per microservice, owned and changed by a single team",
+    "es": "Una base de datos por microservicio, que un solo equipo posee y modifica"
    },
    {
-    "en": "Never use caches",
-    "es": "No usar nunca cachés"
+    "en": "A cache placed in front of the write model to make the reads faster",
+    "es": "Una caché colocada delante del modelo de escritura para acelerar las lecturas"
    }
   ],
   "answer": [
@@ -152,7 +152,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -170,20 +170,20 @@
   },
   "options": [
    {
-    "en": "Loose coupling and resilience in exchange for eventual consistency and harder debugging",
-    "es": "Bajo acoplamiento y resiliencia a cambio de consistencia eventual y depuración más difícil"
+    "en": "Looser coupling and resilience, in exchange for eventual consistency and harder debugging",
+    "es": "Menor acoplamiento y más resiliencia, a cambio de consistencia eventual y depuración más difícil"
    },
    {
-    "en": "Higher coupling",
-    "es": "Mayor acoplamiento"
+    "en": "Stronger consistency between the services, in exchange for more latency on every call",
+    "es": "Consistencia más fuerte entre los servicios, a cambio de más latencia en cada llamada"
    },
    {
-    "en": "It removes the need for monitoring",
-    "es": "Elimina la necesidad de monitoreo"
+    "en": "Simpler tracing and debugging, in exchange for tighter coupling between the teams",
+    "es": "Rastreo y depuración más simples, a cambio de mayor acoplamiento entre los equipos"
    },
    {
-    "en": "It guarantees strong consistency",
-    "es": "Garantiza consistencia fuerte"
+    "en": "Guaranteed ordering and exactly-once delivery, in exchange for a higher broker cost",
+    "es": "Orden garantizado y entrega exactamente una vez, a cambio de un mayor costo del broker"
    }
   ],
   "answer": [
@@ -204,7 +204,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -222,20 +222,20 @@
   },
   "options": [
    {
-    "en": "Gradually replacing a legacy system by routing functionality to new components piece by piece",
-    "es": "Reemplazar gradualmente un sistema legado enrutando funcionalidad a componentes nuevos poco a poco"
+    "en": "Replacing a legacy system gradually, routing functionality to new components bit by bit",
+    "es": "Reemplazar un sistema legado gradualmente, enrutando funcionalidad a componentes nuevos poco a poco"
    },
    {
-    "en": "Killing slow threads",
-    "es": "Matar hilos lentos"
+    "en": "Rewriting the legacy system in parallel and moving all the traffic over in one release",
+    "es": "Reescribir el sistema legado en paralelo y pasar todo el tráfico en una sola liberación"
    },
    {
-    "en": "Compressing logs",
-    "es": "Comprimir logs"
+    "en": "Wrapping the legacy system behind an API so that it never has to be replaced",
+    "es": "Envolver el sistema legado detrás de una API para que nunca haya que reemplazarlo"
    },
    {
-    "en": "Encrypting databases",
-    "es": "Cifrar bases de datos"
+    "en": "Splitting the legacy database into several schemas first and migrating the application code at the very end",
+    "es": "Dividir primero la base de datos legada en varios esquemas y migrar el código de la aplicación hasta el final"
    }
   ],
   "answer": [
@@ -256,7 +256,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]

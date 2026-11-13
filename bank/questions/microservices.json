@@ -14,20 +14,20 @@
   },
   "options": [
    {
-    "en": "Single entry point that routes requests and applies cross-cutting concerns such as authentication and rate limiting",
+    "en": "A single entry point that routes requests and applies cross-cutting concerns such as authentication and rate limiting",
     "es": "Punto de entrada único que enruta las peticiones y aplica aspectos transversales como autenticación y límite de tasa"
    },
    {
-    "en": "Store the data of every service",
-    "es": "Guardar los datos de todos los servicios"
+    "en": "A registry where every service instance announces its address so that the other services can find it",
+    "es": "Un registro donde cada instancia de servicio anuncia su dirección para que los demás servicios la encuentren"
    },
    {
-    "en": "Compile the services",
-    "es": "Compilar los servicios"
+    "en": "A sidecar next to each service that handles retries, timeouts and mutual TLS between the services",
+    "es": "Un sidecar junto a cada servicio que maneja reintentos, tiempos de espera y TLS mutuo entre los servicios"
    },
    {
-    "en": "Replace the database",
-    "es": "Reemplazar la base de datos"
+    "en": "A broker that stores messages so that the services exchange events without calling each other directly",
+    "es": "Un broker que guarda mensajes para que los servicios intercambien eventos sin llamarse directamente"
    }
   ],
   "answer": [
@@ -48,7 +48,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -72,15 +72,15 @@
    },
    {
     "en": "Closed",
-    "es": "Cerrado"
+    "es": "Cerrado (closed)"
    },
    {
     "en": "Open",
-    "es": "Abierto"
+    "es": "Abierto (open)"
    },
    {
-    "en": "Idle",
-    "es": "Inactivo"
+    "en": "Forced open",
+    "es": "Abierto forzado (forced open)"
    }
   ],
   "answer": [
@@ -101,7 +101,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -119,20 +119,20 @@
   },
   "options": [
    {
-    "en": "So a client can safely retry without charging twice",
-    "es": "Para que el cliente pueda reintentar sin cobrar dos veces"
+    "en": "So that the client can retry safely without charging the customer twice",
+    "es": "Para que el cliente pueda reintentar con seguridad sin cobrar dos veces"
    },
    {
-    "en": "To make the request faster",
-    "es": "Para que la petición sea más rápida"
+    "en": "So that the server can reject requests that arrive after the token expires",
+    "es": "Para que el servidor rechace las peticiones que llegan después de vencer el token"
    },
    {
-    "en": "To encrypt the body",
-    "es": "Para cifrar el cuerpo"
+    "en": "So that two different clients cannot pay for the same order at the same time",
+    "es": "Para que dos clientes distintos no puedan pagar el mismo pedido al mismo tiempo"
    },
    {
-    "en": "To avoid authentication",
-    "es": "Para evitar la autenticación"
+    "en": "So that the gateway can cache the response and answer later reads faster",
+    "es": "Para que el gateway guarde la respuesta en caché y conteste más rápido después"
    }
   ],
   "answer": [
@@ -153,7 +153,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -171,20 +171,20 @@
   },
   "options": [
    {
-    "en": "Run compensating actions for the steps already completed",
-    "es": "Ejecutar acciones compensatorias de los pasos ya completados"
+    "en": "Run compensating actions for the steps that have already completed",
+    "es": "Ejecutar acciones compensatorias de los pasos que ya se completaron"
    },
    {
-    "en": "Do a distributed two-phase lock on everything",
-    "es": "Hacer un bloqueo distribuido de dos fases sobre todo"
+    "en": "Roll back all five steps with a two-phase commit across the services",
+    "es": "Revertir los cinco pasos con un commit de dos fases entre los servicios"
    },
    {
-    "en": "Ignore the failure",
-    "es": "Ignorar el fallo"
+    "en": "Retry step 3 until it succeeds, keeping the other steps locked meanwhile",
+    "es": "Reintentar el paso 3 hasta que funcione, manteniendo bloqueados los demás"
    },
    {
-    "en": "Restart the database",
-    "es": "Reiniciar la base de datos"
+    "en": "Mark the saga as failed and leave the completed steps exactly as they are",
+    "es": "Marcar la saga como fallida y dejar los pasos completados tal como quedaron"
    }
   ],
   "answer": [
@@ -205,7 +205,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -227,16 +227,16 @@
     "es": "Consistencia y disponibilidad"
    },
    {
-    "en": "Speed and cost",
-    "es": "Velocidad y costo"
+    "en": "Consistency and partition tolerance",
+    "es": "Consistencia y tolerancia a particiones"
    },
    {
-    "en": "Security and privacy",
-    "es": "Seguridad y privacidad"
+    "en": "Availability and partition tolerance",
+    "es": "Disponibilidad y tolerancia a particiones"
    },
    {
-    "en": "Latency and throughput",
-    "es": "Latencia y rendimiento"
+    "en": "Latency and consistency",
+    "es": "Latencia y consistencia"
    }
   ],
   "answer": [
@@ -257,7 +257,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]

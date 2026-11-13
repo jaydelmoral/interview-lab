@@ -71,16 +71,16 @@
     "es": "Given / When / Then (Dado / Cuando / Entonces)"
    },
    {
-    "en": "Setup / Run / Assert",
-    "es": "Setup / Run / Assert"
+    "en": "Arrange / Act / Assert",
+    "es": "Arrange / Act / Assert (Preparar / Actuar / Afirmar)"
    },
    {
-    "en": "If / Then / Else",
-    "es": "If / Then / Else"
+    "en": "Setup / Exercise / Verify",
+    "es": "Setup / Exercise / Verify (Preparar / Ejercitar / Verificar)"
    },
    {
-    "en": "Before / During / After",
-    "es": "Before / During / After"
+    "en": "Scenario / Step / Result",
+    "es": "Scenario / Step / Result (Escenario / Paso / Resultado)"
    }
   ],
   "answer": [
@@ -101,7 +101,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -119,20 +119,20 @@
   },
   "options": [
    {
-    "en": "A spy wraps a real object and calls real methods unless you stub them; a mock replaces all behavior with defaults",
-    "es": "Un spy envuelve un objeto real y llama a sus métodos reales salvo que los configures; un mock reemplaza todo el comportamiento con valores por defecto"
+    "en": "A spy wraps a real object and calls its real methods unless they are stubbed; a mock returns defaults for everything",
+    "es": "Un spy envuelve un objeto real y llama a sus métodos reales salvo que los configures; un mock devuelve valores por defecto en todo"
    },
    {
-    "en": "A mock calls real methods and a spy does not",
-    "es": "Un mock llama a los métodos reales y un spy no"
+    "en": "A mock wraps a real object and calls its real methods unless they are stubbed; a spy returns defaults for everything",
+    "es": "Un mock envuelve un objeto real y llama a sus métodos reales salvo que los configures; un spy devuelve valores por defecto en todo"
    },
    {
-    "en": "They are the same; spy is the old name",
-    "es": "Son lo mismo; spy es el nombre antiguo"
+    "en": "A spy only records the calls so they can be verified later; a mock is the only one whose methods can be stubbed",
+    "es": "Un spy solo registra las llamadas para verificarlas después; un mock es el único cuyos métodos se pueden configurar"
    },
    {
-    "en": "A spy can only be used with interfaces",
-    "es": "Un spy solo se puede usar con interfaces"
+    "en": "A mock is created from an interface and a spy from a concrete class; apart from that they behave in the same way",
+    "es": "Un mock se crea a partir de una interfaz y un spy de una clase concreta; fuera de eso se comportan igual"
    }
   ],
   "answer": [
@@ -153,7 +153,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -175,16 +175,16 @@
     "es": "Pruebas unitarias"
    },
    {
+    "en": "Integration tests",
+    "es": "Pruebas de integración"
+   },
+   {
     "en": "End-to-end UI tests",
     "es": "Pruebas de UI de extremo a extremo"
    },
    {
-    "en": "Manual exploratory tests",
-    "es": "Pruebas exploratorias manuales"
-   },
-   {
-    "en": "Load tests",
-    "es": "Pruebas de carga"
+    "en": "Contract tests",
+    "es": "Pruebas de contrato"
    }
   ],
   "answer": [
@@ -205,7 +205,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -223,20 +223,20 @@
   },
   "options": [
    {
-    "en": "Quarantine it and find the root cause (shared state, time, async waits, ordering)",
+    "en": "Quarantine it and look for the root cause (shared state, time, async waits, order)",
     "es": "Ponerla en cuarentena y buscar la causa raíz (estado compartido, tiempo, esperas asíncronas, orden)"
    },
    {
-    "en": "Re-run the pipeline until it is green",
-    "es": "Volver a correr el pipeline hasta que salga en verde"
+    "en": "Add automatic retries so that it passes, and review it when the team has some time",
+    "es": "Agregar reintentos automáticos para que pase, y revisarla cuando el equipo tenga tiempo"
    },
    {
-    "en": "Double every timeout",
-    "es": "Duplicar todos los timeouts"
+    "en": "Increase its timeouts and waits until it stops failing on the build pipeline",
+    "es": "Aumentar sus tiempos de espera hasta que deje de fallar en el pipeline de compilación"
    },
    {
-    "en": "Delete the test",
-    "es": "Borrar la prueba"
+    "en": "Mark it as ignored and replace it with a manual check before every release",
+    "es": "Marcarla como ignorada y reemplazarla por una revisión manual antes de cada liberación"
    }
   ],
   "answer": [
@@ -261,7 +261,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]

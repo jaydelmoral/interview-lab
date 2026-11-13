@@ -19,16 +19,16 @@
     "es": "WHERE filtra filas antes de agrupar; HAVING filtra grupos después de agregar"
    },
    {
-    "en": "WHERE is for numbers and HAVING for text",
-    "es": "WHERE es para números y HAVING para texto"
+    "en": "WHERE filters groups after aggregation; HAVING filters rows before grouping",
+    "es": "WHERE filtra grupos después de agregar; HAVING filtra filas antes de agrupar"
    },
    {
-    "en": "They are interchangeable",
-    "es": "Son intercambiables"
+    "en": "WHERE applies to every joined table; HAVING applies only to the first table",
+    "es": "WHERE se aplica a todas las tablas unidas; HAVING solo a la primera tabla"
    },
    {
-    "en": "HAVING runs before WHERE",
-    "es": "HAVING se ejecuta antes que WHERE"
+    "en": "WHERE can use the aliases defined in SELECT; HAVING can only use raw columns",
+    "es": "WHERE puede usar los alias definidos en SELECT; HAVING solo columnas originales"
    }
   ],
   "answer": [
@@ -49,7 +49,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -75,12 +75,12 @@
     "es": "INNER JOIN"
    },
    {
-    "en": "CROSS JOIN",
-    "es": "CROSS JOIN"
+    "en": "RIGHT JOIN",
+    "es": "RIGHT JOIN"
    },
    {
-    "en": "None of them",
-    "es": "Ninguno"
+    "en": "CROSS JOIN",
+    "es": "CROSS JOIN"
    }
   ],
   "answer": [
@@ -101,7 +101,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -173,20 +173,20 @@
   },
   "options": [
    {
-    "en": "Applying a function to the indexed column prevents using the index (non-sargable); a functional index or a normalized column fixes it",
-    "es": "Aplicar una función a la columna indexada impide usar el índice (no sargable); lo arregla un índice funcional o una columna normalizada"
+    "en": "The function on the indexed column makes the predicate non-sargable; an expression index on lower(email) fixes it",
+    "es": "La función sobre la columna indexada vuelve el predicado no sargable; lo arregla un índice de expresión sobre lower(email)"
    },
    {
-    "en": "Indexes only work with numbers",
-    "es": "Los índices solo funcionan con números"
+    "en": "The comparison ignores case, and a B-tree index can only serve case-sensitive equality on a text column",
+    "es": "La comparación ignora mayúsculas, y un índice B-tree solo sirve para igualdad sensible a mayúsculas en una columna de texto"
    },
    {
-    "en": "Because email is a text column",
-    "es": "Porque email es una columna de texto"
+    "en": "The planner skips indexes on text columns unless the query also has a LIMIT or an ORDER BY clause",
+    "es": "El planificador omite los índices sobre columnas de texto salvo que la consulta tenga también LIMIT u ORDER BY"
    },
    {
-    "en": "Indexes are never used with WHERE",
-    "es": "Los índices nunca se usan con WHERE"
+    "en": "The literal is compared as a different type, so the index is skipped because of an implicit conversion",
+    "es": "El literal se compara como otro tipo, así que el índice se omite por una conversión implícita"
    }
   ],
   "answer": [
@@ -207,7 +207,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  },
  {
@@ -234,12 +234,12 @@
     "es": "Lecturas sucias"
    },
    {
-    "en": "None",
-    "es": "Ninguna"
+    "en": "Dirty writes",
+    "es": "Escrituras sucias"
    },
    {
-    "en": "Deadlocks cannot happen",
-    "es": "Los interbloqueos no pueden ocurrir"
+    "en": "No read anomaly at all",
+    "es": "Ninguna anomalía de lectura"
    }
   ],
   "answer": [
@@ -260,7 +260,7 @@
   "review": {
    "status": "draft",
    "author": "Claude (Anthropic) — AI-authored, not yet human-reviewed",
-   "date": "2026-11-10"
+   "date": "2026-11-13"
   }
  }
 ]
