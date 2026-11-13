@@ -187,11 +187,12 @@ async function renderCode(){
   $('resetBtn').onclick = () => { if (confirm(T('resetConfirm'))) $('code').value = p.starter; };
   $('submitBtn').onclick = async () => {
     saveDraft(); $('submitBtn').disabled = true; $('status').textContent = T('running');
-    try { const r = await post('/api/grade', withAttempt({problem: p.id, code: $('code').value, lang, exam: EXAM.id})); recordCode(it.key, r); showCodeResult(r); $('status').textContent = ''; drawSteps(); const tb = $('body').querySelector('[data-i="' + codeIdx + '"]'); if (tb) tb.textContent = T('problem') + ' ' + (codeIdx + 1) + ' · ' + Math.round(100 * codeBest[it.key].score / codeBest[it.key].max) + '%'; }
+    try { grading = post('/api/grade', withAttempt({problem: p.id, code: $('code').value, lang, exam: EXAM.id})); const r = await grading; recordCode(it.key, r); showCodeResult(r); $('status').textContent = ''; drawSteps(); const tb = $('body').querySelector('[data-i="' + codeIdx + '"]'); if (tb) tb.textContent = T('problem') + ' ' + (codeIdx + 1) + ' · ' + Math.round(100 * codeBest[it.key].score / codeBest[it.key].max) + '%'; }
     catch (e) { $('status').textContent = T('err') + ': ' + e.message; }
-    $('submitBtn').disabled = false;
+    grading = null; $('submitBtn').disabled = false;
   };
 }
+let grading = null;      // the code submission being graded right now, if any: closing the section waits for it
 /* The server keeps the latest answers too (debounced), so a section whose time ran out is graded as it was left. */
 let draftTimer = null, draftQueue = Promise.resolve();
 function sendDraft(keepalive){
@@ -233,6 +234,7 @@ async function finishSection(auto){
   let rec;
   if (sec.items.length && sec.items[0].type === 'code') {
     saveDraft();
+    if (grading) { try { await grading; } catch (e) {} }   // a submission sent in time still counts: wait for its grade before closing the section
     let s = 0, m = 0, pass = 0, tot = 0; const cats = {};
     const bump = (c, p, n) => { const a = cats[c] || (cats[c] = {p: 0, n: 0}); a.p += p; a.n += n; };
     sec.items.forEach(it => { const b = codeBest[it.key]; if (!b) return; m += b.max; s += b.score; pass += b.passed; tot += b.total; Object.entries(b.cats).forEach(([c, v]) => bump(c, v.p, v.n)); });

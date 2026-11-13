@@ -18,7 +18,8 @@ The browser mints a random **attempt id** (32 hex chars) each time a new attempt
 State lives in `exam-attempts/<exam id>-<attempt id>.json`, replaced atomically, behind the `AttemptRepository` port. The earlier client-trusted mode was removed on 2026-11-10: progress saved by an older version has no attempt id, so the page ignores it and the exam starts over.
 
 ## Consequences
-**Positive:** the history can no longer be inflated from the browser; a double or repeated `finish` is idempotent; the answers of a section cannot be "peeked at" and then re-submitted for a better score. 
+**Positive:** the scores of a run can no longer be typed in from the browser; a double or repeated `finish` is idempotent; within one attempt, the answers of a section cannot be "peeked at" and then re-submitted for a better score.
+**Still possible by calling the API by hand (accepted for the local, single-user edition; audit of 2026-11-13):** the caller chooses which sections of the attempt are listed in `finish`, so a weak section can be left out of the average; and because the browser mints the attempt id, a second attempt at the same exam can be answered after reading the answers in a first one. A hosted or proctored edition must mint attempts on the server, limit them, and count every section of the exam. 
 **Negative / trade-offs:** an extra small file per attempt, and one small request per answer change (local, so cheap); the rest time *between* sections is not limited (the next clock starts when the user clicks); someone calling the API by hand can still read answers by grading with empty answers, but that locks in a zero score for the section.
 
 ## Alternatives considered

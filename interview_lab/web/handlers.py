@@ -114,7 +114,7 @@ class Handlers:
 
     def bank_create(self, req: Request):
         b = req.body
-        urls = [u for u in (b.get("urls") or []) if isinstance(u, str) and u.strip()]
+        urls = [u for u in (b.get("urls") if isinstance(b.get("urls"), list) else []) if isinstance(u, str) and u.strip()]
         notes = b.get("notes") if isinstance(b.get("notes"), str) else ""
         return self.banks.create(str(b.get("title", ""))[:80], urls, notes)
 

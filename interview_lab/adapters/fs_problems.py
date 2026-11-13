@@ -22,7 +22,7 @@ class FsProblems:
 
     def find(self, pid: str) -> Optional[tuple]:
         """Built-in problems win over user problems with the same id."""
-        if not ID_RE.match(str(pid)):
+        if not isinstance(pid, str) or not ID_RE.match(pid):      # a number or a list is simply not a problem id
             return None
         for base, source in self.sources:
             d = base / pid

@@ -197,9 +197,10 @@ class ExamService:
 
     def grade_section(self, exam_id: str, idx, answers, lang: str, attempt) -> dict:
         exam = self._load(exam_id)
-        if not isinstance(idx, int) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
+        if not isinstance(idx, int) or isinstance(idx, bool) or not 0 <= idx < len(exam["sections"]) or not isinstance(answers, dict):
             raise InvalidRequest("invalid request")
         attempt = self._attempt(attempt)
+        answers = rules.clean_answers(exam["sections"][idx], answers)      # what is graded is also stored: keep only what grading understands
         with self._lock:
             state = self._state(exam["id"], attempt)
             key = str(idx)
