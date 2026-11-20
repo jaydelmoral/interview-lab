@@ -1,6 +1,6 @@
 addStrings({
   es: {
-    heroBadge: 'Código abierto · Apache-2.0 · 100 % local', heroT1: 'Entrevistas técnicas', heroEm: 'a la medida', heroT3: ', ejecutadas en tu propia computadora',
+    heroBadge: 'Código abierto · AGPL-3.0 · 100 % local', heroT1: 'Entrevistas técnicas', heroEm: 'a la medida', heroT3: ', ejecutadas en tu propia computadora',
     heroSub: 'Sube tu CV o pega la vacante. Interview Lab detecta qué te van a preguntar, arma el simulacro con tiempo por sección y califica tu código de verdad.',
     ctaBuild: 'Crear mi simulacro', ctaEval: 'Ver cómo se evalúa',
     evalNote: 'Datos de ejemplo. Tu reporte real aparece aquí mismo al terminar cada simulacro.',
@@ -44,7 +44,7 @@ addStrings({
     genLocalAi: 'Generador activo: IA local (Ollama). Tu texto no sale de tu equipo; la calidad depende del modelo que tengas instalado y las preguntas salen como borrador.', genOffline: 'Generador activo: local (sin IA). Tu texto no sale de tu equipo.', genAi: 'Generador activo: IA (proveedor externo con tu propia llave). El texto que agregues se envía al proveedor y el costo es de tu cuenta.'
   },
   en: {
-    heroBadge: 'Open source · Apache-2.0 · 100% local', heroT1: 'Interview simulations', heroEm: 'tailored to the job', heroT3: ', running on your own machine',
+    heroBadge: 'Open source · AGPL-3.0 · 100% local', heroT1: 'Interview simulations', heroEm: 'tailored to the job', heroT3: ', running on your own machine',
     heroSub: 'Upload your CV or paste the job post. Interview Lab detects what you will be asked, builds the simulation with a timer per section and grades your code for real.',
     ctaBuild: 'Build my simulation', ctaEval: 'See how you are scored',
     evalNote: 'Sample data. Your real report appears right here after each simulation.',

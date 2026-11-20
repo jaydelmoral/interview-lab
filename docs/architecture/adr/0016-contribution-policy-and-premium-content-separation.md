@@ -12,7 +12,7 @@ The maintainer wants to give the engine to the world **and** keep the option of 
 ## Decision
 1. **Premium and private content never enters this repository.** It lives in *content packs* (`packs/<name>/`), each its own private git repository, loaded at runtime. `packs/*` and `workspace/*` are git-ignored; `tools/preflight.py` fails if anything under them (or `.env`, secrets, personal paths, oversized files) is tracked **or exists anywhere in history**. It runs in CI and as a local `pre-push` hook.
 2. **No external pull requests until a CLA exists.** Issues and discussions are welcome; the maintainer writes the final content. A CLA (reviewed by an IP lawyer) will let the project keep relicensing options; the DCO remains as a second, origin-only layer.
-3. The final split between free sample content and premium packs, and the engine's licence (Apache-2.0 vs AGPL-3.0 with a commercial option), are decided **before the repository becomes public**.
+3. The final split between free sample content and premium packs, and the engine's licence (Apache-2.0 vs AGPL-3.0 with a commercial option), are decided **before the repository becomes public**. Decided on 2026-11-20: AGPL-3.0 with a commercial option ([ADR-0024](0024-agpl-with-commercial-licence.md)).
 
 ## Consequences
 **Positive**

@@ -1,7 +1,7 @@
 # Interview Lab
 
 [![CI](https://github.com/jaydelmoral/interview-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/jaydelmoral/interview-lab/actions/workflows/ci.yml)
-![License: Apache-2.0](https://img.shields.io/badge/code-Apache--2.0-blue)
+![License: AGPL-3.0](https://img.shields.io/badge/code-AGPL--3.0-blue)
 ![Content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)
 
 🇬🇧 [English README](README.en.md)
@@ -83,8 +83,8 @@ Usa un **giro** (aerolínea, banco…) en vez de nombres de empresas y escribe c
 [Índice](docs/README.md) · [Guía de uso](docs/USER-GUIDE.md) · [Instalación](docs/INSTALL.md) · [Arquitectura](docs/architecture/README.md) · [ADR](docs/architecture/adr/README.md) · [API](docs/API.md) · [Seguridad](docs/SECURITY-MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Contribuir](CONTRIBUTING.md)
 
 ## Licencias, autoría y avisos
-- **Código:** [Apache-2.0](LICENSE). **Ejercicios, quiz y textos:** [CC BY 4.0](LICENSE-CONTENT.md) (texto oficial en `LICENSE-CONTENT.txt`). **Logotipos y marca de Collaboration: todos los derechos reservados**, no cubiertos por esas licencias; quien haga un fork debe reemplazarlos (`web/brand/brand.json`).
+- **Código:** [AGPL-3.0](LICENSE) con términos adicionales de atribución (ver [NOTICE](NOTICE)); si necesitas otras condiciones, hay [licencia comercial](LICENSE-COMMERCIAL.md). **Ejercicios, quiz y textos:** [CC BY 4.0](LICENSE-CONTENT.md) (texto oficial en `LICENSE-CONTENT.txt`). **Logotipos y marca de Collaboration: todos los derechos reservados**, no cubiertos por esas licencias; quien haga un fork debe reemplazarlos (`web/brand/brand.json`).
 - Autoría: **Javier Morales Barrera ([@jaydelmoral](https://github.com/jaydelmoral))**, creado junto con **Claude** (asistente de IA de Anthropic). Ver [AUTHORS.md](AUTHORS.md) y [NOTICE](NOTICE).
 - Proyecto independiente: **no está afiliado, patrocinado ni respaldado** por Oracle, los titulares de Java®, Spring u otras marcas, ni por plataformas de pruebas de código. Las marcas pertenecen a sus dueños y se usan solo para identificar tecnologías.
-- Los ejercicios son originales (ideas algorítmicas clásicas con enunciados, datos y giros de negocio propios). Sin garantía (ver Apache-2.0); practicar aquí no garantiza resultados en ninguna entrevista.
+- Los ejercicios son originales (ideas algorítmicas clásicas con enunciados, datos y giros de negocio propios). Sin garantía (ver AGPL-3.0); practicar aquí no garantiza resultados en ninguna entrevista.
 - El banco de conceptos y las preguntas se redactaron con ayuda de IA: **contrástalos con la documentación oficial**.

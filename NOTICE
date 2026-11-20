@@ -5,15 +5,26 @@ Created together with Claude, an AI assistant developed by Anthropic. Claude is 
 (see AUTHORS.md); the copyright holder named above is the human author.
 
 This product includes:
-  - Source code, licensed under the Apache License, Version 2.0 (see LICENSE).
+  - Source code, licensed under the GNU Affero General Public License, version 3 (AGPL-3.0, see LICENSE) with the
+    additional terms below. A separate commercial licence is available (see LICENSE-COMMERCIAL.md).
   - Exercises, quiz questions, documentation and the concept bank (problems/, bank/, README*, docs/),
     licensed under Creative Commons Attribution 4.0 International (see LICENSE-CONTENT.md).
 
-Redistributions of the source code must retain this NOTICE file (Apache-2.0, section 4(d)).
+Copies and modified versions of the source code must keep this NOTICE file and the copyright notices (AGPL-3.0, sections 4 and 5).
 Reuse of the content must give credit as described in LICENSE-CONTENT.md.
 
-Logos and brand: the Collaboration name, logos and tagline (web/brand/) are NOT licensed under Apache-2.0 or CC BY 4.0;
-all rights reserved by their owner. Replace them when you fork (web/brand/brand.json).
+Logos and brand: the Collaboration name, logos and tagline (web/brand/) are NOT licensed under AGPL-3.0 or CC BY 4.0;
+all rights reserved by their owner. No trademark rights are granted (AGPL-3.0, section 7(e)).
+
+Additional terms under section 7 of the AGPL-3.0 (they apply to the source code of Interview Lab):
+  (a) Section 7(b): every copy, modified version or network-hosted service based on this code must preserve, in the
+      user interface, the legal notices and attribution shown by the unmodified program: the credit "Interview Lab,
+      by Collaboration (Javier Morales Barrera)" and the Collaboration name and logo in the places where the
+      unmodified program shows them (header and footer). They may be added to, never removed or hidden.
+  (b) Section 7(c): modified versions must be marked as such and must not be presented as the original program or as
+      made or endorsed by Collaboration or Javier Morales Barrera.
+  (c) Whoever cannot or does not want to meet these terms (for example, to remove the Collaboration brand or to keep
+      their own changes private) needs a commercial licence from the copyright holder: see LICENSE-COMMERCIAL.md.
 
 Third-party typeface: Outfit (web/fonts/), Copyright 2021 The Outfit Project Authors, licensed under the SIL Open Font
 License 1.1 (web/fonts/OFL.txt). The shipped file is a Latin, weight 400-600 subset; origin and SHA-256 in web/fonts/ORIGEN.md.

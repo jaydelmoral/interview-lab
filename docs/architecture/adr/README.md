@@ -16,7 +16,7 @@ Un ADR documenta una decisión significativa: contexto, decisión y consecuencia
 | 0009 | [SSRF-safe link fetching for the personal bank](0009-ssrf-safe-link-fetching.md) | Accepted |
 | 0010 | [JSON files for persistence](0010-json-files-for-persistence.md) | Accepted |
 | 0011 | [Optional AI question generator behind a port, with the user's own key](0011-optional-ai-generator-port.md) | Accepted |
-| 0012 | [Licensing: Apache-2.0 code, CC BY 4.0 content, reserved brand](0012-content-licensing-and-brand-policy.md) | Accepted |
+| 0012 | [Licensing: Apache-2.0 code, CC BY 4.0 content, reserved brand](0012-content-licensing-and-brand-policy.md) | Partly superseded by 0024 |
 | 0013 | [Vanilla HTML/JS front end without a build step](0013-no-build-step-frontend.md) | Accepted |
 | 0014 | [Section timers run in the browser](0014-client-side-section-timers.md) | Accepted |
 | 0015 | [Design system with light/dark themes and one results dashboard](0015-ui-design-system-and-results-dashboard.md) | Accepted |
@@ -28,6 +28,7 @@ Un ADR documenta una decisión significativa: contexto, decisión y consecuencia
 | 0021 | [Server-side state per exam attempt](0021-server-side-exam-attempts.md) | Accepted |
 | 0022 | [Isotype animated with the scroll, without libraries](0022-scroll-driven-isotype-without-libraries.md) | Accepted |
 | 0023 | [Heading typeface hosted in the app; gold as the colour of action](0023-hosted-heading-typeface-and-gold-action-colour.md) | Accepted |
+| 0024 | [AGPL-3.0 for the code, with a separate commercial licence](0024-agpl-with-commercial-licence.md) | Accepted |
 
 ## Template
 

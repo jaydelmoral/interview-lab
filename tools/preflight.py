@@ -20,7 +20,7 @@ MAX_BYTES = 2_000_000
 SECRET = re.compile(r"sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{12,}|BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY|xox[baprs]-|AIza[0-9A-Za-z_-]{20,}")
 PERSONAL = re.compile(r"/home/[a-z][a-z0-9_-]+/|/Users/[A-Za-z][A-Za-z0-9._-]+/|collaboration-mx|lightsail")
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}")
-EMAIL_OK = re.compile(r"@(example\.(com|org)|b\.com|users\.noreply\.github\.com)$|^noreply@anthropic\.com$|^security@|^conduct@")
+EMAIL_OK = re.compile(r"@(example\.(com|org)|b\.com|users\.noreply\.github\.com)$|^noreply@anthropic\.com$|^security@|^conduct@|^javier\.morales\.barrera@gmail\.com$")
 SELF = "tools/preflight.py"
 
 

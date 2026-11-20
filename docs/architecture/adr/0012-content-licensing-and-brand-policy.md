@@ -1,6 +1,6 @@
 # ADR-0012: Licensing: Apache-2.0 code, CC BY 4.0 content, reserved brand
 
-- **Status:** Accepted
+- **Status:** Partly superseded by [ADR-0024](0024-agpl-with-commercial-licence.md) (the licence of the code; content and brand rules still apply)
 - **Date:** 2026-11-09
 - **Deciders:** Javier Morales Barrera, Claude
 

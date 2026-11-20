@@ -1,7 +1,7 @@
 # Interview Lab
 
 [![CI](https://github.com/jaydelmoral/interview-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/jaydelmoral/interview-lab/actions/workflows/ci.yml)
-![License: Apache-2.0](https://img.shields.io/badge/code-Apache--2.0-blue)
+![License: AGPL-3.0](https://img.shields.io/badge/code-AGPL--3.0-blue)
 ![Content: CC BY 4.0](https://img.shields.io/badge/content-CC%20BY%204.0-lightgrey)
 
 🇪🇸 [README en español](README.md)
@@ -79,8 +79,8 @@ Use a **sector** (airline, bank…) instead of company names and write in your o
 [Index](docs/README.md) · [User guide](docs/USER-GUIDE.md) · [Install](docs/INSTALL.md) · [Architecture](docs/architecture/README.md) · [ADRs](docs/architecture/adr/README.md) · [API](docs/API.md) · [Security](docs/SECURITY-MODEL.md) · [Roadmap](docs/ROADMAP.md) · [Contributing](CONTRIBUTING.md)
 
 ## Licenses, authorship and notices
-- **Code:** [Apache-2.0](LICENSE). **Exercises, quiz and texts:** [CC BY 4.0](LICENSE-CONTENT.md) (official text in `LICENSE-CONTENT.txt`). **Collaboration logos and brand: all rights reserved**, not covered by those licenses; forks must replace them (`web/brand/brand.json`).
+- **Code:** [AGPL-3.0](LICENSE) with additional attribution terms (see [NOTICE](NOTICE)); other conditions need a [commercial licence](LICENSE-COMMERCIAL.md). **Exercises, quiz and texts:** [CC BY 4.0](LICENSE-CONTENT.md) (official text in `LICENSE-CONTENT.txt`). **Collaboration logos and brand: all rights reserved**, not covered by those licenses; forks must replace them (`web/brand/brand.json`).
 - Authors: **Javier Morales Barrera ([@jaydelmoral](https://github.com/jaydelmoral))**, created together with **Claude** (an AI assistant by Anthropic). See [AUTHORS.md](AUTHORS.md) and [NOTICE](NOTICE).
 - Independent project: **not affiliated with, sponsored or endorsed by** Oracle, the owners of Java®, Spring or other trademarks, or any code-testing platform. Trademarks belong to their owners and are used only to identify technologies.
-- Exercises are original (classic algorithmic ideas with our own statements, data and business settings). No warranty (see Apache-2.0); practicing here does not guarantee results in any interview.
+- Exercises are original (classic algorithmic ideas with our own statements, data and business settings). No warranty (see AGPL-3.0); practicing here does not guarantee results in any interview.
 - The concept bank and questions were drafted with AI help: **check them against official documentation**.
